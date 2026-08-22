@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Business Software Automation Solutions | Autonomous Enterprise Infrastructure</title>
+  <meta name="description" content="Next-generation business software automation solutions for enterprise operations. Automate workflows, reduce errors, and scale effortlessly.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==========================================================================
+       DESIGN SYSTEM & CUSTOM PROPERTIES
+       ========================================================================== */
+    :root {
+      --bg-void: #030508;
+      --bg-dark-blue: #07101e;
+      --bg-surface: rgba(10, 20, 38, 0.55);
+      --bg-surface-hover: rgba(15, 28, 52, 0.75);
+      
+      --accent-cyan: #00d2ff;
+      --accent-blue: #1e90ff;
+      --accent-glow: rgba(0, 210, 255, 0.35);
+      --accent-glow-strong: rgba(0, 210, 255, 0.65);
+      
+      --text-main: #f0f4f8;
+      --text-muted: #8a99ad;
+      --text-dim: #5c6b7e;
+      
+      --border-metallic: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(0,210,255,0.4) 50%, rgba(255,255,255,0.05) 100%);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-glow: rgba(0, 210, 255, 0.3);
+      
+      --font-heading: 'Space Grotesk', 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-accent: 'Outfit', sans-serif;
+      
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 24px;
+      --radius-full: 9999px;
+      
+      --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Reset & Base Styles */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+      color-scheme: dark;
+    }
+
+    body {
+      background-color: var(--bg-void);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      position: relative;
+    }
+
+    /* Background Canvas */
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Geometric Dark Blue Overlay */
+    .bg-grid-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(to right, rgba(0, 210, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 210, 255, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      z-index: 1;
+      pointer-events: none;
+      mask-image: radial-gradient(circle at 50% 40%, black 20%, transparent 80%);
+    }
+
+    /* Deep Void Radial Ambient Glows */
+    .ambient-glow {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(140px);
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.45;
+      animation: pulseGlow 10s infinite alternate ease-in-out;
+    }
+
+    .glow-1 {
+      top: -150px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 450px;
+      background: radial-gradient(circle, var(--accent-blue) 0%, rgba(0, 210, 255, 0.2) 50%, transparent 70%);
+    }
+
+    .glow-2 {
+      top: 40%;
+      right: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(10, 25, 47, 0.8) 0%, rgba(0, 210, 255, 0.15) 50%, transparent 70%);
+      animation-delay: -5s;
+    }
+
+    .glow-3 {
+      bottom: 10%;
+      left: -150px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(30, 144, 255, 0.2) 0%, transparent 70%);
+    }
+
+    @keyframes pulseGlow {
+      0% { opacity: 0.35; transform: scale(1) translateY(0); }
+      100% { opacity: 0.6; transform: scale(1.1) translateY(20px); }
+    }
+
+    /* Container */
+    .container {
+      width: 100%;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Typography Utilities */
+    .font-heading { font-family: var(--font-heading); }
+    .text-gradient {
+      background: linear-gradient(135deg, #ffffff 30%, #c0d8f0 60%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .text-metallic {
+      background: linear-gradient(180deg, #ffffff 0%, #a2b4c7 70%, #5d6f85 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .text-cyan { color: var(--accent-cyan); }
+
+    /* Glassmorphism Panel Component */
+    .glass-panel {
+      background: var(--bg-surface);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition-smooth);
+    }
+
+    .glass-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: var(--border-metallic);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0.4;
+      transition: var(--transition-fast);
+    }
+
+    .glass-panel:hover::before {
+      opacity: 1;
+    }
+
+    /* ==========================================================================
+       NAVBAR
+       ========================================================================== */
+    .navbar {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 48px);
+      max-width: 1240px;
+      z-index: 100;
+      padding: 12px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: var(--radius-full);
+      background: rgba(5, 10, 20, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(0, 210, 255, 0.2), rgba(30, 144, 255, 0.6));
+      border: 1px solid rgba(0, 210, 255, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .brand-icon svg {
+      width: 20px;
+      height: 20px;
+      color: #fff;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: var(--transition-fast);
+      position: relative;
+    }
+
+    .nav-link:hover {
+      color: var(--text-main);
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    /* Metallic Sheen Buttons */
+    .btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 26px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      cursor: pointer;
+      overflow: hidden;
+      transition: var(--transition-smooth);
+      border: none;
+      outline: none;
+      z-index: 1;
+    }
+
+    /* Metallic sheen sweep animation pseudo-element */
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -60%;
+      width: 40%;
+      height: 200%;
+      background: linear-gradient(
+        90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.4) 50%, 
+        transparent 100%
+      );
+      transform: rotate(25deg);
+      transition: all 0.6s ease;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .btn:hover::after {
+      left: 130%;
+      opacity: 1;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0077ff 0%, #00d2ff 100%);
+      color: #030712;
+      box-shadow: 0 0 25px var(--accent-glow), 0 4px 15px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 40px var(--accent-glow-strong), 0 8px 25px rgba(0, 210, 255, 0.4);
+      background: linear-gradient(135deg, #0099ff 0%, #33e0ff 100%);
+    }
+
+    .btn-metallic {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.03) 100%);
+      color: var(--text-main);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-metallic:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 20px rgba(0, 210, 255, 0.25);
+      color: #fff;
+    }
+
+    /* Mobile Menu Toggle */
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text-main);
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       HERO SECTION
+       ========================================================================== */
+    .hero {
+      padding-top: 180px;
+      padding-bottom: 100px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 18px;
+      border-radius: var(--radius-full);
+      background: rgba(0, 210, 255, 0.08);
+      border: 1px solid rgba(0, 210, 255, 0.3);
+      color: var(--accent-cyan);
+      font-size: 0.825rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      box-shadow: 0 0 15px rgba(0, 210, 255, 0.15);
+      animation: badgePulse 3s infinite alternate ease-in-out;
+    }
+
+    @keyframes badgePulse {
+      0% { border-color: rgba(0, 210, 255, 0.3); box-shadow: 0 0 15px rgba(0, 210, 255, 0.15); }
+      100% { border-color: rgba(0, 210, 255, 0.7); box-shadow: 0 0 25px rgba(0, 210, 255, 0.35); }
+    }
+
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2.5rem, 5.5vw, 4.8rem);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      max-width: 950px;
+      margin: 0 auto 24px;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 40px;
+      font-weight: 400;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 60px;
+      flex-wrap: wrap;
+    }
+
+    /* Hero Dashboard Visual */
+    .hero-visual-wrapper {
+      margin-top: 20px;
+      perspective: 1000px;
+    }
+
+    .hero-dashboard {
+      padding: 24px;
+      border-radius: var(--radius-lg);
+      transform: rotateX(4deg) translateY(0);
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 50px rgba(0, 210, 255, 0.15);
+    }
+
+    .hero-dashboard:hover {
+      transform: rotateX(0deg) translateY(-8px);
+    }
+
+    .dash-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 20px;
+    }
+
+    .dash-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dash-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .dash-dot.red { background: #ff5f56; }
+    .dash-dot.yellow { background: #ffbd2e; }
+    .dash-dot.green { background: #27c93f; }
+
+    .dash-title {
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    .dash-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      text-align: left;
+    }
+
+    .dash-card {
+      background: rgba(5, 12, 24, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 18px;
+      border-radius: var(--radius-md);
+      position: relative;
+    }
+
+    .dash-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .dash-card-title {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .status-badge {
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      background: rgba(0, 210, 255, 0.15);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0, 210, 255, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      box-shadow: 0 0 8px var(--accent-cyan);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .dash-metric {
+      font-family: var(--font-heading);
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #1e90ff, #00d2ff);
+      border-radius: 3px;
+      width: 88%;
+      box-shadow: 0 0 10px var(--accent-cyan);
+      position: relative;
+    }
+
+    .progress-bar-fill::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0; bottom: 0; width: 30px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* ==========================================================================
+       STATS STRIP
+       ========================================================================== */
+    .stats-section {
+      padding: 60px 0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .stat-card {
+      padding: 28px 20px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-family: var(--font-heading);
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 500;
+    }
+
+    /* ==========================================================================
+       FEATURE BOXES SECTION (ULTRA-MINIMALIST COPY ~10 WORDS PER BOX)
+       ========================================================================== */
+    .features-section {
+      padding: 100px 0;
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto 60px;
+    }
+
+    .section-tag {
+      color: var(--accent-cyan);
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+
+    .section-subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .feature-card {
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 210, 255, 0.2);
+    }
+
+    .feature-icon-box {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(0, 210, 255, 0.15) 100%);
+      border: 1px solid rgba(0, 210, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      color: var(--accent-cyan);
+      box-shadow: 0 0 15px rgba(0, 210, 255, 0.1);
+      transition: var(--transition-smooth);
+    }
+
+    .feature-card:hover .feature-icon-box {
+      transform: scale(1.1) rotate(3deg);
+      background: linear-gradient(135deg, rgba(0, 210, 255, 0.3) 0%, rgba(30, 144, 255, 0.5) 100%);
+      color: #fff;
+      box-shadow: 0 0 25px var(--accent-glow-strong);
+    }
+
+    .feature-icon-box svg {
+      width: 26px;
+      height: 26px;
+    }
+
+    .feature-title {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--text-main);
+    }
+
+    /* Minimalist ~10-word punchy copy */
+    .feature-copy {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      flex-grow: 1;
+    }
+
+    .feature-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--accent-cyan);
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition-fast);
+    }
+
+    .feature-link svg {
+      width: 14px;
+      height: 14px;
+      transition: var(--transition-fast);
+    }
+
+    .feature-card:hover .feature-link svg {
+      transform: translateX(4px);
+    }
+
+    /* ==========================================================================
+       INTERACTIVE AUTOMATION PIPELINE PREVIEW
+       ========================================================================== */
+    .pipeline-section {
+      padding: 80px 0;
+    }
+
+    .pipeline-panel {
+      padding: 40px;
+    }
+
+    .pipeline-controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      padding: 10px 22px;
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      font-family: var(--font-heading);
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .tab-btn.active, .tab-btn:hover {
+      background: rgba(0, 210, 255, 0.15);
+      border-color: var(--accent-cyan);
+      color: var(--text-main);
+      box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+    }
+
+    .pipeline-flow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: relative;
+    }
+
+    @media (max-width: 900px) {
+      .pipeline-flow {
+        flex-direction: column;
+      }
+    }
+
+    .node-card {
+      flex: 1;
+      background: rgba(5, 12, 25, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 20px;
+      border-radius: var(--radius-md);
+      text-align: center;
+      position: relative;
+      transition: var(--transition-smooth);
+    }
+
+    .node-card.active {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 20px rgba(0, 210, 255, 0.25);
+    }
+
+    .node-step {
+      font-size: 0.75rem;
+      color: var(--accent-cyan);
+      font-family: var(--font-heading);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .node-title {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+
+    .node-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .flow-connector {
+      width: 40px;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(0, 210, 255, 0.2), rgba(0, 210, 255, 0.8), rgba(0, 210, 255, 0.2));
+      position: relative;
+    }
+
+    .flow-connector::after {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      box-shadow: 0 0 10px var(--accent-cyan);
+      top: -3px;
+      animation: moveDot 2s infinite linear;
+    }
+
+    @keyframes moveDot {
+      0% { left: 0; opacity: 0; }
+      50% { opacity: 1; }
+      100% { left: 100%; opacity: 0; }
+    }
+
+    /* ==========================================================================
+       CTA BANNER SECTION
+       ========================================================================== */
+    .cta-section {
+      padding: 100px 0;
+    }
+
+    .cta-panel {
+      padding: 60px 40px;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(10, 25, 47, 0.8) 0%, rgba(5, 12, 24, 0.9) 100%);
+      border: 1px solid rgba(0, 210, 255, 0.3);
+      box-shadow: 0 0 60px rgba(0, 210, 255, 0.15);
+    }
+
+    .cta-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 800;
+      margin-bottom: 20px;
+    }
+
+    .cta-subtitle {
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 36px;
+      font-size: 1.1rem;
+    }
+
+    /* ==========================================================================
+       FOOTER
+       ========================================================================== */
+    .footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 60px 0 40px;
+      background: rgba(3, 5, 8, 0.95);
+      position: relative;
+      z-index: 2;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr repeat(3, 1fr);
+      gap: 40px;
+      margin-bottom: 50px;
+    }
+
+    .footer-brand p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-top: 16px;
+      max-width: 320px;
+    }
+
+    .footer-heading {
+      font-family: var(--font-heading);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 20px;
+      letter-spacing: 0.05em;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: var(--transition-fast);
+    }
+
+    .footer-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 30px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    .system-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .status-dot-green {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #00e676;
+      box-shadow: 0 0 10px #00e676;
+    }
+
+    /* ==========================================================================
+       SCROLL REVEAL ANIMATIONS
+       ========================================================================== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ==========================================================================
+       RESPONSIVE BREAKPOINTS
+       ========================================================================== */
+    @media (max-width: 1024px) {
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 12px 20px;
+      }
+      .nav-links {
+        display: none; /* Can be expanded if mobile menu toggled */
+      }
+      .menu-toggle {
+        display: block;
+      }
+      .hero {
+        padding-top: 140px;
+        padding-bottom: 60px;
+      }
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+      .footer-bottom {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Animated Particle Canvas Background -->
+  <canvas id="bg-canvas"></canvas>
+  
+  <!-- Subtle Geometric Grid Lines Overlay -->
+  <div class="bg-grid-overlay"></div>
+
+  <!-- Deep Void Glowing Lights -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <div class="ambient-glow glow-3"></div>
+
+  <!-- Floating Glass Navbar -->
+  <nav class="navbar">
+    <a href="#" class="brand-logo">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+          <polyline points="2 17 12 22 22 17"></polyline>
+          <polyline points="2 12 12 17 22 12"></polyline>
+        </svg>
+      </div>
+      <span>AUTOMATION<span class="text-cyan">.AI</span></span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#features" class="nav-link">Features</a></li>
+      <li><a href="#pipeline" class="nav-link">Pipeline</a></li>
+      <li><a href="#metrics" class="nav-link">Metrics</a></li>
+      <li><a href="#enterprise" class="nav-link">Enterprise</a></li>
+    </ul>
+
+    <a href="#cta" class="btn btn-primary">
+      Deploy System
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+    </a>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge reveal">
+        <span>✦ GENERATION 4 ENTERPRISE AUTOMATION</span>
+      </div>
+
+      <h1 class="hero-title reveal">
+        Engineered for <span class="text-gradient">Autonomous Enterprise</span> Scale
+      </h1>
+
+      <p class="hero-subtitle reveal">
+        Empower your organization with self-optimizing software workflows, real-time telemetry, and zero-friction automated execution.
+      </p>
+
+      <div class="hero-actions reveal">
+        <a href="#cta" class="btn btn-primary">
+          Launch Automation Platform
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
+        </a>
+        <a href="#features" class="btn btn-metallic">
+          Explore Architecture
+        </a>
+      </div>
+
+      <!-- Hero Dashboard Visual -->
+      <div class="hero-visual-wrapper reveal">
+        <div class="glass-panel hero-dashboard">
+          <div class="dash-header">
+            <div class="dash-dots">
+              <div class="dash-dot red"></div>
+              <div class="dash-dot yellow"></div>
+              <div class="dash-dot green"></div>
+            </div>
+            <div class="dash-title">SYSTEM MATRIX TELEMETRY // AUTONOMOUS NODE 01</div>
+            <div class="status-badge">
+              <span class="status-pulse"></span> LIVE SYNC
+            </div>
+          </div>
+
+          <div class="dash-grid">
+            <div class="dash-card">
+              <div class="dash-card-header">
+                <span class="dash-card-title">Workflow Execution Rate</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+              </div>
+              <div class="dash-metric text-metallic">14,280 / sec</div>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" style="width: 92%;"></div>
+              </div>
+            </div>
+
+            <div class="dash-card">
+              <div class="dash-card-header">
+                <span class="dash-card-title">Neural Error Prevention</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              </div>
+              <div class="dash-metric text-cyan">99.998%</div>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" style="width: 99%;"></div>
+              </div>
+            </div>
+
+            <div class="dash-card">
+              <div class="dash-card-header">
+                <span class="dash-card-title">Global Latency</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              </div>
+              <div class="dash-metric text-metallic">&lt; 8.4 ms</div>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" style="width: 85%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Metrics / Stats Strip -->
+  <section class="stats-section" id="metrics">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="glass-panel stat-card reveal">
+          <div class="stat-number text-gradient">99.999%</div>
+          <div class="stat-label">System Uptime</div>
+        </div>
+        <div class="glass-panel stat-card reveal">
+          <div class="stat-number text-cyan">&lt; 12ms</div>
+          <div class="stat-label">Execution Latency</div>
+        </div>
+        <div class="glass-panel stat-card reveal">
+          <div class="stat-number text-gradient">10x+</div>
+          <div class="stat-label">Operational Speed</div>
+        </div>
+        <div class="glass-panel stat-card reveal">
+          <div class="stat-number text-cyan">$4.2M</div>
+          <div class="stat-label">Avg. Annual Savings</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature Grid (Ultra-Minimalist Copy ~10 words per box) -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">High-Velocity Features</span>
+        <h2 class="section-title">Architected for Unmatched Performance</h2>
+        <p class="section-subtitle">Streamlined enterprise automation built on high-precision metallic architecture.</p>
+      </div>
+
+      <div class="features-grid">
+        
+        <!-- Box 1 -->
+        <div class="glass-panel feature-card reveal">
+          <div class="feature-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          </div>
+          <h3 class="feature-title">Autonomous Workflows</h3>
+          <p class="feature-copy">Automate complex enterprise workflows. Eliminate manual human errors instantly. Scale effortlessly.</p>
+          <a href="#" class="feature-link">Learn more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+        </div>
+
+        <!-- Box 2 -->
+        <div class="glass-panel feature-card reveal">
+          <div class="feature-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+          </div>
+          <h3 class="feature-title">Predictive Intelligence</h3>
+          <p class="feature-copy">Forecast system bottlenecks. Optimize cloud resources dynamically before incidents occur.</p>
+          <a href="#" class="feature-link">Learn more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+        </div>
+
+        <!-- Box 3 -->
+        <div class="glass-panel feature-card reveal">
+          <div class="feature-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          </div>
+          <h3 class="feature-title">Zero-Trust Security</h3>
+          <p class="feature-copy">Military-grade data encryption. Continuous automated security compliance auditing across all endpoints.</p>
+          <a href="#" class="feature-link">Learn more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+        </div>
+
+        <!-- Box 4 -->
+        <div class="glass-panel feature-card reveal">
+          <div class="feature-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+          </div>
+          <h3 class="feature-title">Self-Healing Infrastructure</h3>
+          <p class="feature-copy">Detect server failures instantly. Auto-remediate outages in real time without human intervention.</p>
+          <a href="#" class="feature-link">Learn more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+        </div>
+
+        <!-- Box 5 -->
+        <div class="glass-panel feature-card reveal">
+          <div class="feature-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline></svg>
+          </div>
+          <h3 class="feature-title">Instant API Mesh</h3>
+          <p class="feature-copy">Unify legacy tech stacks seamlessly with pre-built, ultra-fast zero-code integration connectors.</p>
+          <a href="#" class="feature-link">Learn more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+        </div>
+
+        <!-- Box 6 -->
+        <div class="glass-panel feature-card reveal">
+          <div class="feature-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          </div>
+          <h3 class="feature-title">Real-Time Telemetry</h3>
+          <p class="feature-copy">Complete operational visibility. Track live metrics and automated actions on one screen.</p>
+          <a href="#" class="feature-link">Learn more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Pipeline Section -->
+  <section class="pipeline-section" id="pipeline">
+    <div class="container">
+      <div class="glass-panel pipeline-panel reveal">
+        <div class="section-header" style="margin-bottom: 30px;">
+          <span class="section-tag">Interactive Architecture</span>
+          <h2 class="section-title">End-to-End Execution Flow</h2>
+        </div>
+
+        <div class="pipeline-controls">
+          <button class="tab-btn active" onclick="switchTab('doc')">Data Ingestion</button>
+          <button class="tab-btn" onclick="switchTab('sync')">Neural Processing</button>
+          <button class="tab-btn" onclick="switchTab('risk')">Automated Output</button>
+        </div>
+
+        <div class="pipeline-flow" id="pipeline-flow">
+          <div class="node-card active">
+            <div class="node-step">NODE 01</div>
+            <div class="node-title">Raw Telemetry Ingestion</div>
+            <div class="node-desc">Captures enterprise data streams instantly.</div>
+          </div>
+          
+          <div class="flow-connector"></div>
+
+          <div class="node-card active">
+            <div class="node-step">NODE 02</div>
+            <div class="node-title">Neural Logic Engine</div>
+            <div class="node-desc">Applies optimization models in &lt;3ms.</div>
+          </div>
+
+          <div class="flow-connector"></div>
+
+          <div class="node-card active">
+            <div class="node-step">NODE 03</div>
+            <div class="node-title">Zero-Error Execution</div>
+            <div class="node-desc">Triggers automated actions flawlessly.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="cta-section" id="cta">
+    <div class="container">
+      <div class="glass-panel cta-panel reveal">
+        <h2 class="cta-title">Ready to Automate Your Business Software?</h2>
+        <p class="cta-subtitle">Deploy our futuristic metallic automation platform today and eliminate operational friction completely.</p>
+        <a href="#" class="btn btn-primary" style="padding: 16px 36px; font-size: 1.05rem;">
+          Get Started Immediately
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#" class="brand-logo">
+            <div class="brand-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 17 12 22 22 17"></polyline>
+                <polyline points="2 12 12 17 22 12"></polyline>
+              </svg>
+            </div>
+            <span>AUTOMATION<span class="text-cyan">.AI</span></span>
+          </a>
+          <p>High-precision autonomous software solutions for modern enterprise scale.</p>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">PRODUCT</h4>
+          <ul class="footer-links">
+            <li><a href="#">Workflow Engine</a></li>
+            <li><a href="#">Neural Analytics</a></li>
+            <li><a href="#">Security Mesh</a></li>
+            <li><a href="#">API Integrations</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">RESOURCES</h4>
+          <ul class="footer-links">
+            <li><a href="#">Documentation</a></li>
+            <li><a href="#">API Reference</a></li>
+            <li><a href="#">Architecture Specs</a></li>
+            <li><a href="#">Status Page</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">COMPANY</h4>
+          <ul class="footer-links">
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Enterprise Support</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 Business Software Automation Solutions Inc. All rights reserved.</div>
+        <div class="system-status">
+          <span class="status-dot-green"></span> All Autonomous Nodes Operational
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Embedded JavaScript -->
+  <script>
+    /* ==========================================================================
+       CANVAS BACKGROUND ANIMATION (Floating Particles & Dark Blue Mesh Network)
+       ========================================================================== */
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let width, height;
+    let particles = [];
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.vx = (Math.random() - 0.5) * 0.4;
+        this.vy = (Math.random() - 0.5) * 0.4;
+        this.radius = Math.random() * 1.5 + 0.5;
+        this.alpha = Math.random() * 0.5 + 0.2;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.x < 0 || this.x > width) this.vx *= -1;
+        if (this.y < 0 || this.y > height) this.vy *= -1;
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0, 210, 255, ${this.alpha})`;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = '#00d2ff';
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    }
+
+    // Spawn 70 floating particles
+    for (let i = 0; i < 70; i++) {
+      particles.push(new Particle());
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+
+      // Draw faint connecting lines between nearby particles
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 140) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(0, 210, 255, ${0.15 * (1 - dist / 140)})`;
+            ctx.lineWidth = 0.6;
+            ctx.stroke();
+          }
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    /* ==========================================================================
+       SCROLL REVEAL ANIMATIONS (IntersectionObserver)
+       ========================================================================== */
+    const revealElements = document.querySelectorAll('.reveal');
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: "0px 0px -50px 0px"
+    });
+
+    revealElements.forEach(el => revealObserver.observe(el));
+
+    /* ==========================================================================
+       INTERACTIVE PIPELINE TAB SWITCHER
+       ========================================================================== */
+    const pipelineData = {
+      doc: [
+        { step: "NODE 01", title: "Raw Telemetry Ingestion", desc: "Captures enterprise data streams instantly." },
+        { step: "NODE 02", title: "Neural Logic Engine", desc: "Applies optimization models in <3ms." },
+        { step: "NODE 03", title: "Zero-Error Execution", desc: "Triggers automated actions flawlessly." }
+      ],
+      sync: [
+        { step: "STAGE A", title: "Pattern Analysis", desc: "Identifies system bottlenecks in real time." },
+        { step: "STAGE B", title: "Autonomous Load Balancing", desc: "Distributes compute power dynamically." },
+        { step: "STAGE C", title: "Real-Time Telemetry", desc: "Updates central dashboard in microseconds." }
+      ],
+      risk: [
+        { step: "SHIELD 1", title: "Threat Detection", desc: "Scans inbound payloads for anomalies." },
+        { step: "SHIELD 2", title: "Automated Remediation", desc: "Isolates breached nodes instantly." },
+        { step: "SHIELD 3", title: "Compliance Proof", desc: "Generates cryptographic audit logs." }
+      ]
+    };
+
+    function switchTab(type) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      const container = document.getElementById('pipeline-flow');
+      const data = pipelineData[type];
+
+      container.innerHTML = `
+        <div class="node-card active">
+          <div class="node-step">${data[0].step}</div>
+          <div class="node-title">${data[0].title}</div>
+          <div class="node-desc">${data[0].desc}</div>
+        </div>
+        <div class="flow-connector"></div>
+        <div class="node-card active">
+          <div class="node-step">${data[1].step}</div>
+          <div class="node-title">${data[1].title}</div>
+          <div class="node-desc">${data[1].desc}</div>
+        </div>
+        <div class="flow-connector"></div>
+        <div class="node-card active">
+          <div class="node-step">${data[2].step}</div>
+          <div class="node-title">${data[2].title}</div>
+          <div class="node-desc">${data[2].desc}</div>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
