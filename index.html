@@ -944,6 +944,360 @@
     }
 
     /* ==========================================================================
+       SCROLL-DRIVEN LAPTOP ANIMATION SECTION
+       ========================================================================== */
+    .laptop-section {
+      /* Pin zone: tall enough to give scroll room for the animation */
+      height: 300vh;
+      position: relative;
+    }
+
+    .laptop-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Ambient glow behind the laptop that intensifies as it opens */
+    .laptop-glow-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 50% at 50% 60%,
+        rgba(0, 210, 255, 0) 0%,
+        transparent 70%);
+      transition: none;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .laptop-label {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .laptop-label .section-tag {
+      margin-bottom: 10px;
+    }
+
+    .laptop-label h2 {
+      font-family: var(--font-heading);
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      font-weight: 700;
+      line-height: 1.15;
+    }
+
+    /* Outer 3-D laptop scene */
+    .laptop-scene {
+      position: relative;
+      z-index: 2;
+      width: min(680px, 90vw);
+      perspective: 1400px;
+      perspective-origin: 50% 40%;
+    }
+
+    /* ---- BASE (bottom body) ---- */
+    .laptop-base {
+      position: relative;
+      width: 100%;
+      background: linear-gradient(180deg, #1c2b3a 0%, #0e1a26 60%, #0a1520 100%);
+      border-radius: 14px 14px 20px 20px;
+      /* Realistic height ~= 4% of width */
+      padding-top: 4%;
+      box-shadow:
+        0 30px 80px rgba(0,0,0,0.9),
+        0 0 0 1px rgba(255,255,255,0.08),
+        inset 0 1px 0 rgba(255,255,255,0.12);
+    }
+
+    /* Keyboard area inside the base */
+    .laptop-keyboard {
+      padding: 14px 18px 10px;
+      background: linear-gradient(135deg, #111c28 0%, #0d1620 100%);
+      border-radius: 8px 8px 16px 16px;
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .kb-row {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 4px;
+      justify-content: center;
+    }
+
+    .kb-key {
+      height: 20px;
+      background: linear-gradient(180deg, #1e2d3d 0%, #15212e 100%);
+      border-radius: 3px;
+      border: 1px solid rgba(255,255,255,0.07);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.6);
+      flex: 1;
+    }
+
+    .kb-key.wide  { flex: 1.6; }
+    .kb-key.wider { flex: 2.4; }
+    .kb-key.space { flex: 5; }
+
+    .kb-glow-bar {
+      height: 2px;
+      margin-top: 6px;
+      border-radius: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,210,255,0.6), transparent);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    /* Trackpad */
+    .laptop-trackpad {
+      width: 32%;
+      aspect-ratio: 16/9;
+      margin: 6px auto 0;
+      background: linear-gradient(135deg, #162030 0%, #0f1b28 100%);
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* Hinge area */
+    .laptop-hinge {
+      width: 88%;
+      height: 5px;
+      margin: 0 auto;
+      background: linear-gradient(90deg, #0a1520, #1a2d40, #0a1520);
+      border-radius: 3px 3px 0 0;
+      box-shadow: 0 0 8px rgba(0,210,255,0.15);
+    }
+
+    /* ---- LID wrapper — rotated by JS ---- */
+    .laptop-lid-wrapper {
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      width: 100%;
+      /* transform-origin at the hinge (bottom edge) */
+      transform-origin: bottom center;
+      /* Start fully closed (flat, rotated forward 85°) */
+      transform: rotateX(85deg);
+      /* We do NOT use CSS transition here — JS drives it frame-by-frame */
+    }
+
+    /* ---- LID outer shell ---- */
+    .laptop-lid {
+      width: 100%;
+      background: linear-gradient(160deg, #1d2e40 0%, #0f1e2e 50%, #0b1624 100%);
+      border-radius: 14px 14px 4px 4px;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.15),
+        0 -4px 20px rgba(0,0,0,0.7);
+      overflow: hidden;
+      aspect-ratio: 16/10.4;
+      position: relative;
+    }
+
+    /* Screen bezel inside lid */
+    .laptop-screen-bezel {
+      position: absolute;
+      inset: 4% 3%;
+      background: #020a12;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(0,210,255,0.12);
+    }
+
+    /* Camera dot */
+    .screen-camera {
+      position: absolute;
+      top: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #0e1a26;
+      border: 1px solid rgba(255,255,255,0.1);
+      z-index: 3;
+    }
+
+    /* Screen content */
+    .screen-content {
+      position: absolute;
+      inset: 16px 10px 10px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .screen-content.visible {
+      opacity: 1;
+    }
+
+    .sc-top-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .sc-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+    }
+    .sc-dot.r { background: #ff5f56; }
+    .sc-dot.y { background: #ffbd2e; }
+    .sc-dot.g { background: #27c93f; }
+
+    .sc-bar {
+      height: 6px;
+      border-radius: 3px;
+      background: linear-gradient(90deg, rgba(0,210,255,0.5), rgba(30,144,255,0.3));
+      animation: scBarShimmer 3s infinite;
+    }
+    @keyframes scBarShimmer {
+      0%,100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    .sc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .sc-card {
+      background: rgba(0,210,255,0.06);
+      border: 1px solid rgba(0,210,255,0.15);
+      border-radius: 5px;
+      padding: 6px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sc-card-line {
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.12);
+    }
+    .sc-card-line.cyan { background: rgba(0,210,255,0.45); width: 70%; }
+
+    .sc-chart {
+      grid-column: span 2;
+      background: rgba(0,210,255,0.04);
+      border: 1px solid rgba(0,210,255,0.12);
+      border-radius: 5px;
+      padding: 8px;
+      display: flex;
+      align-items: flex-end;
+      gap: 5px;
+      height: 48px;
+    }
+
+    .sc-bar-item {
+      flex: 1;
+      background: linear-gradient(to top, rgba(0,210,255,0.6), rgba(30,144,255,0.3));
+      border-radius: 2px 2px 0 0;
+      animation: barBounce 2s infinite ease-in-out;
+    }
+    .sc-bar-item:nth-child(1) { height: 55%; animation-delay: 0s; }
+    .sc-bar-item:nth-child(2) { height: 80%; animation-delay: 0.15s; }
+    .sc-bar-item:nth-child(3) { height: 45%; animation-delay: 0.3s; }
+    .sc-bar-item:nth-child(4) { height: 90%; animation-delay: 0.45s; }
+    .sc-bar-item:nth-child(5) { height: 65%; animation-delay: 0.6s; }
+    .sc-bar-item:nth-child(6) { height: 75%; animation-delay: 0.75s; }
+    .sc-bar-item:nth-child(7) { height: 50%; animation-delay: 0.9s; }
+    .sc-bar-item:nth-child(8) { height: 85%; animation-delay: 1.05s; }
+
+    @keyframes barBounce {
+      0%,100% { transform: scaleY(1); }
+      50% { transform: scaleY(0.85); }
+    }
+
+    /* Chrome edge reflection strip at lid bottom */
+    .lid-chrome-edge {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 5px;
+      background: linear-gradient(90deg,
+        rgba(255,255,255,0.03),
+        rgba(255,255,255,0.18) 30%,
+        rgba(0,210,255,0.35) 50%,
+        rgba(255,255,255,0.18) 70%,
+        rgba(255,255,255,0.03));
+    }
+
+    /* Apple-style logo on the back of lid (back = outside facing user) */
+    .lid-logo {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 36px; height: 36px;
+      opacity: 0;
+      filter: drop-shadow(0 0 12px rgba(0,210,255,0.8));
+      transition: opacity 0.4s;
+    }
+
+    /* scroll-hint that fades out as user starts scrolling */
+    .scroll-hint {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-family: var(--font-heading);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      animation: hintFade 2s infinite ease-in-out;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .scroll-hint-arrow {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .sha {
+      width: 14px; height: 14px;
+      border-right: 2px solid rgba(0,210,255,0.7);
+      border-bottom: 2px solid rgba(0,210,255,0.7);
+      transform: rotate(45deg);
+      animation: hintFade 2s infinite ease-in-out;
+    }
+    .sha:nth-child(2) { animation-delay: 0.2s; opacity: 0.6; }
+    .sha:nth-child(3) { animation-delay: 0.4s; opacity: 0.3; }
+
+    @keyframes hintFade {
+      0%,100% { opacity: 0.8; transform: translateY(0) rotate(45deg); }
+      50% { opacity: 0.3; transform: translateY(4px) rotate(45deg); }
+    }
+
+    /* adjust .sha animation so translateY works — override individually */
+    .sha { animation-name: shaAnim; }
+    @keyframes shaAnim {
+      0%,100% { opacity: 0.8; }
+      50% { opacity: 0.3; }
+    }
+
+    @media (max-width: 600px) {
+      .laptop-scene { width: 94vw; }
+    }
+
+    /* ==========================================================================
        RESPONSIVE BREAKPOINTS
        ========================================================================== */
     @media (max-width: 1024px) {
@@ -1106,6 +1460,132 @@
       </div>
 
     </div>
+  </section>
+
+  <!-- ================================================================
+       SCROLL-DRIVEN LAPTOP OPENING SECTION
+       ================================================================ -->
+  <section class="laptop-section" id="laptop-reveal">
+    <div class="laptop-sticky">
+
+      <!-- Ambient glow driven by JS -->
+      <div class="laptop-glow-bg" id="laptop-glow-bg"></div>
+
+      <!-- Label -->
+      <div class="laptop-label reveal">
+        <span class="section-tag">Precision-Engineered Interface</span>
+        <h2 class="text-metallic">Scroll to Reveal the Platform</h2>
+      </div>
+
+      <!-- 3-D Laptop Scene -->
+      <div class="laptop-scene">
+
+        <!-- The hinge bar on top of the base -->
+        <div class="laptop-hinge"></div>
+
+        <!-- LID — driven by JS rotateX -->
+        <div class="laptop-lid-wrapper" id="laptop-lid">
+          <div class="laptop-lid">
+
+            <!-- Glowing brand logo on lid exterior -->
+            <svg class="lid-logo" id="lid-logo" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" stroke-width="1.5">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+              <polyline points="2 17 12 22 22 17"/>
+              <polyline points="2 12 12 17 22 12"/>
+            </svg>
+
+            <!-- Screen inside lid -->
+            <div class="laptop-screen-bezel">
+              <div class="screen-camera"></div>
+              <div class="screen-content" id="screen-content">
+                <div class="sc-top-bar">
+                  <div class="sc-dot r"></div>
+                  <div class="sc-dot y"></div>
+                  <div class="sc-dot g"></div>
+                </div>
+                <div class="sc-bar" style="width:90%"></div>
+                <div class="sc-bar" style="width:65%"></div>
+                <div class="sc-grid">
+                  <div class="sc-card">
+                    <div class="sc-card-line cyan"></div>
+                    <div class="sc-card-line" style="width:90%"></div>
+                    <div class="sc-card-line" style="width:60%"></div>
+                  </div>
+                  <div class="sc-card">
+                    <div class="sc-card-line cyan" style="width:50%"></div>
+                    <div class="sc-card-line" style="width:80%"></div>
+                    <div class="sc-card-line" style="width:40%"></div>
+                  </div>
+                  <div class="sc-chart">
+                    <div class="sc-bar-item"></div>
+                    <div class="sc-bar-item"></div>
+                    <div class="sc-bar-item"></div>
+                    <div class="sc-bar-item"></div>
+                    <div class="sc-bar-item"></div>
+                    <div class="sc-bar-item"></div>
+                    <div class="sc-bar-item"></div>
+                    <div class="sc-bar-item"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Chrome lid edge -->
+            <div class="lid-chrome-edge"></div>
+          </div>
+        </div>
+
+        <!-- BASE -->
+        <div class="laptop-base">
+          <div class="laptop-keyboard">
+            <!-- Row 1: function keys -->
+            <div class="kb-row">
+              <div class="kb-key wide"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key wide"></div>
+            </div>
+            <!-- Row 2 -->
+            <div class="kb-row">
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key wider"></div>
+            </div>
+            <!-- Row 3 -->
+            <div class="kb-row">
+              <div class="kb-key wider"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key wider"></div>
+            </div>
+            <!-- Row 4 -->
+            <div class="kb-row">
+              <div class="kb-key wide"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key space"></div>
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key wide"></div>
+            </div>
+            <!-- Backlit glow bar -->
+            <div class="kb-glow-bar" id="kb-glow-bar"></div>
+          </div>
+          <div class="laptop-trackpad"></div>
+        </div>
+
+      </div><!-- /.laptop-scene -->
+
+      <!-- Scroll Hint (fades on scroll) -->
+      <div class="scroll-hint" id="scroll-hint">
+        <span>Scroll to open</span>
+        <div class="scroll-hint-arrow">
+          <div class="sha"></div>
+          <div class="sha"></div>
+          <div class="sha"></div>
+        </div>
+      </div>
+
+    </div><!-- /.laptop-sticky -->
   </section>
 
   <!-- Metrics / Stats Strip -->
@@ -1472,6 +1952,110 @@
         </div>
       `;
     }
+
+    /* ==========================================================================
+       SCROLL-DRIVEN LAPTOP OPENING ANIMATION
+       ========================================================================== */
+    (function () {
+      const section      = document.getElementById('laptop-reveal');
+      const lid          = document.getElementById('laptop-lid');
+      const glowBg       = document.getElementById('laptop-glow-bg');
+      const kbGlowBar    = document.getElementById('kb-glow-bar');
+      const lidLogo      = document.getElementById('lid-logo');
+      const screenContent = document.getElementById('screen-content');
+      const scrollHint   = document.getElementById('scroll-hint');
+
+      // Angle range: 85° = fully closed/flat, -10° = fully open (slight past-vertical for drama)
+      const ANGLE_CLOSED = 85;
+      const ANGLE_OPEN   = -10;
+
+      let currentAngle = ANGLE_CLOSED;
+      let targetAngle  = ANGLE_CLOSED;
+      let rafId        = null;
+      let isActive     = false;
+
+      function getScrollProgress() {
+        if (!section) return 0;
+        const rect = section.getBoundingClientRect();
+        const sectionH = section.offsetHeight;
+        const viewH = window.innerHeight;
+
+        // Progress 0 = section top just entered viewport bottom
+        // Progress 1 = section bottom is at viewport bottom (= full 300vh scrolled)
+        // We use the sticky zone: progress across the 2 extra vh of scroll travel
+        const scrolled = -rect.top;                       // px scrolled into section
+        const travel   = sectionH - viewH;                // px of scroll travel (= 200vh)
+        return Math.max(0, Math.min(1, scrolled / travel));
+      }
+
+      function applyEffects(progress) {
+        // --- LID ANGLE ---
+        targetAngle = ANGLE_CLOSED + (ANGLE_OPEN - ANGLE_CLOSED) * progress;
+
+        // --- AMBIENT GLOW ---
+        const glowAlpha = progress * 0.35;
+        glowBg.style.background =
+          `radial-gradient(ellipse 60% 50% at 50% 60%,
+            rgba(0, 210, 255, ${glowAlpha}) 0%,
+            rgba(30, 144, 255, ${glowAlpha * 0.4}) 40%,
+            transparent 70%)`;
+
+        // --- KEYBOARD BACKLIGHT ---
+        kbGlowBar.style.opacity = progress > 0.3
+          ? Math.min(1, (progress - 0.3) / 0.4).toFixed(3)
+          : '0';
+
+        // --- LID LOGO: visible when closed, fades out when opening ---
+        lidLogo.style.opacity = progress < 0.2
+          ? (1 - progress / 0.2).toFixed(3)
+          : '0';
+
+        // --- SCREEN CONTENT: fade in once opened past ~60% ---
+        if (progress >= 0.65) {
+          screenContent.classList.add('visible');
+        } else {
+          screenContent.classList.remove('visible');
+        }
+
+        // --- SCROLL HINT: fade out quickly ---
+        scrollHint.style.opacity = progress < 0.08
+          ? (1 - progress / 0.08).toFixed(3)
+          : '0';
+      }
+
+      function lerp(a, b, t) {
+        return a + (b - a) * t;
+      }
+
+      function tick() {
+        // Smoothly interpolate toward the target angle at 14% per frame
+        const diff = Math.abs(currentAngle - targetAngle);
+        if (diff > 0.05) {
+          currentAngle = lerp(currentAngle, targetAngle, 0.14);
+        } else {
+          currentAngle = targetAngle;
+        }
+
+        if (lid) {
+          lid.style.transform = `rotateX(${currentAngle.toFixed(3)}deg)`;
+        }
+
+        rafId = requestAnimationFrame(tick);
+      }
+
+      function onScroll() {
+        const progress = getScrollProgress();
+        applyEffects(progress);
+      }
+
+      // Start the rAF loop once
+      tick();
+
+      // Listen to scroll — passive for performance
+      window.addEventListener('scroll', onScroll, { passive: true });
+      // Initial state
+      onScroll();
+    })();
   </script>
 </body>
 </html>
