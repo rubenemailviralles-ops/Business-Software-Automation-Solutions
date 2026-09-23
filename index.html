@@ -944,7 +944,7 @@
     }
 
     /* ==========================================================================
-       FIXED BACKGROUND 3D LAPTOP ANIMATION
+       REALISTIC 3D STANDING LAPTOP ANIMATION
        ========================================================================== */
     .laptop-bg-wrapper {
       position: fixed;
@@ -960,47 +960,66 @@
       transition: opacity 0.15s linear;
     }
 
-    /* Ambient background glow behind laptop */
+    /* Ambient background glow behind 3D laptop */
     .laptop-glow-bg {
       position: absolute;
       inset: 0;
       background: radial-gradient(ellipse 55% 45% at 50% 55%,
-        rgba(0, 210, 255, 0.15) 0%,
-        rgba(30, 144, 255, 0.05) 50%,
+        rgba(0, 210, 255, 0.18) 0%,
+        rgba(30, 144, 255, 0.06) 50%,
         transparent 75%);
       pointer-events: none;
       z-index: 0;
     }
 
-    /* 3D Laptop Scene Container */
+    /* Outer 3D Scene Viewport */
     .laptop-scene {
       position: relative;
       z-index: 2;
-      width: min(720px, 88vw);
-      perspective: 1400px;
-      perspective-origin: 50% 35%;
-      transform: translateY(20px);
+      width: min(700px, 86vw);
+      perspective: 1200px;
+      perspective-origin: 50% 45%;
+      margin: 0 auto;
     }
 
-    /* ---- LAPTOP BASE (Keyboard & Trackpad body) ---- */
+    /* 3D Laptop Body Container (Tilted in 3D perspective) */
+    .laptop-3d-body {
+      position: relative;
+      width: 100%;
+      transform-style: preserve-3d;
+      transform: rotateX(54deg) rotateY(0deg);
+      transition: transform 0.2s ease;
+    }
+
+    /* ---- LAPTOP BASE (Keyboard Chassis lying flat on 3D plane) ---- */
     .laptop-base {
       position: relative;
       width: 100%;
-      background: linear-gradient(180deg, #243548 0%, #122030 50%, #0a1320 100%);
-      border-radius: 12px 12px 22px 22px;
-      padding-top: 3.8%;
+      background: linear-gradient(180deg, #1e2c3c 0%, #101925 60%, #0a111a 100%);
+      border-radius: 14px 14px 22px 22px;
+      padding: 14px 20px 18px;
       box-shadow:
-        0 40px 100px rgba(0, 0, 0, 0.95),
+        0 45px 110px rgba(0, 0, 0, 0.95),
         0 0 0 1px rgba(255, 255, 255, 0.12),
         inset 0 1px 1px rgba(255, 255, 255, 0.25);
+      transform-style: preserve-3d;
+    }
+
+    .laptop-hinge {
+      width: 80%;
+      height: 6px;
+      margin: 0 auto 6px;
+      background: linear-gradient(90deg, #09121c, #22374e, #09121c);
+      border-radius: 4px;
+      box-shadow: 0 0 8px rgba(0, 210, 255, 0.3);
     }
 
     .laptop-keyboard {
-      padding: 14px 20px 10px;
-      background: linear-gradient(135deg, #0e1824 0%, #0a111a 100%);
+      padding: 14px 18px 10px;
+      background: linear-gradient(135deg, #0d1724 0%, #091018 100%);
       border-radius: 8px 8px 16px 16px;
       border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.8);
     }
 
     .kb-row {
@@ -1011,8 +1030,8 @@
     }
 
     .kb-key {
-      height: 20px;
-      background: linear-gradient(180deg, #1d2c3c 0%, #121c27 100%);
+      height: 19px;
+      background: linear-gradient(180deg, #1b2938 0%, #111a25 100%);
       border-radius: 3px;
       border: 1px solid rgba(255, 255, 255, 0.08);
       box-shadow: 0 1px 2px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.1);
@@ -1030,61 +1049,75 @@
       background: linear-gradient(90deg, transparent, rgba(0, 210, 255, 0.8), transparent);
       opacity: 0;
       transition: opacity 0.3s ease;
-      box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+      box-shadow: 0 0 12px rgba(0, 210, 255, 0.6);
     }
 
     .laptop-trackpad {
       width: 30%;
       aspect-ratio: 16/9;
       margin: 8px auto 0;
-      background: linear-gradient(135deg, #152232 0%, #0d1724 100%);
+      background: linear-gradient(135deg, #14202f 0%, #0c1522 100%);
       border-radius: 8px;
       border: 1px solid rgba(255, 255, 255, 0.08);
       box-shadow: inset 0 1px 3px rgba(0,0,0,0.6);
     }
 
-    .laptop-hinge {
-      width: 86%;
-      height: 6px;
-      margin: 0 auto;
-      background: linear-gradient(90deg, #09121c, #1e3246, #09121c);
-      border-radius: 4px 4px 0 0;
-      box-shadow: 0 -1px 4px rgba(0, 210, 255, 0.3);
-    }
-
-    /* ---- LAPTOP LID WRAPPER ---- */
-    .laptop-lid-wrapper {
+    /* ---- 3D LAPTOP LID (Hinged at the top/rear edge of base) ---- */
+    .laptop-lid-pivot {
       position: absolute;
-      bottom: 100%;
+      top: 0;
       left: 0;
       width: 100%;
-      transform-origin: bottom center;
-      transform: rotateX(85deg); /* Start closed */
+      height: 100%;
+      transform-origin: top center; /* Hinge is at rear edge of base! */
+      transform-style: preserve-3d;
+      transform: rotateX(0deg); /* 0° = lying flat over keyboard */
       will-change: transform;
     }
 
-    .laptop-lid {
-      width: 100%;
-      background: linear-gradient(160deg, #243548 0%, #122030 50%, #0a1320 100%);
-      border-radius: 16px 16px 4px 4px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow:
-        inset 0 1px 1px rgba(255, 255, 255, 0.2),
-        0 -10px 30px rgba(0, 0, 0, 0.8);
+    /* Outer Lid Back Cover (Visible when closed) */
+    .lid-back-cover {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, #223346 0%, #121e2c 50%, #0a131f 100%);
+      border-radius: 16px 16px 6px 6px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.25), 0 -8px 25px rgba(0, 0, 0, 0.8);
+      backface-visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lid-logo {
+      width: 44px;
+      height: 44px;
+      filter: drop-shadow(0 0 16px rgba(0, 210, 255, 0.9));
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Inside Display Screen (Visible when opened up) */
+    .lid-inside-display {
+      position: absolute;
+      inset: 0;
+      background: #02070d;
+      border-radius: 16px 16px 6px 6px;
+      border: 1px solid rgba(0, 210, 255, 0.25);
+      transform: rotateY(180deg); /* Flipped face on inside of lid */
+      backface-visibility: hidden;
       overflow: hidden;
-      aspect-ratio: 16/10.2;
-      position: relative;
+      box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.95);
     }
 
     /* Screen Bezel */
     .laptop-screen-bezel {
       position: absolute;
       inset: 3.5% 2.8%;
-      background: #02070d;
+      background: #000;
       border-radius: 8px;
       overflow: hidden;
       border: 1px solid rgba(0, 210, 255, 0.2);
-      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
     }
 
     .screen-camera {
@@ -1392,78 +1425,86 @@
   <div class="ambient-glow glow-2"></div>
   <div class="ambient-glow glow-3"></div>
 
-  <!-- FIXED BACKGROUND 3D LAPTOP ANIMATION -->
+  <!-- FIXED BACKGROUND 3D STANDING LAPTOP ANIMATION -->
   <div class="laptop-bg-wrapper" id="laptop-bg-wrapper">
     <div class="laptop-glow-bg" id="laptop-glow-bg"></div>
 
     <div class="laptop-scene">
-      <div class="laptop-hinge"></div>
+      <div class="laptop-3d-body">
+        
+        <!-- BASE (Keyboard Chassis lying flat on 3D plane) -->
+        <div class="laptop-base">
+          <div class="laptop-hinge"></div>
+          
+          <div class="laptop-keyboard">
+            <div class="kb-row">
+              <div class="kb-key wide"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key wide"></div>
+            </div>
+            <div class="kb-row">
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key wider"></div>
+            </div>
+            <div class="kb-row">
+              <div class="kb-key wider"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key wider"></div>
+            </div>
+            <div class="kb-row">
+              <div class="kb-key wide"></div><div class="kb-key"></div><div class="kb-key"></div>
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key space"></div>
+              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key wide"></div>
+            </div>
+            <div class="kb-glow-bar" id="kb-glow-bar"></div>
+          </div>
+          
+          <div class="laptop-trackpad"></div>
+        </div>
 
-      <!-- LID -->
-      <div class="laptop-lid-wrapper" id="laptop-lid">
-        <div class="laptop-lid">
-          <svg class="lid-logo" id="lid-logo" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" stroke-width="1.5">
-            <polygon points="12 2 2 7 12 12 22 7 12 2"/>
-            <polyline points="2 17 12 22 22 17"/>
-            <polyline points="2 12 12 17 22 12"/>
-          </svg>
+        <!-- DOUBLE-SIDED 3D LID (Hinged at top/rear edge of base) -->
+        <div class="laptop-lid-pivot" id="laptop-lid">
+          
+          <!-- Outer Back Shell (Visible when closed) -->
+          <div class="lid-back-cover">
+            <svg class="lid-logo" id="lid-logo" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" stroke-width="1.5">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+              <polyline points="2 17 12 22 22 17"/>
+              <polyline points="2 12 12 17 22 12"/>
+            </svg>
+          </div>
 
-          <!-- Screen Bezel & Old TV CRT Display -->
-          <div class="laptop-screen-bezel">
-            <div class="screen-camera"></div>
-            
-            <div class="crt-screen-container">
-              <div class="crt-boot-line" id="crt-boot-line"></div>
+          <!-- Inside Screen Display (Visible when opened up) -->
+          <div class="lid-inside-display">
+            <div class="laptop-screen-bezel">
+              <div class="screen-camera"></div>
               
-              <div class="crt-screen-content" id="crt-screen-content">
-                <div class="crt-title-text" id="crt-title-text">
-                  Get the latest<br>
-                  business operating systems!
-                </div>
-                <div class="crt-sub-badge">
-                  <span>✦ NEXT-GEN OS 4.0</span>
+              <div class="crt-screen-container">
+                <div class="crt-boot-line" id="crt-boot-line"></div>
+                
+                <div class="crt-screen-content" id="crt-screen-content">
+                  <div class="crt-title-text" id="crt-title-text">
+                    Get the latest<br>
+                    business operating systems!
+                  </div>
+                  <div class="crt-sub-badge">
+                    <span>✦ NEXT-GEN OS 4.0</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="lid-chrome-edge"></div>
-        </div>
-      </div>
+        </div><!-- /.laptop-lid-pivot -->
 
-      <!-- BASE -->
-      <div class="laptop-base">
-        <div class="laptop-keyboard">
-          <div class="kb-row">
-            <div class="kb-key wide"></div><div class="kb-key"></div><div class="kb-key"></div>
-            <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
-            <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
-            <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
-            <div class="kb-key wide"></div>
-          </div>
-          <div class="kb-row">
-            <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
-            <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
-            <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
-            <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
-            <div class="kb-key wider"></div>
-          </div>
-          <div class="kb-row">
-            <div class="kb-key wider"></div><div class="kb-key"></div><div class="kb-key"></div>
-            <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
-            <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
-            <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key wider"></div>
-          </div>
-          <div class="kb-row">
-            <div class="kb-key wide"></div><div class="kb-key"></div><div class="kb-key"></div>
-            <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key space"></div>
-            <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key wide"></div>
-          </div>
-          <div class="kb-glow-bar" id="kb-glow-bar"></div>
-        </div>
-        <div class="laptop-trackpad"></div>
-      </div>
-    </div>
+      </div><!-- /.laptop-3d-body -->
+    </div><!-- /.laptop-scene -->
   </div>
 
   <!-- Metrics / Stats Strip -->
@@ -1839,13 +1880,14 @@
       const lid           = document.getElementById('laptop-lid');
       const glowBg        = document.getElementById('laptop-glow-bg');
       const kbGlowBar     = document.getElementById('kb-glow-bar');
-      const lidLogo       = document.getElementById('lid-logo');
       const crtBootLine   = document.getElementById('crt-boot-line');
       const crtContent    = document.getElementById('crt-screen-content');
       const crtTitleText  = document.getElementById('crt-title-text');
 
-      const ANGLE_CLOSED = 85;
-      const ANGLE_OPEN   = -10;
+      // 0° = Closed (lying flat on keyboard base)
+      // 106° = Fully open (standing upright, screen facing viewer)
+      const ANGLE_CLOSED = 0;
+      const ANGLE_OPEN   = 106;
 
       let currentAngle   = ANGLE_CLOSED;
       let targetAngle    = ANGLE_CLOSED;
@@ -1875,26 +1917,26 @@
 
         // -------------------------------------------------------------
         // 2. LAPTOP LID OPEN/CLOSE ANGLE
-        // 0% - 20%: Closed (85°)
-        // 20% - 30%: Starts opening (85° -> 0°)
-        // 30% - 40%: Opens completely (0° -> -10°)
-        // 40% - 60%: Stays still (-10°)
-        // 60% - 80%: Closes completely (-10° -> 85°)
-        // 80% - 100%: Closed (85°)
+        // 0% - 20%: Closed (0°)
+        // 20% - 30%: Starts opening (0° -> 60°)
+        // 30% - 40%: Opens completely (60° -> 106°)
+        // 40% - 60%: Stays still (106°)
+        // 60% - 80%: Closes completely (106° -> 0°)
+        // 80% - 100%: Closed (0°)
         // -------------------------------------------------------------
         if (p < 0.20) {
           targetAngle = ANGLE_CLOSED;
         } else if (p < 0.30) {
           const sub = (p - 0.20) / 0.10; // 0 -> 1
-          targetAngle = ANGLE_CLOSED - (85 * sub);
+          targetAngle = ANGLE_CLOSED + (60 * sub);
         } else if (p < 0.40) {
           const sub = (p - 0.30) / 0.10; // 0 -> 1
-          targetAngle = 0 + (ANGLE_OPEN * sub);
+          targetAngle = 60 + ((ANGLE_OPEN - 60) * sub);
         } else if (p <= 0.60) {
-          targetAngle = ANGLE_OPEN; // Stay still at -10°
+          targetAngle = ANGLE_OPEN; // Stay still at 106°
         } else if (p <= 0.80) {
           const sub = (p - 0.60) / 0.20; // 0 -> 1
-          targetAngle = ANGLE_OPEN + ((ANGLE_CLOSED - ANGLE_OPEN) * sub);
+          targetAngle = ANGLE_OPEN - ((ANGLE_OPEN - ANGLE_CLOSED) * sub);
         } else {
           targetAngle = ANGLE_CLOSED;
         }
@@ -1932,12 +1974,11 @@
         }
 
         // -------------------------------------------------------------
-        // 4. KEYBOARD & LOGO EFFECTS
+        // 4. KEYBOARD & GLOW EFFECTS
         // -------------------------------------------------------------
-        const openProgress = Math.max(0, (ANGLE_CLOSED - currentAngle) / (ANGLE_CLOSED - ANGLE_OPEN));
-        kbGlowBar.style.opacity = (openProgress * 0.8).toFixed(2);
-        lidLogo.style.opacity = (p >= 0.05 && p <= 0.25) ? ((0.25 - p) / 0.20).toFixed(2) : '0';
-        glowBg.style.opacity = (openProgress * 0.5).toFixed(2);
+        const openProgress = Math.max(0, currentAngle / ANGLE_OPEN);
+        kbGlowBar.style.opacity = (openProgress * 0.85).toFixed(2);
+        glowBg.style.opacity = (openProgress * 0.6).toFixed(2);
       }
 
       function lerp(a, b, t) {
@@ -1945,7 +1986,6 @@
       }
 
       function tick() {
-        // Interpolate opacity & lid angle smoothly
         currentOpacity = lerp(currentOpacity, targetOpacity, 0.15);
         currentAngle   = lerp(currentAngle, targetAngle, 0.15);
 
@@ -1964,7 +2004,6 @@
         updateTimeline();
       }
 
-      // Initialize loop & listener
       tick();
       window.addEventListener('scroll', onScroll, { passive: true });
       window.addEventListener('resize', onScroll, { passive: true });
