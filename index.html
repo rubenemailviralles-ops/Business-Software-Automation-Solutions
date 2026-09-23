@@ -11,6 +11,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
+  <!-- Three.js 3D WebGL Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  
   <style>
     /* ==========================================================================
        DESIGN SYSTEM & CUSTOM PROPERTIES
@@ -944,20 +947,23 @@
     }
 
     /* ==========================================================================
-       REALISTIC 3D STANDING LAPTOP ANIMATION
+       THREE.JS WEBGL 3D LAPTOP BACKGROUND
        ========================================================================== */
-    .laptop-bg-wrapper {
+    #laptop-webgl-container {
       position: fixed;
       inset: 0;
       width: 100vw;
       height: 100vh;
       pointer-events: none;
       z-index: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       opacity: 0;
-      transition: opacity 0.15s linear;
+      transition: opacity 0.2s ease-out;
+    }
+
+    #laptop-webgl-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
 
     /* Ambient background glow behind 3D laptop */
@@ -1425,86 +1431,9 @@
   <div class="ambient-glow glow-2"></div>
   <div class="ambient-glow glow-3"></div>
 
-  <!-- FIXED BACKGROUND 3D STANDING LAPTOP ANIMATION -->
-  <div class="laptop-bg-wrapper" id="laptop-bg-wrapper">
-    <div class="laptop-glow-bg" id="laptop-glow-bg"></div>
-
-    <div class="laptop-scene">
-      <div class="laptop-3d-body">
-        
-        <!-- BASE (Keyboard Chassis lying flat on 3D plane) -->
-        <div class="laptop-base">
-          <div class="laptop-hinge"></div>
-          
-          <div class="laptop-keyboard">
-            <div class="kb-row">
-              <div class="kb-key wide"></div><div class="kb-key"></div><div class="kb-key"></div>
-              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
-              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
-              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
-              <div class="kb-key wide"></div>
-            </div>
-            <div class="kb-row">
-              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
-              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
-              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
-              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
-              <div class="kb-key wider"></div>
-            </div>
-            <div class="kb-row">
-              <div class="kb-key wider"></div><div class="kb-key"></div><div class="kb-key"></div>
-              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
-              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key"></div>
-              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key wider"></div>
-            </div>
-            <div class="kb-row">
-              <div class="kb-key wide"></div><div class="kb-key"></div><div class="kb-key"></div>
-              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key space"></div>
-              <div class="kb-key"></div><div class="kb-key"></div><div class="kb-key wide"></div>
-            </div>
-            <div class="kb-glow-bar" id="kb-glow-bar"></div>
-          </div>
-          
-          <div class="laptop-trackpad"></div>
-        </div>
-
-        <!-- DOUBLE-SIDED 3D LID (Hinged at top/rear edge of base) -->
-        <div class="laptop-lid-pivot" id="laptop-lid">
-          
-          <!-- Outer Back Shell (Visible when closed) -->
-          <div class="lid-back-cover">
-            <svg class="lid-logo" id="lid-logo" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" stroke-width="1.5">
-              <polygon points="12 2 2 7 12 12 22 7 12 2"/>
-              <polyline points="2 17 12 22 22 17"/>
-              <polyline points="2 12 12 17 22 12"/>
-            </svg>
-          </div>
-
-          <!-- Inside Screen Display (Visible when opened up) -->
-          <div class="lid-inside-display">
-            <div class="laptop-screen-bezel">
-              <div class="screen-camera"></div>
-              
-              <div class="crt-screen-container">
-                <div class="crt-boot-line" id="crt-boot-line"></div>
-                
-                <div class="crt-screen-content" id="crt-screen-content">
-                  <div class="crt-title-text" id="crt-title-text">
-                    Get the latest<br>
-                    business operating systems!
-                  </div>
-                  <div class="crt-sub-badge">
-                    <span>✦ NEXT-GEN OS 4.0</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div><!-- /.laptop-lid-pivot -->
-
-      </div><!-- /.laptop-3d-body -->
-    </div><!-- /.laptop-scene -->
+  <!-- THREE.JS WEBGL 3D LAPTOP CONTAINER -->
+  <div id="laptop-webgl-container">
+    <canvas id="laptop-webgl-canvas"></canvas>
   </div>
 
   <!-- Metrics / Stats Strip -->
@@ -1873,141 +1802,271 @@
     }
 
     /* ==========================================================================
-       SCROLL TIMELINE (0% to 100% Page Scroll Background Laptop)
+       THREE.JS WEBGL 3D LAPTOP ANIMATION & SCROLL TIMELINE
        ========================================================================== */
     (function () {
-      const bgWrapper     = document.getElementById('laptop-bg-wrapper');
-      const lid           = document.getElementById('laptop-lid');
-      const glowBg        = document.getElementById('laptop-glow-bg');
-      const kbGlowBar     = document.getElementById('kb-glow-bar');
-      const crtBootLine   = document.getElementById('crt-boot-line');
-      const crtContent    = document.getElementById('crt-screen-content');
-      const crtTitleText  = document.getElementById('crt-title-text');
+      if (typeof THREE === 'undefined') return;
 
-      // 0° = Closed (lying flat on keyboard base)
-      // 106° = Fully open (standing upright, screen facing viewer)
-      const ANGLE_CLOSED = 0;
-      const ANGLE_OPEN   = 106;
+      const container = document.getElementById('laptop-webgl-container');
+      const canvas = document.getElementById('laptop-webgl-canvas');
 
-      let currentAngle   = ANGLE_CLOSED;
-      let targetAngle    = ANGLE_CLOSED;
-      let currentOpacity = 0;
-      let targetOpacity  = 0;
+      // 1. Offscreen 2D Canvas for Dynamic CRT Screen Texture
+      const screenCanvas = document.createElement('canvas');
+      screenCanvas.width = 1024;
+      screenCanvas.height = 640;
+      const sCtx = screenCanvas.getContext('2d');
 
-      function getPageScrollProgress() {
-        const scrollTop = window.scrollY || document.documentElement.scrollTop;
-        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-        if (maxScroll <= 0) return 0;
-        return Math.max(0, Math.min(1, scrollTop / maxScroll));
+      let crtProgress = 0; // 0 = off, 0.5 = CRT line, 1 = booted text
+      let textVisible = false;
+
+      function renderScreenTexture() {
+        // Clear background
+        sCtx.fillStyle = '#02070d';
+        sCtx.fillRect(0, 0, 1024, 640);
+
+        if (crtProgress <= 0) return;
+
+        // Draw scanlines
+        sCtx.fillStyle = 'rgba(0, 210, 255, 0.03)';
+        for (let y = 0; y < 640; y += 4) {
+          sCtx.fillRect(0, y, 1024, 2);
+        }
+
+        // CRT Flare Line (Boot-up phase 0.05 -> 0.4)
+        if (crtProgress > 0 && crtProgress < 0.4) {
+          const lineW = (crtProgress / 0.4) * 1024;
+          sCtx.shadowColor = '#00d2ff';
+          sCtx.shadowBlur = 30;
+          sCtx.fillStyle = '#ffffff';
+          sCtx.fillRect((1024 - lineW) / 2, 318, lineW, 4);
+          sCtx.shadowBlur = 0;
+        }
+
+        // Booted Screen Glow + Centered Text (Phase 0.4 -> 1.0)
+        if (crtProgress >= 0.4) {
+          // Ambient Screen Radial Glow
+          const gradient = sCtx.createRadialGradient(512, 320, 50, 512, 320, 480);
+          gradient.addColorStop(0, 'rgba(0, 180, 255, 0.25)');
+          gradient.addColorStop(0.8, 'rgba(2, 10, 22, 0.95)');
+          sCtx.fillStyle = gradient;
+          sCtx.fillRect(0, 0, 1024, 640);
+
+          // Top Header Dots
+          sCtx.fillStyle = '#ff5f56'; sCtx.beginPath(); sCtx.arc(36, 36, 8, 0, Math.PI * 2); sCtx.fill();
+          sCtx.fillStyle = '#ffbd2e'; sCtx.beginPath(); sCtx.arc(60, 36, 8, 0, Math.PI * 2); sCtx.fill();
+          sCtx.fillStyle = '#27c93f'; sCtx.beginPath(); sCtx.arc(84, 36, 8, 0, Math.PI * 2); sCtx.fill();
+
+          // Centered Text
+          if (textVisible) {
+            sCtx.textAlign = 'center';
+            sCtx.textBaseline = 'middle';
+            
+            sCtx.shadowColor = '#00d2ff';
+            sCtx.shadowBlur = 25;
+            sCtx.font = '700 52px "Space Grotesk", sans-serif';
+            sCtx.fillStyle = '#ffffff';
+            
+            sCtx.fillText("Get the latest", 512, 270);
+            sCtx.fillText("business operating systems!", 512, 340);
+            sCtx.shadowBlur = 0;
+
+            // Sub Badge
+            sCtx.font = '600 24px "Outfit", sans-serif';
+            sCtx.fillStyle = '#00d2ff';
+            sCtx.fillText("✦ NEXT-GEN OS 4.0", 512, 430);
+          }
+        }
       }
+
+      const screenTexture = new THREE.CanvasTexture(screenCanvas);
+
+      // 2. Three.js Scene Setup
+      const scene = new THREE.Scene();
+
+      const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
+      camera.position.set(0, 0, 9.5);
+
+      const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      // 3. Lighting
+      const ambientLight = new THREE.AmbientLight(0x102035, 2.8);
+      scene.add(ambientLight);
+
+      const dirLight = new THREE.DirectionalLight(0xffffff, 2.2);
+      dirLight.position.set(5, 10, 7);
+      scene.add(dirLight);
+
+      const pointLight = new THREE.PointLight(0x00d2ff, 3.5, 10);
+      pointLight.position.set(0, 0, 2);
+      scene.add(pointLight);
+
+      // 4. Laptop 3D Model Group
+      const laptopGroup = new THREE.Group();
+      laptopGroup.rotation.x = 0.45; // Tilt 25° forward towards camera
+      laptopGroup.rotation.y = -0.22; // Slight 3D angle
+      scene.add(laptopGroup);
+
+      // Materials
+      const metallicDarkMat = new THREE.MeshStandardMaterial({
+        color: 0x111e2e,
+        metalness: 0.85,
+        roughness: 0.2,
+      });
+
+      const keyboardBaseMat = new THREE.MeshStandardMaterial({
+        color: 0x09101a,
+        metalness: 0.5,
+        roughness: 0.5,
+      });
+
+      const keyMat = new THREE.MeshStandardMaterial({
+        color: 0x162434,
+        metalness: 0.4,
+        roughness: 0.3,
+      });
+
+      const logoMat = new THREE.MeshBasicMaterial({ color: 0x00d2ff });
+
+      const screenMat = new THREE.MeshBasicMaterial({ map: screenTexture });
+
+      // Laptop Base Mesh
+      const baseGeo = new THREE.BoxGeometry(4.8, 0.14, 3.2);
+      const baseMesh = new THREE.Mesh(baseGeo, metallicDarkMat);
+      baseMesh.position.set(0, -0.07, 0);
+      laptopGroup.add(baseMesh);
+
+      // Keyboard Recess
+      const kbGeo = new THREE.BoxGeometry(4.2, 0.02, 1.7);
+      const kbMesh = new THREE.Mesh(kbGeo, keyboardBaseMat);
+      kbMesh.position.set(0, 0.01, -0.2);
+      laptopGroup.add(kbMesh);
+
+      // Keyboard Keys Grid Representation
+      for (let r = 0; r < 5; r++) {
+        for (let c = 0; c < 12; c++) {
+          const keyG = new THREE.BoxGeometry(0.3, 0.03, 0.26);
+          const keyM = new THREE.Mesh(keyG, keyMat);
+          keyM.position.set(-1.9 + c * 0.35, 0.03, -0.8 + r * 0.31);
+          laptopGroup.add(keyM);
+        }
+      }
+
+      // Trackpad
+      const tpGeo = new THREE.BoxGeometry(1.4, 0.01, 0.9);
+      const tpMesh = new THREE.Mesh(tpGeo, keyMat);
+      tpMesh.position.set(0, 0.01, 0.9);
+      laptopGroup.add(tpMesh);
+
+      // Hinge Cylinder
+      const hingeGeo = new THREE.CylinderGeometry(0.06, 0.06, 4.2, 16);
+      const hingeMesh = new THREE.Mesh(hingeGeo, metallicDarkMat);
+      hingeMesh.rotation.z = Math.PI / 2;
+      hingeMesh.position.set(0, 0.04, -1.6);
+      laptopGroup.add(hingeMesh);
+
+      // 5. Lid Group (Pivot attached to rear hinge at z = -1.6, y = 0.04)
+      const lidPivot = new THREE.Group();
+      lidPivot.position.set(0, 0.04, -1.6);
+      laptopGroup.add(lidPivot);
+
+      // Lid Shell Mesh
+      const lidGeo = new THREE.BoxGeometry(4.8, 3.2, 0.1);
+      const lidMesh = new THREE.Mesh(lidGeo, metallicDarkMat);
+      lidMesh.position.set(0, 1.6, -0.05);
+      lidPivot.add(lidMesh);
+
+      // Screen Mesh (Facing Front inside lid)
+      const screenGeo = new THREE.PlaneGeometry(4.4, 2.8);
+      const screenMesh = new THREE.Mesh(screenGeo, screenMat);
+      screenMesh.position.set(0, 1.6, 0.06);
+      lidPivot.add(screenMesh);
+
+      // Logo Badge (On back cover of lid)
+      const logoGeo = new THREE.CircleGeometry(0.2, 32);
+      const logoMesh = new THREE.Mesh(logoGeo, logoMat);
+      logoMesh.position.set(0, 1.6, -0.06);
+      logoMesh.rotation.y = Math.PI;
+      lidPivot.add(logoMesh);
+
+      // 6. Scroll Timeline Animation Sync
+      let targetLidAngle = 0; // 0 = closed, 2.05 rad (~118°) = open
+      let currentLidAngle = 0;
+      let targetOpacity = 0;
+      let currentOpacity = 0;
 
       function updateTimeline() {
-        const p = getPageScrollProgress();
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        const p = maxScroll > 0 ? Math.max(0, Math.min(1, scrollTop / maxScroll)) : 0;
 
-        // -------------------------------------------------------------
-        // 1. OPACITY FADE (0-20% Fade In, 80-100% Fade Out)
-        // -------------------------------------------------------------
+        // Opacity Timeline (0-20% In, 80-100% Out)
         if (p < 0.20) {
-          targetOpacity = p / 0.20; // 0 -> 1
+          targetOpacity = p / 0.20;
         } else if (p <= 0.80) {
-          targetOpacity = 1;        // Full visibility
+          targetOpacity = 1;
         } else {
-          targetOpacity = 1 - ((p - 0.80) / 0.20); // 1 -> 0
+          targetOpacity = 1 - ((p - 0.80) / 0.20);
         }
 
-        // -------------------------------------------------------------
-        // 2. LAPTOP LID OPEN/CLOSE ANGLE
-        // 0% - 20%: Closed (0°)
-        // 20% - 30%: Starts opening (0° -> 60°)
-        // 30% - 40%: Opens completely (60° -> 106°)
-        // 40% - 60%: Stays still (106°)
-        // 60% - 80%: Closes completely (106° -> 0°)
-        // 80% - 100%: Closed (0°)
-        // -------------------------------------------------------------
+        // Lid Angle Timeline
         if (p < 0.20) {
-          targetAngle = ANGLE_CLOSED;
+          targetLidAngle = 0; // Closed
         } else if (p < 0.30) {
-          const sub = (p - 0.20) / 0.10; // 0 -> 1
-          targetAngle = ANGLE_CLOSED + (60 * sub);
+          targetLidAngle = ((p - 0.20) / 0.10) * 1.2;
         } else if (p < 0.40) {
-          const sub = (p - 0.30) / 0.10; // 0 -> 1
-          targetAngle = 60 + ((ANGLE_OPEN - 60) * sub);
+          targetLidAngle = 1.2 + (((p - 0.30) / 0.10) * 0.85); // Fully open ~2.05 rad
         } else if (p <= 0.60) {
-          targetAngle = ANGLE_OPEN; // Stay still at 106°
+          targetLidAngle = 2.05; // Stay open
         } else if (p <= 0.80) {
-          const sub = (p - 0.60) / 0.20; // 0 -> 1
-          targetAngle = ANGLE_OPEN - ((ANGLE_OPEN - ANGLE_CLOSED) * sub);
+          targetLidAngle = 2.05 - (((p - 0.60) / 0.20) * 2.05); // Close lid
         } else {
-          targetAngle = ANGLE_CLOSED;
+          targetLidAngle = 0;
         }
 
-        // -------------------------------------------------------------
-        // 3. CRT OLD TV SCREEN STARTUP (40% - 60%) & TEXT (45% - 55%)
-        // -------------------------------------------------------------
-        if (p >= 0.38 && p <= 0.62) {
-          // CRT Line Flare trigger (40% - 44%)
-          if (p >= 0.40 && p < 0.44) {
-            const lineProg = (p - 0.40) / 0.04;
-            crtBootLine.style.opacity = '1';
-            crtBootLine.style.transform = `translateY(-50%) scaleX(${lineProg})`;
-            crtContent.classList.remove('booted');
-            crtTitleText.classList.remove('visible');
-          } else if (p >= 0.44 && p <= 0.60) {
-            crtBootLine.style.opacity = '0';
-            crtContent.classList.add('booted');
-            
-            // Text visibility from 45% to 55%
-            if (p >= 0.45 && p <= 0.55) {
-              crtTitleText.classList.add('visible');
-            } else {
-              crtTitleText.classList.remove('visible');
-            }
+        // CRT Screen Trigger
+        if (p >= 0.40 && p <= 0.60) {
+          if (p < 0.44) {
+            crtProgress = (p - 0.40) / 0.04; // CRT flare expanding line
+            textVisible = false;
           } else {
-            crtBootLine.style.opacity = '0';
-            crtContent.classList.remove('booted');
-            crtTitleText.classList.remove('visible');
+            crtProgress = 1.0;
+            textVisible = (p >= 0.45 && p <= 0.55);
           }
         } else {
-          crtBootLine.style.opacity = '0';
-          crtContent.classList.remove('booted');
-          crtTitleText.classList.remove('visible');
+          crtProgress = 0;
+          textVisible = false;
         }
-
-        // -------------------------------------------------------------
-        // 4. KEYBOARD & GLOW EFFECTS
-        // -------------------------------------------------------------
-        const openProgress = Math.max(0, currentAngle / ANGLE_OPEN);
-        kbGlowBar.style.opacity = (openProgress * 0.85).toFixed(2);
-        glowBg.style.opacity = (openProgress * 0.6).toFixed(2);
       }
 
-      function lerp(a, b, t) {
-        return a + (b - a) * t;
-      }
+      function lerp(a, b, t) { return a + (b - a) * t; }
 
-      function tick() {
+      function animate() {
+        requestAnimationFrame(animate);
+
         currentOpacity = lerp(currentOpacity, targetOpacity, 0.15);
-        currentAngle   = lerp(currentAngle, targetAngle, 0.15);
+        currentLidAngle = lerp(currentLidAngle, targetLidAngle, 0.15);
 
-        if (bgWrapper) {
-          bgWrapper.style.opacity = currentOpacity.toFixed(3);
-        }
+        container.style.opacity = currentOpacity.toFixed(3);
+        lidPivot.rotation.x = -currentLidAngle; // Rotate lid open around hinge
 
-        if (lid) {
-          lid.style.transform = `rotateX(${currentAngle.toFixed(3)}deg)`;
-        }
+        renderScreenTexture();
+        screenTexture.needsUpdate = true;
 
-        requestAnimationFrame(tick);
+        renderer.render(scene, camera);
       }
 
-      function onScroll() {
-        updateTimeline();
+      function onResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
       }
 
-      tick();
-      window.addEventListener('scroll', onScroll, { passive: true });
-      window.addEventListener('resize', onScroll, { passive: true });
-      onScroll();
+      window.addEventListener('scroll', updateTimeline, { passive: true });
+      window.addEventListener('resize', onResize);
+      updateTimeline();
+      animate();
     })();
   </script>
 </body>
