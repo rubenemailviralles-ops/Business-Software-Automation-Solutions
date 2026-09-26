@@ -1824,24 +1824,14 @@
         sCtx.fillStyle = '#05070a';
         sCtx.fillRect(0, 0, 1024, 640);
 
-        // Subtle CRT scanlines overlay
+        // Subtle scanlines overlay
         sCtx.fillStyle = 'rgba(0, 210, 255, 0.02)';
         for (let y = 0; y < 640; y += 4) {
           sCtx.fillRect(0, y, 1024, 2);
         }
 
-        // CRT Boot flare line (40% - 44%)
-        if (crtProgress > 0 && crtProgress < 0.4) {
-          const lineW = (crtProgress / 0.4) * 1024;
-          sCtx.shadowColor = '#00d2ff';
-          sCtx.shadowBlur = 35;
-          sCtx.fillStyle = '#ffffff';
-          sCtx.fillRect((1024 - lineW) / 2, 318, lineW, 6);
-          sCtx.shadowBlur = 0;
-        }
-
         // Booted Screen Text & Radial Glow (45% - 60%)
-        if (crtProgress >= 0.4 && textVisible) {
+        if (textVisible) {
           const gradient = sCtx.createRadialGradient(512, 320, 40, 512, 320, 480);
           gradient.addColorStop(0, 'rgba(0, 210, 255, 0.35)');
           gradient.addColorStop(0.75, 'rgba(5, 7, 10, 0.95)');
@@ -1910,20 +1900,6 @@
         roughness: 0.5,
       });
 
-      const tufKeyNormalMat = new THREE.MeshStandardMaterial({
-        color: 0x181a24,
-        metalness: 0.3,
-        roughness: 0.4,
-      });
-
-      const tufKeyWASDMat = new THREE.MeshStandardMaterial({
-        color: 0xffb700,
-        emissive: 0xff9500,
-        emissiveIntensity: 0.9,
-        metalness: 0.2,
-        roughness: 0.2,
-      });
-
       const asusLogoMat = new THREE.MeshStandardMaterial({
         color: 0xe0e4ee,
         metalness: 0.95,
@@ -1942,8 +1918,6 @@
       });
 
       // ---- LAPTOP BASE CHASSIS (ASUS TUF Gaming) ----
-      // Base Dimensions: Width 5.2, Height 0.16, Depth 3.3
-      // Center: (0, -0.08, 0). Extends Y: [-0.16, 0], Z: [-1.65, 1.65], X: [-2.6, 2.6]
       const baseGeo = new THREE.BoxGeometry(5.2, 0.16, 3.3);
       const baseMesh = new THREE.Mesh(baseGeo, tufGunmetalMat);
       baseMesh.position.set(0, -0.08, 0);
@@ -1962,14 +1936,69 @@
       kbMesh.position.set(0, 0.005, -0.2);
       laptopGroup.add(kbMesh);
 
-      // TUF Amber Backlit Keyboard Keys + WASD Highlights (Image 1)
+      // ---- AUTHENTIC ASUS GAMING KEYBOARD KEYCAPS ----
+      // Normal keys: Dark black tops with glowing amber translucent sides and glowing center legends
+      // WASD keys: Bright glowing gold/amber key bodies with dark top cap/letter engravings
+      const keyBaseGeo = new THREE.BoxGeometry(0.28, 0.02, 0.27);
+      const keyCapGeo = new THREE.BoxGeometry(0.23, 0.015, 0.22);
+      const keyLegendGeo = new THREE.BoxGeometry(0.08, 0.005, 0.06);
+
+      const normalSideMat = new THREE.MeshStandardMaterial({
+        color: 0xffa000,
+        emissive: 0xff8c00,
+        emissiveIntensity: 0.75,
+        roughness: 0.3
+      });
+
+      const normalTopMat = new THREE.MeshStandardMaterial({
+        color: 0x0e1017,
+        roughness: 0.5,
+        metalness: 0.2
+      });
+
+      const legendMat = new THREE.MeshBasicMaterial({ color: 0xffb700 });
+
+      const wasdBodyMat = new THREE.MeshStandardMaterial({
+        color: 0xffb700,
+        emissive: 0xff9500,
+        emissiveIntensity: 1.0,
+        roughness: 0.2
+      });
+
+      const wasdTopMat = new THREE.MeshStandardMaterial({
+        color: 0x080a10,
+        roughness: 0.4
+      });
+
       for (let r = 0; r < 5; r++) {
         for (let c = 0; c < 14; c++) {
           const isWASD = (r === 2 && (c === 2 || c === 3 || c === 4)) || (r === 1 && c === 3);
-          const keyG = new THREE.BoxGeometry(0.28, 0.03, 0.27);
-          const keyM = new THREE.Mesh(keyG, isWASD ? tufKeyWASDMat : tufKeyNormalMat);
-          keyM.position.set(-2.25 + c * 0.34, 0.02, -0.85 + r * 0.32);
-          laptopGroup.add(keyM);
+          const posX = -2.25 + c * 0.34;
+          const posZ = -0.85 + r * 0.32;
+
+          if (!isWASD) {
+            // Standard Key: Glowing sides + Black top cap + Glowing legend
+            const sideM = new THREE.Mesh(keyBaseGeo, normalSideMat);
+            sideM.position.set(posX, 0.015, posZ);
+            laptopGroup.add(sideM);
+
+            const topM = new THREE.Mesh(keyCapGeo, normalTopMat);
+            topM.position.set(posX, 0.025, posZ);
+            laptopGroup.add(topM);
+
+            const legendM = new THREE.Mesh(keyLegendGeo, legendMat);
+            legendM.position.set(posX, 0.033, posZ);
+            laptopGroup.add(legendM);
+          } else {
+            // WASD Gaming Key: Full glowing body + Dark top letter cap
+            const bodyM = new THREE.Mesh(keyBaseGeo, wasdBodyMat);
+            bodyM.position.set(posX, 0.018, posZ);
+            laptopGroup.add(bodyM);
+
+            const topM = new THREE.Mesh(keyCapGeo, wasdTopMat);
+            topM.position.set(posX, 0.028, posZ);
+            laptopGroup.add(topM);
+          }
         }
       }
 
@@ -2095,19 +2124,8 @@
           targetLidAngle = -1.95 * (1 - sub);
         }
 
-        // CRT Screen Text Triggering (Active around middle of page: 40% -> 65%)
-        if (p >= 0.40 && p <= 0.65) {
-          if (p < 0.44) {
-            crtProgress = (p - 0.40) / 0.04;
-            textVisible = false;
-          } else {
-            crtProgress = 1.0;
-            textVisible = (p >= 0.45 && p <= 0.60);
-          }
-        } else {
-          crtProgress = 0;
-          textVisible = false;
-        }
+        // Screen Text Triggering (Active around middle of page: 45% -> 60%)
+        textVisible = (p >= 0.45 && p <= 0.60);
       }
 
       function lerp(a, b, t) { return a + (b - a) * t; }
