@@ -540,12 +540,12 @@
       max-width: 950px;
       margin: 0 auto 24px;
       opacity: 0;
-      animation: heroTitleFadeIn 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+      transition: opacity 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity;
     }
 
-    @keyframes heroTitleFadeIn {
-      0% { opacity: 0; }
-      100% { opacity: 1; }
+    .hero-title.visible {
+      opacity: 1;
     }
 
     .hero-subtitle {
@@ -1857,6 +1857,14 @@
     window.addEventListener('beforeunload', () => {
       window.scrollTo(0, 0);
     });
+
+    // Smoothly fade in hero title on fresh load and page refresh
+    function triggerTitleFadeIn() {
+      const titleEl = document.querySelector('.hero-title');
+      if (titleEl) titleEl.classList.add('visible');
+    }
+    window.addEventListener('DOMContentLoaded', triggerTitleFadeIn);
+    setTimeout(triggerTitleFadeIn, 120);
 
     /* ==========================================================================
        CANVAS BACKGROUND ANIMATION (Floating Particles & Dark Blue Mesh Network)
