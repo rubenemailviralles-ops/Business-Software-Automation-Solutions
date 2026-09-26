@@ -213,7 +213,7 @@
     }
 
     /* ==========================================================================
-       INTEGRATED SEAMLESS SITE HEADER
+       SCROLL-TRIGGERED NAVIGATION (Starts Large & Transparent, Shrinks to Sticky Bar)
        ========================================================================== */
     .site-header {
       position: fixed;
@@ -225,15 +225,15 @@
       backdrop-filter: none;
       -webkit-backdrop-filter: none;
       border-bottom: 1px solid transparent;
-      transition: background 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .site-header.scrolled {
-      background: rgba(3, 7, 18, 0.88);
+      background: rgba(3, 7, 18, 0.92);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(0, 210, 255, 0.2);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid rgba(0, 210, 255, 0.25);
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.95), 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
     /* Top cyan glowing accent line */
@@ -258,55 +258,86 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 76px;
+      height: 110px; /* Default Large Top Header Height */
       padding: 0 28px;
       max-width: 1320px;
       margin: 0 auto;
+      transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .site-header.scrolled .navbar-container {
+      height: 68px; /* Compact Sticky Bar Height when Scrolled */
     }
 
     .brand-logo {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
       text-decoration: none;
       color: var(--text-main);
       font-family: var(--font-heading);
       font-weight: 800;
-      font-size: 1.15rem;
+      font-size: 1.45rem; /* Larger Brand Text at Top */
       letter-spacing: -0.02em;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .site-header.scrolled .brand-logo {
+      font-size: 1.15rem;
+      gap: 12px;
     }
 
     .brand-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
+      width: 48px; /* Larger Icon at Top */
+      height: 48px;
+      border-radius: 14px;
       background: linear-gradient(135deg, rgba(0, 210, 255, 0.25), rgba(30, 144, 255, 0.7));
       border: 1px solid rgba(0, 210, 255, 0.6);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 20px var(--accent-glow), inset 0 1px 0 rgba(255, 255, 255, 0.4);
-      transition: var(--transition-bounce);
+      box-shadow: 0 0 24px var(--accent-glow), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .site-header.scrolled .brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      box-shadow: 0 0 16px var(--accent-glow);
     }
 
     .brand-logo:hover .brand-icon {
       transform: scale(1.06) rotate(3deg);
-      box-shadow: 0 0 30px var(--accent-glow-strong);
+      box-shadow: 0 0 32px var(--accent-glow-strong);
     }
 
     .brand-icon svg {
-      width: 22px;
-      height: 22px;
+      width: 26px;
+      height: 26px;
       color: #fff;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .site-header.scrolled .brand-icon svg {
+      width: 20px;
+      height: 20px;
     }
 
     .brand-text-sub {
-      font-size: 0.65rem;
+      font-size: 0.78rem; /* Larger Subtitle at Top */
       color: var(--text-muted);
-      letter-spacing: 0.12em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       font-weight: 600;
       display: block;
+      margin-top: 0px;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .site-header.scrolled .brand-text-sub {
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
       margin-top: -2px;
     }
 
@@ -315,22 +346,33 @@
       align-items: center;
       gap: 8px;
       list-style: none;
-      background: rgba(255, 255, 255, 0.03);
-      padding: 4px;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 6px;
       border-radius: var(--radius-full);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .site-header.scrolled .nav-links {
+      padding: 4px;
+      background: rgba(255, 255, 255, 0.02);
     }
 
     .nav-link {
       color: var(--text-muted);
       text-decoration: none;
-      font-size: 0.875rem;
+      font-size: 0.95rem; /* Larger Links at Top */
       font-weight: 500;
-      padding: 8px 20px;
+      padding: 10px 22px;
       border-radius: var(--radius-full);
-      transition: var(--transition-fast);
+      transition: all 0.3s ease;
       position: relative;
       display: inline-block;
+    }
+
+    .site-header.scrolled .nav-link {
+      font-size: 0.85rem;
+      padding: 7px 18px;
     }
 
     .nav-link:hover {
