@@ -1820,32 +1820,12 @@
       let textVisible = false;
 
       function renderScreenTexture() {
-        // Base dark metal wallpaper background (Image 1)
-        sCtx.fillStyle = '#0a0d14';
+        // Pure dark off-screen glass background
+        sCtx.fillStyle = '#05070a';
         sCtx.fillRect(0, 0, 1024, 640);
 
-        // Draw TUF metallic geometric armor plates in background (Image 1)
-        // Left armor plate
-        sCtx.fillStyle = 'rgba(255, 255, 255, 0.05)';
-        sCtx.beginPath();
-        sCtx.moveTo(40, 60); sCtx.lineTo(280, 100); sCtx.lineTo(240, 580); sCtx.lineTo(40, 580);
-        sCtx.closePath(); sCtx.fill();
-        sCtx.strokeStyle = 'rgba(255, 255, 255, 0.12)'; sCtx.lineWidth = 3; sCtx.stroke();
-
-        // Right armor plate
-        sCtx.beginPath();
-        sCtx.moveTo(980, 60); sCtx.lineTo(740, 120); sCtx.lineTo(780, 580); sCtx.lineTo(980, 580);
-        sCtx.closePath(); sCtx.fill(); sCtx.stroke();
-
-        // Stencil 'TUF' background watermark
-        sCtx.font = '900 160px "Space Grotesk", sans-serif';
-        sCtx.fillStyle = 'rgba(255, 255, 255, 0.04)';
-        sCtx.textAlign = 'center';
-        sCtx.textBaseline = 'middle';
-        sCtx.fillText('TUF', 512, 270);
-
         // Subtle CRT scanlines overlay
-        sCtx.fillStyle = 'rgba(0, 210, 255, 0.03)';
+        sCtx.fillStyle = 'rgba(0, 210, 255, 0.02)';
         for (let y = 0; y < 640; y += 4) {
           sCtx.fillRect(0, y, 1024, 2);
         }
@@ -1853,38 +1833,33 @@
         // CRT Boot flare line (40% - 44%)
         if (crtProgress > 0 && crtProgress < 0.4) {
           const lineW = (crtProgress / 0.4) * 1024;
-          sCtx.shadowColor = '#ffb000';
+          sCtx.shadowColor = '#00d2ff';
           sCtx.shadowBlur = 35;
           sCtx.fillStyle = '#ffffff';
           sCtx.fillRect((1024 - lineW) / 2, 318, lineW, 6);
           sCtx.shadowBlur = 0;
         }
 
-        // Booted Screen Text & Radial Glow (45% - 55%)
+        // Booted Screen Text & Radial Glow (45% - 60%)
         if (crtProgress >= 0.4 && textVisible) {
           const gradient = sCtx.createRadialGradient(512, 320, 40, 512, 320, 480);
-          gradient.addColorStop(0, 'rgba(0, 210, 255, 0.28)');
-          gradient.addColorStop(0.75, 'rgba(9, 13, 20, 0.88)');
+          gradient.addColorStop(0, 'rgba(0, 210, 255, 0.35)');
+          gradient.addColorStop(0.75, 'rgba(5, 7, 10, 0.95)');
           sCtx.fillStyle = gradient;
           sCtx.fillRect(0, 0, 1024, 640);
 
           sCtx.textAlign = 'center';
           sCtx.textBaseline = 'middle';
 
-          // Glowing main headline
+          // Glowing main headline centered on screen
           sCtx.shadowColor = '#00d2ff';
-          sCtx.shadowBlur = 30;
-          sCtx.font = '800 54px "Space Grotesk", sans-serif';
+          sCtx.shadowBlur = 35;
+          sCtx.font = '800 56px "Space Grotesk", sans-serif';
           sCtx.fillStyle = '#ffffff';
 
-          sCtx.fillText("Get the latest", 512, 260);
-          sCtx.fillText("business operating systems!", 512, 335);
+          sCtx.fillText("Get the latest", 512, 280);
+          sCtx.fillText("business operating systems!", 512, 360);
           sCtx.shadowBlur = 0;
-
-          // Amber badge accent (TUF theme)
-          sCtx.font = '700 24px "Outfit", sans-serif';
-          sCtx.fillStyle = '#ffb000';
-          sCtx.fillText("✦ TUF GAMING ENTERPRISE OS 4.0 ✦", 512, 425);
         }
       }
 
