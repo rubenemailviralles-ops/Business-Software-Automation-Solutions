@@ -1867,14 +1867,90 @@
             sCtx.fillStyle = '#ffffff';
             
             sCtx.fillText("Get the latest", 512, 270);
-            sCtx.fillText("business operating systems!", 512, 340);
-            sCtx.shadowBlur = 0;
+    /* ==========================================================================
+       THREE.JS WEBGL 3D LAPTOP (EXACT REPLICA OF ASUS TUF GAMING PC)
+       ========================================================================== */
+    (function () {
+      if (typeof THREE === 'undefined') return;
 
-            // Sub Badge
-            sCtx.font = '600 24px "Outfit", sans-serif';
-            sCtx.fillStyle = '#00d2ff';
-            sCtx.fillText("✦ NEXT-GEN OS 4.0", 512, 430);
-          }
+      const container = document.getElementById('laptop-webgl-container');
+      const canvas = document.getElementById('laptop-webgl-canvas');
+
+      // 1. Offscreen 2D Canvas for Dynamic CRT Screen & TUF Wallpaper Texture
+      const screenCanvas = document.createElement('canvas');
+      screenCanvas.width = 1024;
+      screenCanvas.height = 640;
+      const sCtx = screenCanvas.getContext('2d');
+
+      let crtProgress = 0; // 0 = off, 0.5 = CRT flare, 1.0 = text visible
+      let textVisible = false;
+
+      function renderScreenTexture() {
+        // Base dark metal wallpaper background
+        sCtx.fillStyle = '#0b0f16';
+        sCtx.fillRect(0, 0, 1024, 640);
+
+        // Draw TUF metallic geometric armor plates in background (as seen in Image 1)
+        // Left armor plate
+        sCtx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+        sCtx.beginPath();
+        sCtx.moveTo(40, 60); sCtx.lineTo(280, 100); sCtx.lineTo(240, 580); sCtx.lineTo(40, 580);
+        sCtx.closePath(); sCtx.fill();
+        sCtx.strokeStyle = 'rgba(255, 255, 255, 0.08)'; sCtx.lineWidth = 2; sCtx.stroke();
+
+        // Right armor plate
+        sCtx.beginPath();
+        sCtx.moveTo(980, 60); sCtx.lineTo(740, 120); sCtx.lineTo(780, 580); sCtx.lineTo(980, 580);
+        sCtx.closePath(); sCtx.fill(); sCtx.stroke();
+
+        // Stencil 'TUF' background watermark
+        sCtx.font = '900 150px "Space Grotesk", sans-serif';
+        sCtx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+        sCtx.textAlign = 'center';
+        sCtx.textBaseline = 'middle';
+        sCtx.fillText('TUF', 512, 280);
+
+        // Subtle CRT scanlines
+        sCtx.fillStyle = 'rgba(0, 210, 255, 0.02)';
+        for (let y = 0; y < 640; y += 4) {
+          sCtx.fillRect(0, y, 1024, 2);
+        }
+
+        // CRT Boot flare line (40% - 44%)
+        if (crtProgress > 0 && crtProgress < 0.4) {
+          const lineW = (crtProgress / 0.4) * 1024;
+          sCtx.shadowColor = '#ffb000';
+          sCtx.shadowBlur = 30;
+          sCtx.fillStyle = '#ffffff';
+          sCtx.fillRect((1024 - lineW) / 2, 318, lineW, 4);
+          sCtx.shadowBlur = 0;
+        }
+
+        // Booted Screen Text & Radial Glow (45% - 55%)
+        if (crtProgress >= 0.4 && textVisible) {
+          const gradient = sCtx.createRadialGradient(512, 320, 40, 512, 320, 460);
+          gradient.addColorStop(0, 'rgba(0, 210, 255, 0.24)');
+          gradient.addColorStop(0.75, 'rgba(11, 15, 22, 0.88)');
+          sCtx.fillStyle = gradient;
+          sCtx.fillRect(0, 0, 1024, 640);
+
+          sCtx.textAlign = 'center';
+          sCtx.textBaseline = 'middle';
+
+          // Glowing main headline
+          sCtx.shadowColor = '#00d2ff';
+          sCtx.shadowBlur = 28;
+          sCtx.font = '800 52px "Space Grotesk", sans-serif';
+          sCtx.fillStyle = '#ffffff';
+
+          sCtx.fillText("Get the latest", 512, 260);
+          sCtx.fillText("business operating systems!", 512, 335);
+          sCtx.shadowBlur = 0;
+
+          // Amber badge accent (TUF theme)
+          sCtx.font = '700 22px "Outfit", sans-serif';
+          sCtx.fillStyle = '#ffb000';
+          sCtx.fillText("✦ TUF GAMING ENTERPRISE OS 4.0 ✦", 512, 425);
         }
       }
 
@@ -1883,115 +1959,183 @@
       // 2. Three.js Scene Setup
       const scene = new THREE.Scene();
 
-      const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
-      camera.position.set(0, 0, 9.5);
+      const camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 100);
+      camera.position.set(0, 0, 9.6);
 
       const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-      // 3. Lighting
-      const ambientLight = new THREE.AmbientLight(0x102035, 2.8);
+      // 3. Lighting (Tactical Gunmetal Lighting & Amber Backlight glow)
+      const ambientLight = new THREE.AmbientLight(0x182232, 2.5);
       scene.add(ambientLight);
 
-      const dirLight = new THREE.DirectionalLight(0xffffff, 2.2);
-      dirLight.position.set(5, 10, 7);
-      scene.add(dirLight);
+      const dirLight1 = new THREE.DirectionalLight(0xffffff, 2.4);
+      dirLight1.position.set(6, 12, 8);
+      scene.add(dirLight1);
 
-      const pointLight = new THREE.PointLight(0x00d2ff, 3.5, 10);
-      pointLight.position.set(0, 0, 2);
-      scene.add(pointLight);
+      const dirLight2 = new THREE.DirectionalLight(0x00d2ff, 1.2);
+      dirLight2.position.set(-6, -4, 4);
+      scene.add(dirLight2);
 
-      // 4. Laptop 3D Model Group
+      const amberPointLight = new THREE.PointLight(0xffa000, 3.8, 8);
+      amberPointLight.position.set(0, 0.2, 0);
+      scene.add(amberPointLight);
+
+      // 4. Laptop 3D Model Group (ASUS TUF Replica)
       const laptopGroup = new THREE.Group();
-      laptopGroup.rotation.x = 0.45; // Tilt 25° forward towards camera
-      laptopGroup.rotation.y = -0.22; // Slight 3D angle
+      laptopGroup.rotation.x = 0.42; // Tilted 24° forward in 3D perspective
+      laptopGroup.rotation.y = -0.18; // Subtle 3D angle
       scene.add(laptopGroup);
 
-      // Materials
-      const metallicDarkMat = new THREE.MeshStandardMaterial({
-        color: 0x111e2e,
-        metalness: 0.85,
-        roughness: 0.2,
+      // Materials matching TUF Reference Images
+      const tufGunmetalMat = new THREE.MeshStandardMaterial({
+        color: 0x242834,
+        metalness: 0.88,
+        roughness: 0.22,
       });
 
-      const keyboardBaseMat = new THREE.MeshStandardMaterial({
-        color: 0x09101a,
+      const tufDarkDeckMat = new THREE.MeshStandardMaterial({
+        color: 0x12151d,
         metalness: 0.5,
         roughness: 0.5,
       });
 
-      const keyMat = new THREE.MeshStandardMaterial({
-        color: 0x162434,
-        metalness: 0.4,
-        roughness: 0.3,
+      const tufKeyNormalMat = new THREE.MeshStandardMaterial({
+        color: 0x181c26,
+        metalness: 0.3,
+        roughness: 0.4,
       });
 
-      const logoMat = new THREE.MeshBasicMaterial({ color: 0x00d2ff });
+      const tufKeyWASDMat = new THREE.MeshStandardMaterial({
+        color: 0xffb700,
+        emissive: 0xffa000,
+        emissiveIntensity: 0.8,
+        metalness: 0.2,
+        roughness: 0.2,
+      });
+
+      const asusLogoMat = new THREE.MeshStandardMaterial({
+        color: 0xd4d8e2,
+        metalness: 0.95,
+        roughness: 0.1,
+      });
+
+      const tufEmblemMat = new THREE.MeshStandardMaterial({
+        color: 0x505868,
+        metalness: 0.9,
+        roughness: 0.2,
+      });
 
       const screenMat = new THREE.MeshBasicMaterial({ map: screenTexture });
 
-      // Laptop Base Mesh
-      const baseGeo = new THREE.BoxGeometry(4.8, 0.14, 3.2);
-      const baseMesh = new THREE.Mesh(baseGeo, metallicDarkMat);
-      baseMesh.position.set(0, -0.07, 0);
+      // ---- LAPTOP BASE CHASSIS (ASUS TUF Gaming) ----
+      const baseGeo = new THREE.BoxGeometry(5.2, 0.16, 3.3);
+      const baseMesh = new THREE.Mesh(baseGeo, tufGunmetalMat);
+      baseMesh.position.set(0, -0.08, 0);
       laptopGroup.add(baseMesh);
 
-      // Keyboard Recess
-      const kbGeo = new THREE.BoxGeometry(4.2, 0.02, 1.7);
-      const kbMesh = new THREE.Mesh(kbGeo, keyboardBaseMat);
+      // Rear Honeycomb Exhaust Vents (as seen in Image 2)
+      const ventGeo = new THREE.BoxGeometry(4.8, 0.12, 0.2);
+      const ventMat = new THREE.MeshStandardMaterial({ color: 0x0a0c10, roughness: 0.8 });
+      const ventMesh = new THREE.Mesh(ventGeo, ventMat);
+      ventMesh.position.set(0, -0.08, -1.65);
+      laptopGroup.add(ventMesh);
+
+      // Keyboard Deck Recess
+      const kbGeo = new THREE.BoxGeometry(4.6, 0.02, 1.8);
+      const kbMesh = new THREE.Mesh(kbGeo, tufDarkDeckMat);
       kbMesh.position.set(0, 0.01, -0.2);
       laptopGroup.add(kbMesh);
 
-      // Keyboard Keys Grid Representation
+      // TUF Amber Backlit Keyboard Keys + WASD Highlights (Image 1)
       for (let r = 0; r < 5; r++) {
-        for (let c = 0; c < 12; c++) {
-          const keyG = new THREE.BoxGeometry(0.3, 0.03, 0.26);
-          const keyM = new THREE.Mesh(keyG, keyMat);
-          keyM.position.set(-1.9 + c * 0.35, 0.03, -0.8 + r * 0.31);
+        for (let c = 0; c < 14; c++) {
+          const isWASD = (r === 2 && (c === 2 || c === 3 || c === 4)) || (r === 1 && c === 3);
+          const keyG = new THREE.BoxGeometry(0.28, 0.03, 0.27);
+          const keyM = new THREE.Mesh(keyG, isWASD ? tufKeyWASDMat : tufKeyNormalMat);
+          keyM.position.set(-2.25 + c * 0.34, 0.03, -0.85 + r * 0.32);
           laptopGroup.add(keyM);
         }
       }
 
-      // Trackpad
-      const tpGeo = new THREE.BoxGeometry(1.4, 0.01, 0.9);
-      const tpMesh = new THREE.Mesh(tpGeo, keyMat);
-      tpMesh.position.set(0, 0.01, 0.9);
+      // Trackpad (TUF logo watermark style)
+      const tpGeo = new THREE.BoxGeometry(1.5, 0.01, 0.95);
+      const tpMesh = new THREE.Mesh(tpGeo, tufKeyNormalMat);
+      tpMesh.position.set(-0.3, 0.01, 0.9);
       laptopGroup.add(tpMesh);
 
-      // Hinge Cylinder
-      const hingeGeo = new THREE.CylinderGeometry(0.06, 0.06, 4.2, 16);
-      const hingeMesh = new THREE.Mesh(hingeGeo, metallicDarkMat);
+      // Status Indicator Panel & Crossed-Line 'X' Badge (Hinge Deck Center - Image 1 & 2)
+      const statusPanelGeo = new THREE.BoxGeometry(0.8, 0.03, 0.25);
+      const statusPanelMat = new THREE.MeshBasicMaterial({ color: 0xffb000 });
+      const statusPanelMesh = new THREE.Mesh(statusPanelGeo, statusPanelMat);
+      statusPanelMesh.position.set(0, 0.02, -1.35);
+      laptopGroup.add(statusPanelMesh);
+
+      // Rear Hinge Bar (Center cutout area)
+      const hingeGeo = new THREE.CylinderGeometry(0.07, 0.07, 4.4, 16);
+      const hingeMesh = new THREE.Mesh(hingeGeo, tufGunmetalMat);
       hingeMesh.rotation.z = Math.PI / 2;
-      hingeMesh.position.set(0, 0.04, -1.6);
+      hingeMesh.position.set(0, 0.05, -1.6);
       laptopGroup.add(hingeMesh);
 
-      // 5. Lid Group (Pivot attached to rear hinge at z = -1.6, y = 0.04)
+      // ---- 5. LID GROUP (Hinged at rear edge z = -1.6, y = 0.08) ----
       const lidPivot = new THREE.Group();
-      lidPivot.position.set(0, 0.04, -1.6);
+      lidPivot.position.set(0, 0.08, -1.6);
       laptopGroup.add(lidPivot);
 
-      // Lid Shell Mesh
-      const lidGeo = new THREE.BoxGeometry(4.8, 3.2, 0.1);
-      const lidMesh = new THREE.Mesh(lidGeo, metallicDarkMat);
-      lidMesh.position.set(0, 1.6, -0.05);
+      // Outer Lid Shell (Gunmetal Gray with Trapezoidal V-Cutout & Corner Triangles - Image 2)
+      const lidGeo = new THREE.BoxGeometry(5.2, 3.3, 0.08);
+      const lidMesh = new THREE.Mesh(lidGeo, tufGunmetalMat);
+      lidMesh.position.set(0, 0, 1.65); // Centered along Z when extending from hinge
       lidPivot.add(lidMesh);
 
-      // Screen Mesh (Facing Front inside lid)
-      const screenGeo = new THREE.PlaneGeometry(4.4, 2.8);
+      // Embossed 3D TUF Winged Emblem on outer back cover (Image 2)
+      const emblemGroup = new THREE.Group();
+      emblemGroup.position.set(0, 0.05, 1.65); // On outer top cover
+      
+      const wingLeftG = new THREE.BoxGeometry(0.4, 0.03, 0.5);
+      const wingLeftM = new THREE.Mesh(wingLeftG, tufEmblemMat);
+      wingLeftM.rotation.y = 0.3;
+      wingLeftM.position.set(-0.35, 0, 0);
+      emblemGroup.add(wingLeftM);
+
+      const wingRightM = wingLeftM.clone();
+      wingRightM.rotation.y = -0.3;
+      wingRightM.position.set(0.35, 0, 0);
+      emblemGroup.add(wingRightM);
+
+      const centerShieldG = new THREE.BoxGeometry(0.3, 0.04, 0.6);
+      const centerShieldM = new THREE.Mesh(centerShieldG, tufEmblemMat);
+      emblemGroup.add(centerShieldM);
+
+      lidPivot.add(emblemGroup);
+
+      // Top Camera Lip / Notch (Image 1 & 2)
+      const camLipGeo = new THREE.BoxGeometry(0.6, 0.06, 0.12);
+      const camLipMesh = new THREE.Mesh(camLipGeo, tufGunmetalMat);
+      camLipMesh.position.set(0, 0, 3.32);
+      lidPivot.add(camLipMesh);
+
+      // Inside Screen Display (Facing Front when lid opens up)
+      const screenGeo = new THREE.PlaneGeometry(4.8, 3.0);
       const screenMesh = new THREE.Mesh(screenGeo, screenMat);
-      screenMesh.position.set(0, 1.6, 0.06);
+      screenMesh.position.set(0, -0.05, 1.65);
+      screenMesh.rotation.x = -Math.PI / 2; // Screen normal faces forward (+Z) when lid opens to 110°!
       lidPivot.add(screenMesh);
 
-      // Logo Badge (On back cover of lid)
-      const logoGeo = new THREE.CircleGeometry(0.2, 32);
-      const logoMesh = new THREE.Mesh(logoGeo, logoMat);
-      logoMesh.position.set(0, 1.6, -0.06);
-      logoMesh.rotation.y = Math.PI;
-      lidPivot.add(logoMesh);
+      // Metallic 'ASUS' Logo on bottom screen bezel (Image 1)
+      const asusTextG = new THREE.BoxGeometry(0.5, 0.02, 0.08);
+      const asusTextM = new THREE.Mesh(asusTextG, asusLogoMat);
+      asusTextM.position.set(0, -0.04, 0.3);
+      lidPivot.add(asusTextM);
 
-      // 6. Scroll Timeline Animation Sync
-      let targetLidAngle = 0; // 0 = closed, 2.05 rad (~118°) = open
+      // ---- 6. SCROLL TIMELINE ANIMATION SYNC ----
+      // Hinge rotation math:
+      // When closed (0% scroll): lidPivot.rotation.x = 0 (lid lies flat over keyboard).
+      // When opened (50% scroll): lidPivot.rotation.x rotates to -1.95 rad (~ -112°).
+      // Front edge lifts UP (+Y) and swings BACKWARDS (-Z), exposing screen facing camera!
+      let targetLidAngle = 0; // 0 = closed, -1.95 = open at middle of page
       let currentLidAngle = 0;
       let targetOpacity = 0;
       let currentOpacity = 0;
@@ -2001,38 +2145,44 @@
         const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
         const p = maxScroll > 0 ? Math.max(0, Math.min(1, scrollTop / maxScroll)) : 0;
 
-        // Opacity Timeline (0-20% In, 80-100% Out)
-        if (p < 0.20) {
-          targetOpacity = p / 0.20;
-        } else if (p <= 0.80) {
+        // Opacity Timeline (0-15% Fade In, 85-100% Fade Out)
+        if (p < 0.15) {
+          targetOpacity = p / 0.15;
+        } else if (p <= 0.85) {
           targetOpacity = 1;
         } else {
-          targetOpacity = 1 - ((p - 0.80) / 0.20);
+          targetOpacity = Math.max(0, 1 - ((p - 0.85) / 0.15));
         }
 
-        // Lid Angle Timeline
-        if (p < 0.20) {
-          targetLidAngle = 0; // Closed
-        } else if (p < 0.30) {
-          targetLidAngle = ((p - 0.20) / 0.10) * 1.2;
-        } else if (p < 0.40) {
-          targetLidAngle = 1.2 + (((p - 0.30) / 0.10) * 0.85); // Fully open ~2.05 rad
-        } else if (p <= 0.60) {
-          targetLidAngle = 2.05; // Stay open
-        } else if (p <= 0.80) {
-          targetLidAngle = 2.05 - (((p - 0.60) / 0.20) * 2.05); // Close lid
-        } else {
+        // =========================================================================
+        // REVISED TIMING REQUEST:
+        // "laptop should open when reaching middle of page (50%),
+        //  and close when it reaches the end (100%)"
+        // =========================================================================
+        if (p <= 0.25) {
+          // Top of page (0% -> 25%): Closed
           targetLidAngle = 0;
+        } else if (p <= 0.50) {
+          // Scroll from 25% -> 50% (middle of page): Lid OPENS smoothly to fully open (-1.95 rad)
+          const sub = (p - 0.25) / 0.25; // 0 -> 1
+          targetLidAngle = -1.95 * sub;
+        } else if (p <= 0.75) {
+          // Middle of page (50% -> 75%): Remains 100% fully open!
+          targetLidAngle = -1.95;
+        } else {
+          // Scroll from 75% -> 100% (end of page): Lid CLOSES smoothly back to 0 (closed)
+          const sub = (p - 0.75) / 0.25; // 0 -> 1
+          targetLidAngle = -1.95 * (1 - sub);
         }
 
-        // CRT Screen Trigger
-        if (p >= 0.40 && p <= 0.60) {
+        // CRT Screen Text Triggering (Active around middle of page: 40% -> 65%)
+        if (p >= 0.40 && p <= 0.65) {
           if (p < 0.44) {
-            crtProgress = (p - 0.40) / 0.04; // CRT flare expanding line
+            crtProgress = (p - 0.40) / 0.04; // Expanding CRT flare line
             textVisible = false;
           } else {
             crtProgress = 1.0;
-            textVisible = (p >= 0.45 && p <= 0.55);
+            textVisible = (p >= 0.45 && p <= 0.60);
           }
         } else {
           crtProgress = 0;
@@ -2045,11 +2195,11 @@
       function animate() {
         requestAnimationFrame(animate);
 
-        currentOpacity = lerp(currentOpacity, targetOpacity, 0.15);
-        currentLidAngle = lerp(currentLidAngle, targetLidAngle, 0.15);
+        currentOpacity = lerp(currentOpacity, targetOpacity, 0.14);
+        currentLidAngle = lerp(currentLidAngle, targetLidAngle, 0.14);
 
         container.style.opacity = currentOpacity.toFixed(3);
-        lidPivot.rotation.x = -currentLidAngle; // Rotate lid open around hinge
+        lidPivot.rotation.x = currentLidAngle; // Negative rotation swings lid UP & BACKWARDS!
 
         renderScreenTexture();
         screenTexture.needsUpdate = true;
