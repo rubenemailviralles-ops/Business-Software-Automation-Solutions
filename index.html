@@ -1953,7 +1953,7 @@
     revealElements.forEach(el => revealObserver.observe(el));
 
     /* ==========================================================================
-       HERO SUBTITLE TYPEWRITER EFFECT & BUTTON FADE-IN SYNC (Zero Layout Shift)
+       HERO SUBTITLE TYPEWRITER EFFECT (Continuous 9-Second Loop & Zero Layout Shift)
        ========================================================================== */
     (function () {
       const targetText = "empower you bussiness software and automation that will make your life easier!";
@@ -1983,27 +1983,47 @@
       }
 
       let charIndex = 0;
-      const speed = 35; // Typewriter typing speed ms per character
+      const typeSpeed = 35;      // Forward typing speed per character (ms)
+      const deleteSpeed = 18;    // Backward deleting speed per character (ms)
+      const holdDuration = 9000; // Hold for 9 seconds after full phrase typed
 
-      function typeNextChar() {
+      function typeForward() {
         if (charIndex < charList.length) {
           charList[charIndex].classList.add("typed");
           if (cursorEl) {
             charList[charIndex].insertAdjacentElement("afterend", cursorEl);
           }
           charIndex++;
-          setTimeout(typeNextChar, speed);
+          setTimeout(typeForward, typeSpeed);
         } else {
-          // Typewriter completed typing subtitle! Fade in action buttons smoothly
+          // Fully typed! Fade in hero buttons if not already visible
           if (heroActionsEl) {
-            setTimeout(() => {
-              heroActionsEl.classList.add("visible");
-            }, 180);
+            heroActionsEl.classList.add("visible");
           }
+          // Hold fully typed phrase for 9 seconds, then reverse / delete
+          setTimeout(deleteBackward, holdDuration);
         }
       }
 
-      setTimeout(typeNextChar, 450);
+      function deleteBackward() {
+        if (charIndex > 0) {
+          charIndex--;
+          charList[charIndex].classList.remove("typed");
+          if (cursorEl) {
+            if (charIndex > 0) {
+              charList[charIndex - 1].insertAdjacentElement("afterend", cursorEl);
+            } else {
+              textEl.insertBefore(cursorEl, textEl.firstChild);
+            }
+          }
+          setTimeout(deleteBackward, deleteSpeed);
+        } else {
+          // Fully deleted! Pause briefly (400ms) before starting forward typing loop again
+          setTimeout(typeForward, 400);
+        }
+      }
+
+      setTimeout(typeForward, 450);
     })();
 
     /* ==========================================================================
