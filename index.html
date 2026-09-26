@@ -539,6 +539,13 @@
       letter-spacing: -0.03em;
       max-width: 950px;
       margin: 0 auto 24px;
+      opacity: 0;
+      animation: heroTitleFadeIn 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+    }
+
+    @keyframes heroTitleFadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
     }
 
     .hero-subtitle {
@@ -1542,7 +1549,7 @@
   <!-- Hero Section -->
   <section class="hero">
     <div class="container">
-      <h1 class="hero-title reveal">
+      <h1 class="hero-title">
         software and <span class="text-gradient">automation solutions</span>
       </h1>
 
