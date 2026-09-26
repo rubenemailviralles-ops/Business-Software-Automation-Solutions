@@ -1841,6 +1841,15 @@
 
   <!-- Embedded JavaScript -->
   <script>
+    // Force scroll position to top (y=0) on page load so header navigation animation triggers on scroll
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+    window.addEventListener('beforeunload', () => {
+      window.scrollTo(0, 0);
+    });
+
     /* ==========================================================================
        CANVAS BACKGROUND ANIMATION (Floating Particles & Dark Blue Mesh Network)
        ========================================================================== */
@@ -2404,6 +2413,7 @@
 
       window.addEventListener('scroll', updateTimeline, { passive: true });
       window.addEventListener('resize', onResize);
+      window.scrollTo(0, 0);
       updateTimeline();
       animate();
     })();
