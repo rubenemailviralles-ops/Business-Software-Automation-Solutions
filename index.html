@@ -1820,24 +1820,9 @@
       let textVisible = false;
 
       function renderScreenTexture() {
-        // Pure dark off-screen glass background
-        sCtx.fillStyle = '#05070a';
+        // Pure dark clean screen glass (no glow, no colors, no scanlines)
+        sCtx.fillStyle = '#080a10';
         sCtx.fillRect(0, 0, 1024, 640);
-
-        // Subtle scanlines overlay
-        sCtx.fillStyle = 'rgba(0, 210, 255, 0.02)';
-        for (let y = 0; y < 640; y += 4) {
-          sCtx.fillRect(0, y, 1024, 2);
-        }
-
-        // Ambient screen glow illumination when active (no text)
-        if (textVisible) {
-          const gradient = sCtx.createRadialGradient(512, 320, 40, 512, 320, 480);
-          gradient.addColorStop(0, 'rgba(0, 210, 255, 0.15)');
-          gradient.addColorStop(0.75, 'rgba(5, 7, 10, 0.95)');
-          sCtx.fillStyle = gradient;
-          sCtx.fillRect(0, 0, 1024, 640);
-        }
       }
 
       const screenTexture = new THREE.CanvasTexture(screenCanvas);
@@ -1852,7 +1837,7 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-      // 3. Lighting (Tactical Gunmetal Lighting & Amber Backlight glow)
+      // 3. Lighting (Tactical Gunmetal Lighting & White Backlight glow)
       const ambientLight = new THREE.AmbientLight(0x283244, 2.5);
       scene.add(ambientLight);
 
@@ -1860,7 +1845,7 @@
       dirLight1.position.set(6, 12, 8);
       scene.add(dirLight1);
 
-      const dirLight2 = new THREE.DirectionalLight(0x00d2ff, 1.4);
+      const dirLight2 = new THREE.DirectionalLight(0x708090, 0.8);
       dirLight2.position.set(-6, -4, 4);
       scene.add(dirLight2);
 
