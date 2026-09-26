@@ -1877,9 +1877,9 @@
       dirLight2.position.set(-6, -4, 4);
       scene.add(dirLight2);
 
-      const amberPointLight = new THREE.PointLight(0xffa000, 4.5, 8);
-      amberPointLight.position.set(0, 0.2, 0);
-      scene.add(amberPointLight);
+      const whitePointLight = new THREE.PointLight(0xffffff, 4.5, 8);
+      whitePointLight.position.set(0, 0.2, 0);
+      scene.add(whitePointLight);
 
       // 4. Laptop 3D Model Group (ASUS TUF Replica)
       const laptopGroup = new THREE.Group();
@@ -1936,39 +1936,37 @@
       kbMesh.position.set(0, 0.005, -0.2);
       laptopGroup.add(kbMesh);
 
-      // ---- AUTHENTIC ASUS GAMING KEYBOARD KEYCAPS ----
-      // Normal keys: Dark black tops with glowing amber translucent sides and glowing center legends
-      // WASD keys: Bright glowing gold/amber key bodies with dark top cap/letter engravings
+      // ---- WHITE BACKLIT KEYBOARD & FULL-COLOR WASD GAMING KEYS ----
       const keyBaseGeo = new THREE.BoxGeometry(0.28, 0.02, 0.27);
       const keyCapGeo = new THREE.BoxGeometry(0.23, 0.015, 0.22);
       const keyLegendGeo = new THREE.BoxGeometry(0.08, 0.005, 0.06);
 
+      // Normal keys: Crisp white underglow & white glowing legends
       const normalSideMat = new THREE.MeshStandardMaterial({
-        color: 0xffa000,
-        emissive: 0xff8c00,
-        emissiveIntensity: 0.75,
-        roughness: 0.3
-      });
-
-      const normalTopMat = new THREE.MeshStandardMaterial({
-        color: 0x0e1017,
-        roughness: 0.5,
-        metalness: 0.2
-      });
-
-      const legendMat = new THREE.MeshBasicMaterial({ color: 0xffb700 });
-
-      const wasdBodyMat = new THREE.MeshStandardMaterial({
-        color: 0xffb700,
-        emissive: 0xff9500,
-        emissiveIntensity: 1.0,
+        color: 0xffffff,
+        emissive: 0xffffff,
+        emissiveIntensity: 0.9,
         roughness: 0.2
       });
 
-      const wasdTopMat = new THREE.MeshStandardMaterial({
-        color: 0x080a10,
-        roughness: 0.4
+      const normalTopMat = new THREE.MeshStandardMaterial({
+        color: 0x12151e,
+        roughness: 0.4,
+        metalness: 0.2
       });
+
+      const legendMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+      // WASD Gaming Keys: FULL VIBRANT GLOWING COLOR (Amber/Gold Full Color Keycaps)
+      const wasdFullColorMat = new THREE.MeshStandardMaterial({
+        color: 0xffb700,
+        emissive: 0xff9500,
+        emissiveIntensity: 1.25,
+        roughness: 0.15,
+        metalness: 0.1
+      });
+
+      const wasdLegendMat = new THREE.MeshBasicMaterial({ color: 0x0a0c10 });
 
       for (let r = 0; r < 5; r++) {
         for (let c = 0; c < 14; c++) {
@@ -1977,7 +1975,7 @@
           const posZ = -0.85 + r * 0.32;
 
           if (!isWASD) {
-            // Standard Key: Glowing sides + Black top cap + Glowing legend
+            // Standard Key: Glowing white sides + Black top cap + Glowing white legend
             const sideM = new THREE.Mesh(keyBaseGeo, normalSideMat);
             sideM.position.set(posX, 0.015, posZ);
             laptopGroup.add(sideM);
@@ -1990,14 +1988,18 @@
             legendM.position.set(posX, 0.033, posZ);
             laptopGroup.add(legendM);
           } else {
-            // WASD Gaming Key: Full glowing body + Dark top letter cap
-            const bodyM = new THREE.Mesh(keyBaseGeo, wasdBodyMat);
+            // WASD Key: FULL VIBRANT COLOR (Entire key body and cap glow in full color)
+            const bodyM = new THREE.Mesh(keyBaseGeo, wasdFullColorMat);
             bodyM.position.set(posX, 0.018, posZ);
             laptopGroup.add(bodyM);
 
-            const topM = new THREE.Mesh(keyCapGeo, wasdTopMat);
+            const topM = new THREE.Mesh(keyCapGeo, wasdFullColorMat);
             topM.position.set(posX, 0.028, posZ);
             laptopGroup.add(topM);
+
+            const legendM = new THREE.Mesh(keyLegendGeo, wasdLegendMat);
+            legendM.position.set(posX, 0.036, posZ);
+            laptopGroup.add(legendM);
           }
         }
       }
@@ -2008,9 +2010,9 @@
       tpMesh.position.set(-0.3, 0.005, 0.9);
       laptopGroup.add(tpMesh);
 
-      // Status Indicator Panel & Crossed-Line 'X' Badge (Image 1 & 2)
+      // Status Indicator Panel & Crossed-Line 'X' Badge
       const statusPanelGeo = new THREE.BoxGeometry(0.8, 0.025, 0.25);
-      const statusPanelMat = new THREE.MeshBasicMaterial({ color: 0xffb000 });
+      const statusPanelMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
       const statusPanelMesh = new THREE.Mesh(statusPanelGeo, statusPanelMat);
       statusPanelMesh.position.set(0, 0.01, -1.35);
       laptopGroup.add(statusPanelMesh);
