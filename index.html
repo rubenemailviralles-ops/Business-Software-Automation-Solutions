@@ -58,6 +58,15 @@
       padding: 0;
     }
 
+    html, body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     html {
       scroll-behavior: smooth;
       font-size: 16px;
@@ -69,7 +78,6 @@
       color: var(--text-main);
       font-family: var(--font-body);
       line-height: 1.6;
-      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       position: relative;
@@ -80,8 +88,10 @@
       position: fixed;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
       z-index: 0;
       pointer-events: none;
     }
@@ -91,6 +101,8 @@
       position: fixed;
       top: 0;
       left: 0;
+      right: 0;
+      bottom: 0;
       width: 100%;
       height: 100%;
       background-image: 
@@ -1037,8 +1049,8 @@
     #laptop-webgl-container {
       position: fixed;
       inset: 0;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
       pointer-events: none;
       z-index: 1;
       opacity: 0;
@@ -1969,7 +1981,8 @@
       // 4. Laptop 3D Model Group (ASUS TUF Replica)
       const laptopGroup = new THREE.Group();
       laptopGroup.rotation.x = 0.42; // Tilted forward in perspective
-      laptopGroup.rotation.y = -0.18; // Angle towards camera
+      laptopGroup.rotation.y = 0; // 100% Perfectly centered facing front
+      laptopGroup.position.set(0, 0, 0);
       scene.add(laptopGroup);
 
       // Materials matching TUF Reference Images
