@@ -566,11 +566,12 @@
 
     .tw-char {
       opacity: 0;
-      transition: opacity 0.04s ease-in;
+      transition: opacity 0.06s ease-out;
     }
 
     .tw-char.typed {
       opacity: 1;
+      transition: opacity 0.04s ease-in;
     }
 
     .typewriter-cursor {
@@ -1991,7 +1992,7 @@
 
       let charIndex = 0;
       const typeSpeed = 35;      // Forward typing speed per character (ms)
-      const deleteSpeed = 18;    // Backward deleting speed per character (ms)
+      const deleteSpeed = 26;    // Backward deleting speed per character (ms)
       const holdDuration = 9000; // Hold for 9 seconds after full phrase typed
 
       function typeForward() {
@@ -2014,15 +2015,20 @@
 
       function deleteBackward() {
         if (charIndex > 0) {
-          charIndex--;
-          charList[charIndex].classList.remove("typed");
+          const targetIndex = charIndex - 1;
+          // Fade out the target character
+          charList[targetIndex].classList.remove("typed");
+          
+          // Position cursor directly at target character so text to the right is already faded out
           if (cursorEl) {
-            if (charIndex > 0) {
-              charList[charIndex - 1].insertAdjacentElement("afterend", cursorEl);
+            if (targetIndex > 0) {
+              charList[targetIndex - 1].insertAdjacentElement("afterend", cursorEl);
             } else {
               textEl.insertBefore(cursorEl, textEl.firstChild);
             }
           }
+          
+          charIndex--;
           setTimeout(deleteBackward, deleteSpeed);
         } else {
           // Fully deleted! Pause briefly (400ms) before starting forward typing loop again
