@@ -1818,6 +1818,15 @@
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
 
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+
     // Interactive Mouse Position Tracking
     const mouse = { x: -1000, y: -1000, active: false };
 
