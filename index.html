@@ -467,11 +467,28 @@
     }
 
     .hero-subtitle {
-      font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+      font-size: clamp(1.05rem, 1.8vw, 1.35rem);
       color: var(--text-muted);
-      max-width: 680px;
+      max-width: 740px;
       margin: 0 auto 40px;
       font-weight: 400;
+      min-height: 2.4em;
+    }
+
+    .typewriter-cursor {
+      display: inline-block;
+      width: 3px;
+      height: 1.1em;
+      background-color: var(--accent-cyan);
+      margin-left: 4px;
+      vertical-align: middle;
+      box-shadow: 0 0 10px var(--accent-cyan);
+      animation: blinkCursor 0.75s infinite;
+    }
+
+    @keyframes blinkCursor {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
     }
 
     .hero-actions {
@@ -1430,7 +1447,7 @@
       </h1>
 
       <p class="hero-subtitle reveal">
-        Empower your organization with self-optimizing software workflows, real-time telemetry, and zero-friction automated execution.
+        <span id="typewriter-text"></span><span class="typewriter-cursor"></span>
       </p>
 
       <div class="hero-actions reveal">
@@ -1823,6 +1840,28 @@
     });
 
     revealElements.forEach(el => revealObserver.observe(el));
+
+    /* ==========================================================================
+       HERO SUBTITLE TYPEWRITER EFFECT
+       ========================================================================== */
+    (function () {
+      const targetText = "empower you bussiness software and automation that will make your life easier!";
+      const textEl = document.getElementById("typewriter-text");
+      if (!textEl) return;
+
+      let charIndex = 0;
+      const speed = 35; // Typewriter typing speed ms per character
+
+      function typeNextChar() {
+        if (charIndex < targetText.length) {
+          textEl.textContent += targetText.charAt(charIndex);
+          charIndex++;
+          setTimeout(typeNextChar, speed);
+        }
+      }
+
+      setTimeout(typeNextChar, 450);
+    })();
 
     /* ==========================================================================
        INTERACTIVE PIPELINE TAB SWITCHER
