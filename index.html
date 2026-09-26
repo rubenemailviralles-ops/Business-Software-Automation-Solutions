@@ -1830,26 +1830,13 @@
           sCtx.fillRect(0, y, 1024, 2);
         }
 
-        // Booted Screen Text & Radial Glow (45% - 60%)
+        // Ambient screen glow illumination when active (no text)
         if (textVisible) {
           const gradient = sCtx.createRadialGradient(512, 320, 40, 512, 320, 480);
-          gradient.addColorStop(0, 'rgba(0, 210, 255, 0.35)');
+          gradient.addColorStop(0, 'rgba(0, 210, 255, 0.15)');
           gradient.addColorStop(0.75, 'rgba(5, 7, 10, 0.95)');
           sCtx.fillStyle = gradient;
           sCtx.fillRect(0, 0, 1024, 640);
-
-          sCtx.textAlign = 'center';
-          sCtx.textBaseline = 'middle';
-
-          // Glowing main headline centered on screen
-          sCtx.shadowColor = '#00d2ff';
-          sCtx.shadowBlur = 35;
-          sCtx.font = '800 56px "Space Grotesk", sans-serif';
-          sCtx.fillStyle = '#ffffff';
-
-          sCtx.fillText("Get the latest", 512, 280);
-          sCtx.fillText("business operating systems!", 512, 360);
-          sCtx.shadowBlur = 0;
         }
       }
 
