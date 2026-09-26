@@ -819,38 +819,29 @@
     }
 
     .features-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 36px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
       width: 100%;
     }
 
     .feature-card {
-      padding: 42px 48px;
+      padding: 36px 30px;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 36px;
-      width: 100%;
+      flex-direction: column;
+      height: 100%;
       box-sizing: border-box;
       transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .feature-card:hover {
-      transform: translateY(-6px);
+      transform: translateY(-8px);
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 35px rgba(0, 210, 255, 0.25);
     }
 
-    .feature-card-left {
-      display: flex;
-      align-items: flex-start;
-      gap: 28px;
-      flex: 1;
-    }
-
     .feature-icon-box {
-      width: 60px;
-      height: 60px;
+      width: 56px;
+      height: 56px;
       flex-shrink: 0;
       border-radius: var(--radius-md);
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(0, 210, 255, 0.15) 100%);
@@ -858,45 +849,38 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      margin-bottom: 24px;
       color: var(--accent-cyan);
       box-shadow: 0 0 15px rgba(0, 210, 255, 0.1);
       transition: var(--transition-smooth);
     }
 
     .feature-card:hover .feature-icon-box {
-      transform: scale(1.08) rotate(3deg);
+      transform: scale(1.1) rotate(3deg);
       background: linear-gradient(135deg, rgba(0, 210, 255, 0.3) 0%, rgba(30, 144, 255, 0.5) 100%);
       color: #fff;
       box-shadow: 0 0 25px var(--accent-glow-strong);
     }
 
     .feature-icon-box svg {
-      width: 28px;
-      height: 28px;
-    }
-
-    .feature-body {
-      flex: 1;
+      width: 26px;
+      height: 26px;
     }
 
     .feature-title {
       font-family: var(--font-heading);
-      font-size: 1.5rem;
+      font-size: 1.35rem;
       font-weight: 700;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       color: var(--text-main);
     }
 
     .feature-copy {
       color: var(--text-muted);
-      font-size: 1.05rem;
+      font-size: 0.95rem;
       line-height: 1.6;
-      margin-bottom: 0;
-      max-width: 780px;
-    }
-
-    .feature-card-action {
-      flex-shrink: 0;
+      margin-bottom: 24px;
+      flex-grow: 1;
     }
 
     .feature-link {
@@ -1613,61 +1597,43 @@
 
       <div class="features-grid">
         
-        <!-- Service Block 1: Software -->
+        <!-- Service Card 1: Software -->
         <div class="glass-panel feature-card reveal">
-          <div class="feature-card-left">
-            <div class="feature-icon-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-            </div>
-            <div class="feature-body">
-              <h3 class="feature-title">Software Development</h3>
-              <p class="feature-copy">Bespoke enterprise software applications built on high-performance architecture, robust cloud infrastructure, and zero-latency backends.</p>
-            </div>
+          <div class="feature-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
           </div>
-          <div class="feature-card-action">
-            <a href="#cta" class="btn btn-primary" style="padding: 12px 24px; font-size: 0.9rem;">
-              Book Consultation
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
-            </a>
-          </div>
+          <h3 class="feature-title">Software Development</h3>
+          <p class="feature-copy">Bespoke enterprise software applications built on high-performance architecture, robust cloud infrastructure, and zero-latency backends.</p>
+          <a href="#cta" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.85rem; width: 100%; text-align: center; justify-content: center; margin-top: auto;">
+            Book Consultation
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
+          </a>
         </div>
 
-        <!-- Service Block 2: Automation -->
+        <!-- Service Card 2: Automation -->
         <div class="glass-panel feature-card reveal">
-          <div class="feature-card-left">
-            <div class="feature-icon-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-            </div>
-            <div class="feature-body">
-              <h3 class="feature-title">Business Automation</h3>
-              <p class="feature-copy">Autonomous software workflows that streamline operations, eliminate manual errors, optimize resource allocation, and scale effortlessly.</p>
-            </div>
+          <div class="feature-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
           </div>
-          <div class="feature-card-action">
-            <a href="#cta" class="btn btn-primary" style="padding: 12px 24px; font-size: 0.9rem;">
-              Book Consultation
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
-            </a>
-          </div>
+          <h3 class="feature-title">Business Automation</h3>
+          <p class="feature-copy">Autonomous software workflows that streamline operations, eliminate manual errors, optimize resource allocation, and scale effortlessly.</p>
+          <a href="#cta" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.85rem; width: 100%; text-align: center; justify-content: center; margin-top: auto;">
+            Book Consultation
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
+          </a>
         </div>
 
-        <!-- Service Block 3: Website Development -->
+        <!-- Service Card 3: Website Development -->
         <div class="glass-panel feature-card reveal">
-          <div class="feature-card-left">
-            <div class="feature-icon-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-            </div>
-            <div class="feature-body">
-              <h3 class="feature-title">Website Development</h3>
-              <p class="feature-copy">State-of-the-art, high-velocity websites and interactive web platforms designed with modern aesthetics, lightning load speeds, and fluid UX.</p>
-            </div>
+          <div class="feature-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
           </div>
-          <div class="feature-card-action">
-            <a href="#cta" class="btn btn-primary" style="padding: 12px 24px; font-size: 0.9rem;">
-              Book Consultation
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
-            </a>
-          </div>
+          <h3 class="feature-title">Website Development</h3>
+          <p class="feature-copy">State-of-the-art, high-velocity websites and interactive web platforms designed with modern aesthetics, lightning load speeds, and fluid UX.</p>
+          <a href="#cta" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.85rem; width: 100%; text-align: center; justify-content: center; margin-top: auto;">
+            Book Consultation
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
+          </a>
         </div>
 
       </div>
