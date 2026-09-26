@@ -1957,16 +1957,16 @@
 
       const legendMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
 
-      // WASD Gaming Keys: FULL VIBRANT GLOWING COLOR (Amber/Gold Full Color Keycaps)
-      const wasdFullColorMat = new THREE.MeshStandardMaterial({
-        color: 0xffb700,
-        emissive: 0xff9500,
-        emissiveIntensity: 1.25,
+      // WASD Gaming Keys: REVERSE OF OTHER BUTTONS (Full White Key body & top cap with Black dot/legend)
+      const wasdFullWhiteMat = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        emissive: 0xf0f4ff,
+        emissiveIntensity: 0.95,
         roughness: 0.15,
         metalness: 0.1
       });
 
-      const wasdLegendMat = new THREE.MeshBasicMaterial({ color: 0x0a0c10 });
+      const wasdBlackLegendMat = new THREE.MeshBasicMaterial({ color: 0x080a10 });
 
       for (let r = 0; r < 5; r++) {
         for (let c = 0; c < 14; c++) {
@@ -1988,16 +1988,16 @@
             legendM.position.set(posX, 0.033, posZ);
             laptopGroup.add(legendM);
           } else {
-            // WASD Key: FULL VIBRANT COLOR (Entire key body and cap glow in full color)
-            const bodyM = new THREE.Mesh(keyBaseGeo, wasdFullColorMat);
+            // WASD Key: REVERSE OF OTHER BUTTONS (Full white key body & top cap + Black legend dot)
+            const bodyM = new THREE.Mesh(keyBaseGeo, wasdFullWhiteMat);
             bodyM.position.set(posX, 0.018, posZ);
             laptopGroup.add(bodyM);
 
-            const topM = new THREE.Mesh(keyCapGeo, wasdFullColorMat);
+            const topM = new THREE.Mesh(keyCapGeo, wasdFullWhiteMat);
             topM.position.set(posX, 0.028, posZ);
             laptopGroup.add(topM);
 
-            const legendM = new THREE.Mesh(keyLegendGeo, wasdLegendMat);
+            const legendM = new THREE.Mesh(keyLegendGeo, wasdBlackLegendMat);
             legendM.position.set(posX, 0.036, posZ);
             laptopGroup.add(legendM);
           }
