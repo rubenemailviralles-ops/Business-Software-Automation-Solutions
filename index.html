@@ -83,22 +83,23 @@
       position: relative;
     }
 
-    /* Background Canvas (Fixed 1:1 viewport matching for exact cursor tracking) */
+    /* Background Canvas (Floating Particle Mesh Layer) */
     #bg-canvas {
       position: fixed;
-      inset: 0;
+      inset: -20% 0;
       width: 100%;
-      height: 100%;
+      height: 140%;
       z-index: 0;
       pointer-events: none;
+      will-change: transform;
     }
 
     /* Geometric Dark Blue Overlay */
     .bg-grid-overlay {
       position: fixed;
-      inset: -15% 0;
+      inset: -20% 0;
       width: 100%;
-      height: 130%;
+      height: 140%;
       background-image: 
         linear-gradient(to right, rgba(0, 210, 255, 0.03) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(0, 210, 255, 0.03) 1px, transparent 1px);
@@ -112,9 +113,9 @@
     /* Deep Void Dynamic Morphing Ambient Gradients Wrapper */
     .ambient-glow-wrapper {
       position: fixed;
-      inset: -15% 0;
+      inset: -20% 0;
       width: 100%;
-      height: 130%;
+      height: 140%;
       pointer-events: none;
       z-index: 1;
       will-change: transform;
@@ -1826,27 +1827,14 @@
     const ctx = canvas.getContext('2d');
 
     let width = canvas.width = window.innerWidth;
-    let height = canvas.height = window.innerHeight;
+    let height = canvas.height = Math.floor(window.innerHeight * 1.4);
     let particles = [];
 
     function resize() {
       width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+      height = canvas.height = Math.floor(window.innerHeight * 1.4);
     }
     window.addEventListener('resize', resize);
-
-    // Interactive Mouse Position Tracking
-    const mouse = { x: -1000, y: -1000, active: false };
-
-    window.addEventListener('mousemove', (e) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-      mouse.active = true;
-    });
-
-    window.addEventListener('mouseleave', () => {
-      mouse.active = false;
-    });
 
     class Particle {
       constructor() {
@@ -1870,31 +1858,6 @@
 
         if (this.x < 0 || this.x > width) this.vx *= -1;
         if (this.y < 0 || this.y > height) this.vy *= -1;
-
-        // Subtle Mouse Attraction & Glow Reaction
-        if (mouse.active) {
-          const dx = mouse.x - this.x;
-          const dy = mouse.y - this.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          const maxMouseDist = 180;
-
-          if (dist < maxMouseDist) {
-            const factor = (1 - dist / maxMouseDist);
-            // Gentle acceleration toward mouse
-            this.x += (dx / dist) * factor * 0.75;
-            this.y += (dy / dist) * factor * 0.75;
-
-            // Expand particle size & brighten glow on mouse proximity
-            this.radius = this.baseRadius + factor * 2.2;
-            this.alpha = Math.min(1.0, this.baseAlpha + factor * 0.6);
-          } else {
-            this.radius += (this.baseRadius - this.radius) * 0.1;
-            this.alpha += (this.baseAlpha - this.alpha) * 0.1;
-          }
-        } else {
-          this.radius += (this.baseRadius - this.radius) * 0.1;
-          this.alpha += (this.baseAlpha - this.alpha) * 0.1;
-        }
       }
 
       draw() {
@@ -2304,6 +2267,7 @@
       let targetScrollY = 0;
 
       const siteHeaderEl = document.querySelector('.site-header');
+      const bgCanvasEl = document.getElementById('bg-canvas');
       const bgGridEl = document.querySelector('.bg-grid-overlay');
       const bgGlowWrapperEl = document.querySelector('.ambient-glow-wrapper');
 
@@ -2357,14 +2321,17 @@
 
         currentOpacity = lerp(currentOpacity, targetOpacity, 0.14);
         currentLidAngle = lerp(currentLidAngle, targetLidAngle, 0.14);
-        currentParallaxY = lerp(currentParallaxY, targetScrollY, 0.06);
+        currentParallaxY = lerp(currentParallaxY, targetScrollY, 0.08);
 
-        // Hardware accelerated liquid-smooth parallax background movement
+        // Hardware-accelerated liquid-smooth multi-depth background scroll motion
+        if (bgCanvasEl) {
+          bgCanvasEl.style.transform = `translate3d(0, ${(-currentParallaxY * 0.25).toFixed(2)}px, 0)`;
+        }
         if (bgGridEl) {
-          bgGridEl.style.transform = `translate3d(0, ${(-currentParallaxY * 0.22).toFixed(2)}px, 0)`;
+          bgGridEl.style.transform = `translate3d(0, ${(-currentParallaxY * 0.35).toFixed(2)}px, 0)`;
         }
         if (bgGlowWrapperEl) {
-          bgGlowWrapperEl.style.transform = `translate3d(0, ${(-currentParallaxY * 0.14).toFixed(2)}px, 0)`;
+          bgGlowWrapperEl.style.transform = `translate3d(0, ${(-currentParallaxY * 0.18).toFixed(2)}px, 0)`;
         }
 
         container.style.opacity = currentOpacity.toFixed(3);
