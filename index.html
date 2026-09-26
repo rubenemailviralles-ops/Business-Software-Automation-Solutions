@@ -212,8 +212,16 @@
       background: transparent;
       backdrop-filter: none;
       -webkit-backdrop-filter: none;
-      border-bottom: 1px solid rgba(0, 210, 255, 0.15);
-      transition: var(--transition-smooth);
+      border-bottom: 1px solid transparent;
+      transition: background 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .site-header.scrolled {
+      background: rgba(3, 7, 18, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(0, 210, 255, 0.2);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
     /* Top cyan glowing accent line */
@@ -2135,10 +2143,21 @@
       let targetOpacity = 0;
       let currentOpacity = 0;
 
+      const siteHeaderEl = document.querySelector('.site-header');
+
       function updateTimeline() {
         const scrollTop = window.scrollY || document.documentElement.scrollTop;
         const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
         const p = maxScroll > 0 ? Math.max(0, Math.min(1, scrollTop / maxScroll)) : 0;
+
+        // Darken header backdrop when scrolling content enters underneath
+        if (siteHeaderEl) {
+          if (scrollTop > 20) {
+            siteHeaderEl.classList.add('scrolled');
+          } else {
+            siteHeaderEl.classList.remove('scrolled');
+          }
+        }
 
         // Opacity Timeline (0-15% Fade In, 85-100% Fade Out)
         if (p < 0.15) {
