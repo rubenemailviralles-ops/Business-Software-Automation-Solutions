@@ -83,28 +83,22 @@
       position: relative;
     }
 
-    /* Background Canvas with Parallax Scroll Support */
+    /* Background Canvas (Fixed 1:1 viewport matching for exact cursor tracking) */
     #bg-canvas {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
+      inset: 0;
       width: 100%;
-      height: 130vh;
+      height: 100%;
       z-index: 0;
       pointer-events: none;
-      will-change: transform;
-      transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* Geometric Dark Blue Overlay with Parallax Scroll Support */
+    /* Geometric Dark Blue Overlay */
     .bg-grid-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
+      inset: -15% 0;
       width: 100%;
-      height: 130vh;
+      height: 130%;
       background-image: 
         linear-gradient(to right, rgba(0, 210, 255, 0.03) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(0, 210, 255, 0.03) 1px, transparent 1px);
@@ -113,17 +107,17 @@
       pointer-events: none;
       mask-image: radial-gradient(circle at 50% 40%, black 20%, transparent 80%);
       will-change: transform;
-      transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     /* Deep Void Dynamic Morphing Ambient Gradients Wrapper */
     .ambient-glow-wrapper {
       position: fixed;
-      inset: 0;
+      inset: -15% 0;
+      width: 100%;
+      height: 130%;
       pointer-events: none;
       z-index: 1;
       will-change: transform;
-      transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .ambient-glow {
@@ -2306,8 +2300,12 @@
       let currentLidAngle = 0;
       let targetOpacity = 0;
       let currentOpacity = 0;
+      let currentParallaxY = 0;
+      let targetScrollY = 0;
 
       const siteHeaderEl = document.querySelector('.site-header');
+      const bgGridEl = document.querySelector('.bg-grid-overlay');
+      const bgGlowWrapperEl = document.querySelector('.ambient-glow-wrapper');
 
       function updateTimeline() {
         const scrollTop = window.scrollY || document.documentElement.scrollTop;
@@ -2323,22 +2321,8 @@
           }
         }
 
-        // Parallax Background Movement:
-        // Scrolling DOWN -> Background moves UP (negative Y)
-        // Scrolling UP -> Background moves DOWN (positive Y back toward 0)
-        const bgGridEl = document.querySelector('.bg-grid-overlay');
-        const bgCanvasEl = document.getElementById('bg-canvas');
-        const bgGlowWrapperEl = document.querySelector('.ambient-glow-wrapper');
-
-        if (bgGridEl) {
-          bgGridEl.style.transform = `translateY(${-scrollTop * 0.35}px)`;
-        }
-        if (bgCanvasEl) {
-          bgCanvasEl.style.transform = `translateY(${-scrollTop * 0.22}px)`;
-        }
-        if (bgGlowWrapperEl) {
-          bgGlowWrapperEl.style.transform = `translateY(${-scrollTop * 0.15}px)`;
-        }
+        // Set target scroll position for liquid-smooth lerped background parallax motion
+        targetScrollY = scrollTop;
 
         // Opacity Timeline (0-15% Fade In, 85-100% Fade Out)
         if (p < 0.15) {
@@ -2373,6 +2357,15 @@
 
         currentOpacity = lerp(currentOpacity, targetOpacity, 0.14);
         currentLidAngle = lerp(currentLidAngle, targetLidAngle, 0.14);
+        currentParallaxY = lerp(currentParallaxY, targetScrollY, 0.06);
+
+        // Hardware accelerated liquid-smooth parallax background movement
+        if (bgGridEl) {
+          bgGridEl.style.transform = `translate3d(0, ${(-currentParallaxY * 0.22).toFixed(2)}px, 0)`;
+        }
+        if (bgGlowWrapperEl) {
+          bgGlowWrapperEl.style.transform = `translate3d(0, ${(-currentParallaxY * 0.14).toFixed(2)}px, 0)`;
+        }
 
         container.style.opacity = currentOpacity.toFixed(3);
         lidPivot.rotation.x = currentLidAngle;
