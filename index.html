@@ -114,46 +114,61 @@
       mask-image: radial-gradient(circle at 50% 40%, black 20%, transparent 80%);
     }
 
-    /* Deep Void Radial Ambient Glows */
+    /* Deep Void Dynamic Morphing Ambient Gradients */
     .ambient-glow {
       position: absolute;
       border-radius: 50%;
       filter: blur(140px);
       pointer-events: none;
       z-index: 1;
-      opacity: 0.45;
-      animation: pulseGlow 10s infinite alternate ease-in-out;
+      opacity: 0.5;
+      will-change: transform, opacity;
     }
 
     .glow-1 {
-      top: -150px;
+      top: -180px;
       left: 50%;
       transform: translateX(-50%);
-      width: 700px;
-      height: 450px;
-      background: radial-gradient(circle, var(--accent-blue) 0%, rgba(0, 210, 255, 0.2) 50%, transparent 70%);
+      width: 850px;
+      height: 550px;
+      background: radial-gradient(circle, #0077ff 0%, rgba(0, 210, 255, 0.28) 45%, transparent 70%);
+      animation: morphGlow1 16s infinite alternate ease-in-out;
     }
 
     .glow-2 {
-      top: 40%;
-      right: -200px;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(10, 25, 47, 0.8) 0%, rgba(0, 210, 255, 0.15) 50%, transparent 70%);
-      animation-delay: -5s;
+      top: 35%;
+      right: -250px;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(16, 35, 70, 0.9) 0%, rgba(0, 210, 255, 0.18) 50%, transparent 75%);
+      animation: morphGlow2 20s infinite alternate ease-in-out;
     }
 
     .glow-3 {
-      bottom: 10%;
-      left: -150px;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(30, 144, 255, 0.2) 0%, transparent 70%);
+      bottom: 5%;
+      left: -200px;
+      width: 650px;
+      height: 650px;
+      background: radial-gradient(circle, rgba(30, 144, 255, 0.3) 0%, rgba(138, 43, 226, 0.12) 50%, transparent 70%);
+      animation: morphGlow3 18s infinite alternate ease-in-out;
     }
 
-    @keyframes pulseGlow {
-      0% { opacity: 0.35; transform: scale(1) translateY(0); }
-      100% { opacity: 0.6; transform: scale(1.1) translateY(20px); }
+    @keyframes morphGlow1 {
+      0% { transform: translateX(-50%) translateY(0) scale(1) rotate(0deg); opacity: 0.45; }
+      50% { transform: translateX(-42%) translateY(40px) scale(1.15) rotate(5deg); opacity: 0.65; }
+      100% { transform: translateX(-58%) translateY(-20px) scale(0.95) rotate(-5deg); opacity: 0.5; }
+    }
+
+    @keyframes morphGlow2 {
+      0% { transform: scale(1) translateY(0) translateX(0); opacity: 0.4; }
+      50% { transform: scale(1.2) translateY(-60px) translateX(-40px); opacity: 0.7; }
+      100% { transform: scale(0.9) translateY(30px) translateX(20px); opacity: 0.45; }
+    }
+
+    @keyframes morphGlow3 {
+      0% { transform: scale(0.95) translateY(0); opacity: 0.35; }
+      50% { transform: scale(1.22) translateY(-40px); opacity: 0.6; }
+      100% { transform: scale(1) translateY(20px); opacity: 0.4; }
     }
 
     /* Container */
@@ -1803,15 +1818,18 @@
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
 
-    let width, height;
-    let particles = [];
+    // Interactive Mouse Position Tracking
+    const mouse = { x: -1000, y: -1000, active: false };
 
-    function resize() {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resize);
-    resize();
+    window.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+      mouse.active = true;
+    });
+
+    window.addEventListener('mouseleave', () => {
+      mouse.active = false;
+    });
 
     class Particle {
       constructor() {
@@ -1821,10 +1839,12 @@
       reset() {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 0.4;
-        this.vy = (Math.random() - 0.5) * 0.4;
-        this.radius = Math.random() * 1.5 + 0.5;
-        this.alpha = Math.random() * 0.5 + 0.2;
+        this.vx = (Math.random() - 0.5) * 0.45;
+        this.vy = (Math.random() - 0.5) * 0.45;
+        this.baseRadius = Math.random() * 1.5 + 0.6;
+        this.radius = this.baseRadius;
+        this.baseAlpha = Math.random() * 0.45 + 0.2;
+        this.alpha = this.baseAlpha;
       }
 
       update() {
@@ -1833,13 +1853,38 @@
 
         if (this.x < 0 || this.x > width) this.vx *= -1;
         if (this.y < 0 || this.y > height) this.vy *= -1;
+
+        // Subtle Mouse Attraction & Glow Reaction
+        if (mouse.active) {
+          const dx = mouse.x - this.x;
+          const dy = mouse.y - this.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const maxMouseDist = 180;
+
+          if (dist < maxMouseDist) {
+            const factor = (1 - dist / maxMouseDist);
+            // Gentle acceleration toward mouse
+            this.x += (dx / dist) * factor * 0.75;
+            this.y += (dy / dist) * factor * 0.75;
+
+            // Expand particle size & brighten glow on mouse proximity
+            this.radius = this.baseRadius + factor * 2.2;
+            this.alpha = Math.min(1.0, this.baseAlpha + factor * 0.6);
+          } else {
+            this.radius += (this.baseRadius - this.radius) * 0.1;
+            this.alpha += (this.baseAlpha - this.alpha) * 0.1;
+          }
+        } else {
+          this.radius += (this.baseRadius - this.radius) * 0.1;
+          this.alpha += (this.baseAlpha - this.alpha) * 0.1;
+        }
       }
 
       draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(0, 210, 255, ${this.alpha})`;
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = this.radius * 4;
         ctx.shadowColor = '#00d2ff';
         ctx.fill();
         ctx.shadowBlur = 0;
