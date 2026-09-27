@@ -1175,26 +1175,26 @@
 
     .reveal-left {
       opacity: 0;
-      transform: translateX(-60px);
-      transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: translateX(-120px) scale(0.95);
+      transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: opacity, transform;
     }
 
     .reveal-left.active {
       opacity: 1;
-      transform: translateX(0);
+      transform: translateX(0) scale(1);
     }
 
     .reveal-right {
       opacity: 0;
-      transform: translateX(60px);
-      transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: translateX(120px) scale(0.95);
+      transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: opacity, transform;
     }
 
     .reveal-right.active {
       opacity: 1;
-      transform: translateX(0);
+      transform: translateX(0) scale(1);
     }
 
     /* ==========================================================================
@@ -1921,10 +1921,10 @@
 
       function updateScrollReveals() {
         const vh = window.innerHeight;
-        // 12% top and bottom viewport buffer zones
-        // Elements in top 12% or bottom 12% fade/slide out visibly before leaving screen
-        const topBuffer = vh * 0.12;
-        const bottomBuffer = vh * 0.12;
+        // 22% top and bottom viewport buffer zones
+        // Elements in top 22% or bottom 22% fade/slide out prominently before leaving screen
+        const topBuffer = vh * 0.22;
+        const bottomBuffer = vh * 0.22;
 
         revealElements.forEach(el => {
           const rect = el.getBoundingClientRect();
