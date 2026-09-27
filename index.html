@@ -818,25 +818,52 @@
       font-size: 1.05rem;
     }
 
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 28px;
-      width: 100%;
+    /* ==========================================================================
+       STANDALONE SERVICE BLOCKS (Software, Automation, Website Development)
+       ========================================================================== */
+    .service-block-section {
+      padding: 60px 0;
+      position: relative;
+      z-index: 2;
     }
 
-    .feature-card {
-      padding: 36px 30px;
+    .service-block {
+      padding: 48px 56px;
       display: flex;
-      flex-direction: column;
-      height: 100%;
-      box-sizing: border-box;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+      position: relative;
       transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .feature-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 35px rgba(0, 210, 255, 0.25);
+    .service-block:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.85), 0 0 40px rgba(0, 210, 255, 0.2);
+    }
+
+    .service-block-header {
+      max-width: 760px;
+    }
+
+    .service-block-title {
+      font-family: var(--font-heading);
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 14px;
+      color: var(--text-main);
+    }
+
+    .service-block-copy {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .service-block-actions {
+      flex-shrink: 0;
     }
 
     .feature-icon-box {
@@ -1573,6 +1600,27 @@
       </div>
 
       <!-- End Hero Actions -->
+    </div>
+  </section>
+
+  <!-- Standalone Software Block -->
+  <section class="service-block-section" id="software">
+    <div class="container">
+      <div class="glass-panel service-block reveal">
+        <div class="service-block-header">
+          <span class="section-tag">01 // SOFTWARE DEVELOPMENT</span>
+          <h2 class="service-block-title">Software Development</h2>
+          <p class="service-block-copy">
+            Bespoke enterprise software applications built on high-performance architecture, robust cloud infrastructure, and zero-latency backends engineered for modern business scale.
+          </p>
+        </div>
+        <div class="service-block-actions">
+          <a href="#cta" class="btn btn-primary" style="padding: 14px 28px; font-size: 0.95rem;">
+            Book Consultation
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 
