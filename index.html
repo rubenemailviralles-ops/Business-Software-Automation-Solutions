@@ -819,27 +819,33 @@
     }
 
     /* ==========================================================================
-       STANDALONE SERVICE BLOCKS (Software, Automation, Website Development)
+       SERVICE BLOCKS STACK (Software, Automation, Website Development)
        ========================================================================== */
-    .service-block-section {
-      padding: 60px 0;
+    .service-blocks-section {
+      padding: 40px 0 70px;
       position: relative;
       z-index: 2;
     }
 
+    .service-blocks-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 22px; /* Professional, sleek, tight spacing between blocks */
+    }
+
     .service-block {
-      padding: 48px 56px;
+      padding: 38px 48px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 40px;
+      gap: 36px;
       position: relative;
       transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .service-block:hover {
       transform: translateY(-4px);
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.85), 0 0 40px rgba(0, 210, 255, 0.2);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.85), 0 0 35px rgba(0, 210, 255, 0.22);
     }
 
     .service-block-header {
@@ -848,17 +854,17 @@
 
     .service-block-title {
       font-family: var(--font-heading);
-      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      font-size: clamp(1.6rem, 2.5vw, 2.1rem);
       font-weight: 700;
       line-height: 1.2;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
       color: var(--text-main);
     }
 
     .service-block-copy {
       color: var(--text-muted);
-      font-size: 1.05rem;
-      line-height: 1.65;
+      font-size: 1rem;
+      line-height: 1.6;
       margin: 0;
     }
 
@@ -1603,65 +1609,62 @@
     </div>
   </section>
 
-  <!-- Standalone Software Block -->
-  <section class="service-block-section" id="software">
+  <!-- Service Blocks Stack (Software, Automation, Website Creation) -->
+  <section class="service-blocks-section">
     <div class="container">
-      <div class="glass-panel service-block reveal">
-        <div class="service-block-header">
-          <span class="section-tag">01 // SOFTWARE DEVELOPMENT</span>
-          <h2 class="service-block-title">Software Development</h2>
-          <p class="service-block-copy">
-            Bespoke enterprise software applications built on high-performance architecture, robust cloud infrastructure, and zero-latency backends engineered for modern business scale.
-          </p>
-        </div>
-        <div class="service-block-actions">
-          <a href="#cta" class="btn btn-primary" style="padding: 14px 28px; font-size: 0.95rem;">
-            Book Consultation
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
+      <div class="service-blocks-stack">
 
-  <!-- Standalone Automation Block -->
-  <section class="service-block-section" id="automation">
-    <div class="container">
-      <div class="glass-panel service-block reveal">
-        <div class="service-block-header">
-          <span class="section-tag">02 // BUSINESS AUTOMATION</span>
-          <h2 class="service-block-title">Business Automation</h2>
-          <p class="service-block-copy">
-            Autonomous software workflows that streamline operations, eliminate manual human errors, optimize resource allocation, and scale your business effortlessly.
-          </p>
+        <!-- 01: Software Development Block -->
+        <div class="glass-panel service-block reveal" id="software">
+          <div class="service-block-header">
+            <span class="section-tag">01 // SOFTWARE DEVELOPMENT</span>
+            <h2 class="service-block-title">Software Development</h2>
+            <p class="service-block-copy">
+              Bespoke enterprise software applications built on high-performance architecture, robust cloud infrastructure, and zero-latency backends engineered for modern business scale.
+            </p>
+          </div>
+          <div class="service-block-actions">
+            <a href="#cta" class="btn btn-primary" style="padding: 13px 26px; font-size: 0.9rem;">
+              Book Consultation
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
+            </a>
+          </div>
         </div>
-        <div class="service-block-actions">
-          <a href="#cta" class="btn btn-primary" style="padding: 14px 28px; font-size: 0.95rem;">
-            Book Consultation
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- Standalone Website Creation Block -->
-  <section class="service-block-section" id="website">
-    <div class="container">
-      <div class="glass-panel service-block reveal">
-        <div class="service-block-header">
-          <span class="section-tag">03 // WEBSITE CREATION</span>
-          <h2 class="service-block-title">Website Creation</h2>
-          <p class="service-block-copy">
-            State-of-the-art, high-velocity websites and interactive web platforms designed with modern aesthetics, lightning load speeds, and fluid user experiences.
-          </p>
+        <!-- 02: Business Automation Block -->
+        <div class="glass-panel service-block reveal" id="automation">
+          <div class="service-block-header">
+            <span class="section-tag">02 // BUSINESS AUTOMATION</span>
+            <h2 class="service-block-title">Business Automation</h2>
+            <p class="service-block-copy">
+              Autonomous software workflows that streamline operations, eliminate manual human errors, optimize resource allocation, and scale your business effortlessly.
+            </p>
+          </div>
+          <div class="service-block-actions">
+            <a href="#cta" class="btn btn-primary" style="padding: 13px 26px; font-size: 0.9rem;">
+              Book Consultation
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
+            </a>
+          </div>
         </div>
-        <div class="service-block-actions">
-          <a href="#cta" class="btn btn-primary" style="padding: 14px 28px; font-size: 0.95rem;">
-            Book Consultation
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
-          </a>
+
+        <!-- 03: Website Creation Block -->
+        <div class="glass-panel service-block reveal" id="website">
+          <div class="service-block-header">
+            <span class="section-tag">03 // WEBSITE CREATION</span>
+            <h2 class="service-block-title">Website Creation</h2>
+            <p class="service-block-copy">
+              State-of-the-art, high-velocity websites and interactive web platforms designed with modern aesthetics, lightning load speeds, and fluid user experiences.
+            </p>
+          </div>
+          <div class="service-block-actions">
+            <a href="#cta" class="btn btn-primary" style="padding: 13px 26px; font-size: 0.9rem;">
+              Book Consultation
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
+            </a>
+          </div>
         </div>
+
       </div>
     </div>
   </section>
