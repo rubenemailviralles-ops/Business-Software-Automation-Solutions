@@ -1176,7 +1176,7 @@
     .reveal-left {
       opacity: 0;
       transform: translateX(-60px);
-      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: opacity, transform;
     }
 
@@ -1188,7 +1188,7 @@
     .reveal-right {
       opacity: 0;
       transform: translateX(60px);
-      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: opacity, transform;
     }
 
@@ -1913,24 +1913,48 @@
     animate();
 
     /* ==========================================================================
-       SCROLL REVEAL ANIMATIONS (IntersectionObserver)
+       SCROLL REVEAL ANIMATIONS (Bidirectional Visible Fade-In & Fade-Out)
        ========================================================================== */
-    const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+    (function () {
+      const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+      let isTicking = false;
 
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('active');
-        } else {
-          entry.target.classList.remove('active');
+      function updateScrollReveals() {
+        const vh = window.innerHeight;
+        // 12% top and bottom viewport buffer zones
+        // Elements in top 12% or bottom 12% fade/slide out visibly before leaving screen
+        const topBuffer = vh * 0.12;
+        const bottomBuffer = vh * 0.12;
+
+        revealElements.forEach(el => {
+          const rect = el.getBoundingClientRect();
+          const inVisibleZone = rect.top < (vh - bottomBuffer) && rect.bottom > topBuffer;
+
+          if (inVisibleZone) {
+            el.classList.add('active');
+          } else {
+            el.classList.remove('active');
+          }
+        });
+
+        isTicking = false;
+      }
+
+      function requestTick() {
+        if (!isTicking) {
+          requestAnimationFrame(updateScrollReveals);
+          isTicking = true;
         }
-      });
-    }, {
-      threshold: 0.1,
-      rootMargin: "0px 0px -50px 0px"
-    });
+      }
 
-    revealElements.forEach(el => revealObserver.observe(el));
+      window.addEventListener('scroll', requestTick, { passive: true });
+      window.addEventListener('resize', requestTick, { passive: true });
+
+      // Run initial checks on load and DOM ready
+      updateScrollReveals();
+      setTimeout(updateScrollReveals, 100);
+      setTimeout(updateScrollReveals, 300);
+    })();
 
     /* ==========================================================================
        HERO SUBTITLE TYPEWRITER EFFECT (Continuous 9-Second Loop & Zero Layout Shift)
