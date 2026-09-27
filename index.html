@@ -1173,6 +1173,30 @@
       transform: translateY(0);
     }
 
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-60px);
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+
+    .reveal-left.active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(60px);
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+
+    .reveal-right.active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
     /* ==========================================================================
        THREE.JS WEBGL 3D LAPTOP BACKGROUND
        ========================================================================== */
@@ -1615,7 +1639,7 @@
       <div class="service-blocks-stack">
 
         <!-- 01: Software Development Block -->
-        <div class="glass-panel service-block reveal" id="software">
+        <div class="glass-panel service-block reveal-left" id="software">
           <div class="service-block-header">
             <span class="section-tag">01 // SOFTWARE DEVELOPMENT</span>
             <h2 class="service-block-title">Software Development</h2>
@@ -1632,7 +1656,7 @@
         </div>
 
         <!-- 02: Business Automation Block -->
-        <div class="glass-panel service-block reveal" id="automation">
+        <div class="glass-panel service-block reveal-right" id="automation">
           <div class="service-block-header">
             <span class="section-tag">02 // BUSINESS AUTOMATION</span>
             <h2 class="service-block-title">Business Automation</h2>
@@ -1649,7 +1673,7 @@
         </div>
 
         <!-- 03: Website Creation Block -->
-        <div class="glass-panel service-block reveal" id="website">
+        <div class="glass-panel service-block reveal-left" id="website">
           <div class="service-block-header">
             <span class="section-tag">03 // WEBSITE CREATION</span>
             <h2 class="service-block-title">Website Creation</h2>
@@ -1891,7 +1915,7 @@
     /* ==========================================================================
        SCROLL REVEAL ANIMATIONS (IntersectionObserver)
        ========================================================================== */
-    const revealElements = document.querySelectorAll('.reveal');
+    const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
 
     const revealObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
