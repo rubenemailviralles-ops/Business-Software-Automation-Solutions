@@ -2127,6 +2127,11 @@
     const tagWebsiteEl = document.querySelector("#website .section-tag");
     const twWebsite = tagWebsiteEl ? createScrollTypewriter(tagWebsiteEl, "03 // WEBSITE CREATION", { holdDuration: 9000, typeSpeed: 35, deleteSpeed: 26 }) : null;
 
+    // Global synchronization flags for 3D PC Typewriter & Lid animations
+    let isWebsiteBoxActive = false;
+    let websiteAnimDoneTime = 0;
+    let isCtaVisible = false;
+
     /* ==========================================================================
        SCROLL REVEAL ANIMATIONS & ON-DEMAND TYPEWRITER RESTART
        ========================================================================== */
@@ -2150,7 +2155,11 @@
               if (el.id === 'typewriter-text' && twHero) twHero.start();
               if (el.id === 'software' && twSoftware) twSoftware.start();
               if (el.id === 'automation' && twAutomation) twAutomation.start();
-              if (el.id === 'website' && twWebsite) twWebsite.start();
+              if (el.id === 'website') {
+                if (twWebsite) twWebsite.start();
+                isWebsiteBoxActive = true;
+                websiteAnimDoneTime = performance.now() + 550; // Wait 550ms for website box slide-in animation to finish!
+              }
             }
           } else {
             if (el.classList.contains('active')) {
@@ -2159,7 +2168,11 @@
               if (el.id === 'typewriter-text' && twHero) twHero.stop();
               if (el.id === 'software' && twSoftware) twSoftware.stop();
               if (el.id === 'automation' && twAutomation) twAutomation.stop();
-              if (el.id === 'website' && twWebsite) twWebsite.stop();
+              if (el.id === 'website') {
+                if (twWebsite) twWebsite.stop();
+                isWebsiteBoxActive = false;
+                websiteAnimDoneTime = 0;
+              }
             }
           }
         });
@@ -2221,7 +2234,14 @@
           cursorBlinkTimer = now;
         }
 
-        if (openRatio > 0.5) {
+        // PC screen typewriter is ONLY allowed to type forward IF:
+        // 1. Website creation box is active on screen
+        // 2. Website creation box slide-in animation has ended (now >= websiteAnimDoneTime)
+        // 3. CTA box ("Ready to Automate...") has NOT appeared on screen yet (!isCtaVisible)
+        // 4. Laptop lid is sufficiently open (openRatio > 0.35)
+        const canTypeForward = isWebsiteBoxActive && (websiteAnimDoneTime > 0 && now >= websiteAnimDoneTime) && !isCtaVisible && (openRatio > 0.35);
+
+        if (canTypeForward) {
           if (pcState === 'idle') {
             pcState = 'typing';
             pcLastStepTime = now;
@@ -2251,11 +2271,12 @@
               }
             }
           }
-        } else if (openRatio < 0.45) {
-          // When 3D PC starts closing, immediately erase text as lid bends forward and closes!
+        } else {
+          // Out of active window (scrolled back up OR CTA box appeared OR website anim in progress):
+          // REVERSE IMMEDIATELY from current position down to 0!
           if (pcCharIndex > 0) {
             pcState = 'deleting';
-            if (now - pcLastStepTime > 18) {
+            if (now - pcLastStepTime > 20) {
               pcCharIndex--;
               pcLastStepTime = now;
             }
@@ -2557,11 +2578,14 @@
       const bgCanvasEl = document.getElementById('bg-canvas');
       const bgGridEl = document.querySelector('.bg-grid-overlay');
       const bgGlowWrapperEl = document.querySelector('.ambient-glow-wrapper');
+      const websiteEl = document.getElementById('website');
+      const ctaEl = document.querySelector('.cta-section') || document.querySelector('.cta-panel');
 
       function updateTimeline() {
         const scrollTop = window.scrollY || document.documentElement.scrollTop;
         const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
         const p = maxScroll > 0 ? Math.max(0, Math.min(1, scrollTop / maxScroll)) : 0;
+        const vh = window.innerHeight;
 
         // Darken header backdrop when scrolling content enters underneath
         if (siteHeaderEl) {
@@ -2584,21 +2608,35 @@
           targetOpacity = Math.max(0, 1 - ((p - 0.85) / 0.15));
         }
 
-        // Timeline: Open at 50% (middle of page), close at 100% (end of page)
-        if (p <= 0.25) {
-          targetLidAngle = 0;
-        } else if (p <= 0.50) {
-          const sub = (p - 0.25) / 0.25;
-          targetLidAngle = -1.95 * sub;
-        } else if (p <= 0.75) {
-          targetLidAngle = -1.95;
+        // Check if CTA banner ("Ready to Automate...") is visible on screen
+        if (ctaEl) {
+          const ctaRect = ctaEl.getBoundingClientRect();
+          isCtaVisible = ctaRect.top < vh;
         } else {
-          const sub = (p - 0.75) / 0.25;
-          targetLidAngle = -1.95 * (1 - sub);
+          isCtaVisible = false;
         }
 
-        // Screen Text Triggering (Active around middle of page: 45% -> 60%)
-        textVisible = (p >= 0.45 && p <= 0.60);
+        // 3D PC Lid Motion Sync:
+        // - Opens as website section enters view
+        // - Stays open throughout pipeline section
+        // - Starts closing AS SOON AS CTA box ("Ready to Automate...") appears on screen
+        if (websiteEl && ctaEl) {
+          const webRect = websiteEl.getBoundingClientRect();
+          const ctaRect = ctaEl.getBoundingClientRect();
+
+          if (webRect.top > vh * 0.85) {
+            // Scrolled above website section -> laptop lid is closed
+            targetLidAngle = 0;
+          } else if (ctaRect.top < vh) {
+            // CTA box ("Ready to Automate...") HAS APPEARED! Start closing laptop lid as CTA box enters viewport!
+            const closeRatio = Math.max(0, Math.min(1, (vh - ctaRect.top) / (vh * 0.45)));
+            targetLidAngle = -1.95 * (1 - closeRatio);
+          } else {
+            // Inside website & open pipeline area -> laptop lid is open facing front
+            const openRatio = Math.max(0, Math.min(1, (vh * 0.85 - webRect.top) / (vh * 0.4)));
+            targetLidAngle = -1.95 * openRatio;
+          }
+        }
       }
 
       function lerp(a, b, t) { return a + (b - a) * t; }
