@@ -1753,45 +1753,10 @@
 
 
 
-  <!-- Interactive Pipeline Section -->
+  <!-- Interactive Pipeline Section (Reserved Space for 3D PC Opening & Future Prompt) -->
   <section class="pipeline-section" id="pipeline">
     <div class="container">
-      <div class="glass-panel pipeline-panel reveal">
-        <div class="section-header" style="margin-bottom: 30px;">
-          <span class="section-tag">Interactive Architecture</span>
-          <h2 class="section-title">End-to-End Execution Flow</h2>
-        </div>
-
-        <div class="pipeline-controls">
-          <button class="tab-btn active" onclick="switchTab('doc')">Data Ingestion</button>
-          <button class="tab-btn" onclick="switchTab('sync')">Neural Processing</button>
-          <button class="tab-btn" onclick="switchTab('risk')">Automated Output</button>
-        </div>
-
-        <div class="pipeline-flow" id="pipeline-flow">
-          <div class="node-card active">
-            <div class="node-step">NODE 01</div>
-            <div class="node-title">Raw Telemetry Ingestion</div>
-            <div class="node-desc">Captures enterprise data streams instantly.</div>
-          </div>
-          
-          <div class="flow-connector"></div>
-
-          <div class="node-card active">
-            <div class="node-step">NODE 02</div>
-            <div class="node-title">Neural Logic Engine</div>
-            <div class="node-desc">Applies optimization models in &lt;3ms.</div>
-          </div>
-
-          <div class="flow-connector"></div>
-
-          <div class="node-card active">
-            <div class="node-step">NODE 03</div>
-            <div class="node-title">Zero-Error Execution</div>
-            <div class="node-desc">Triggers automated actions flawlessly.</div>
-          </div>
-        </div>
-
+      <div class="glass-panel pipeline-panel reveal" style="min-height: 480px; display: flex; align-items: center; justify-content: center;">
       </div>
     </div>
   </section>
@@ -2215,54 +2180,7 @@
       setTimeout(updateScrollReveals, 300);
     })();
 
-    /* ==========================================================================
-       INTERACTIVE PIPELINE TAB SWITCHER
-       ========================================================================== */
-    const pipelineData = {
-      doc: [
-        { step: "NODE 01", title: "Raw Telemetry Ingestion", desc: "Captures enterprise data streams instantly." },
-        { step: "NODE 02", title: "Neural Logic Engine", desc: "Applies optimization models in <3ms." },
-        { step: "NODE 03", title: "Zero-Error Execution", desc: "Triggers automated actions flawlessly." }
-      ],
-      sync: [
-        { step: "STAGE A", title: "Pattern Analysis", desc: "Identifies system bottlenecks in real time." },
-        { step: "STAGE B", title: "Autonomous Load Balancing", desc: "Distributes compute power dynamically." },
-        { step: "STAGE C", title: "Real-Time Telemetry", desc: "Updates central dashboard in microseconds." }
-      ],
-      risk: [
-        { step: "SHIELD 1", title: "Threat Detection", desc: "Scans inbound payloads for anomalies." },
-        { step: "SHIELD 2", title: "Automated Remediation", desc: "Isolates breached nodes instantly." },
-        { step: "SHIELD 3", title: "Compliance Proof", desc: "Generates cryptographic audit logs." }
-      ]
-    };
 
-    function switchTab(type) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-
-      const container = document.getElementById('pipeline-flow');
-      const data = pipelineData[type];
-
-      container.innerHTML = `
-        <div class="node-card active">
-          <div class="node-step">${data[0].step}</div>
-          <div class="node-title">${data[0].title}</div>
-          <div class="node-desc">${data[0].desc}</div>
-        </div>
-        <div class="flow-connector"></div>
-        <div class="node-card active">
-          <div class="node-step">${data[1].step}</div>
-          <div class="node-title">${data[1].title}</div>
-          <div class="node-desc">${data[1].desc}</div>
-        </div>
-        <div class="flow-connector"></div>
-        <div class="node-card active">
-          <div class="node-step">${data[2].step}</div>
-          <div class="node-title">${data[2].title}</div>
-          <div class="node-desc">${data[2].desc}</div>
-        </div>
-      `;
-    }
 
     /* ==========================================================================
        THREE.JS WEBGL 3D LAPTOP (EXACT REPLICA OF ASUS TUF GAMING PC)
