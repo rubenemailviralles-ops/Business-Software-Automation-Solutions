@@ -2004,30 +2004,78 @@
           if (heroActionsEl) {
             heroActionsEl.classList.add("visible");
           }
-          // Hold fully typed phrase for 9 seconds, then reverse / delete
-          setTimeout(deleteBackward, holdDuration);
+          // Hold fully typed phrase for 9 seconds, then reverse / delete all lines simultaneously
+          setTimeout(startDeleteBackward, holdDuration);
         }
       }
 
-      function deleteBackward() {
-        if (charIndex > 0) {
-          const targetIndex = charIndex - 1;
-          // Fade out the target character
-          charList[targetIndex].classList.remove("typed");
-          
-          // Position cursor directly at target character so text to the right is already faded out
-          if (cursorEl) {
-            if (targetIndex > 0) {
-              charList[targetIndex - 1].insertAdjacentElement("afterend", cursorEl);
+      function getLineGroups() {
+        const lines = [];
+        let currentLine = [];
+        let lastTop = null;
+
+        charList.forEach(char => {
+          const top = char.offsetTop;
+          if (lastTop === null || Math.abs(top - lastTop) < 6) {
+            currentLine.push(char);
+            if (lastTop === null) lastTop = top;
+          } else {
+            lines.push(currentLine);
+            currentLine = [char];
+            lastTop = top;
+          }
+        });
+        if (currentLine.length > 0) {
+          lines.push(currentLine);
+        }
+        return lines;
+      }
+
+      let reverseStep = 0;
+      let lineGroups = [];
+      let maxLineLength = 0;
+
+      function startDeleteBackward() {
+        lineGroups = getLineGroups();
+        maxLineLength = Math.max(...lineGroups.map(group => group.length));
+        reverseStep = maxLineLength;
+        runSimultaneousDelete();
+      }
+
+      function runSimultaneousDelete() {
+        if (reverseStep > 0) {
+          reverseStep--;
+          const ratio = reverseStep / maxLineLength;
+
+          lineGroups.forEach(group => {
+            const keepCount = Math.round(ratio * group.length);
+            group.forEach((char, idx) => {
+              if (idx < keepCount) {
+                char.classList.add("typed");
+              } else {
+                char.classList.remove("typed");
+              }
+            });
+          });
+
+          // Position cursor at active deletion point of line 1
+          if (cursorEl && lineGroups.length > 0) {
+            const line1 = lineGroups[0];
+            const line1Keep = Math.round(ratio * line1.length);
+            if (line1Keep > 0 && line1[line1Keep - 1]) {
+              line1[line1Keep - 1].insertAdjacentElement("afterend", cursorEl);
             } else {
               textEl.insertBefore(cursorEl, textEl.firstChild);
             }
           }
-          
-          charIndex--;
-          setTimeout(deleteBackward, deleteSpeed);
+
+          setTimeout(runSimultaneousDelete, deleteSpeed);
         } else {
-          // Fully deleted! Pause briefly (400ms) before starting forward typing loop again
+          // Fully deleted! Reset index, position cursor at start, pause 400ms then type forward again
+          charIndex = 0;
+          if (cursorEl) {
+            textEl.insertBefore(cursorEl, textEl.firstChild);
+          }
           setTimeout(typeForward, 400);
         }
       }
