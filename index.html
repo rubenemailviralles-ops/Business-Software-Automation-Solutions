@@ -2148,7 +2148,6 @@
         holdDuration: 9000,
         typeSpeed: 35,
         deleteSpeed: 26,
-        autoStart: true,
         onTyped: () => {
           if (heroActionsEl) heroActionsEl.classList.add("visible");
         }
@@ -2183,7 +2182,8 @@
           if (inVisibleZone) {
             if (!el.classList.contains('active')) {
               el.classList.add('active');
-              // Trigger typewriter restart on-demand when box enters screen!
+              // Trigger typewriter restart on-demand when element enters screen!
+              if (el.id === 'typewriter-text' && twHero) twHero.start();
               if (el.id === 'software' && twSoftware) twSoftware.start();
               if (el.id === 'automation' && twAutomation) twAutomation.start();
               if (el.id === 'website' && twWebsite) twWebsite.start();
@@ -2191,7 +2191,8 @@
           } else {
             if (el.classList.contains('active')) {
               el.classList.remove('active');
-              // Stop & reset typewriter cycle when box leaves screen
+              // Stop & reset typewriter cycle when element leaves screen
+              if (el.id === 'typewriter-text' && twHero) twHero.stop();
               if (el.id === 'software' && twSoftware) twSoftware.stop();
               if (el.id === 'automation' && twAutomation) twAutomation.stop();
               if (el.id === 'website' && twWebsite) twWebsite.stop();
