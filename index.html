@@ -2687,10 +2687,10 @@
           const ctaPanelEl = document.querySelector('.cta-panel') || ctaEl;
           const ctaRect = ctaPanelEl.getBoundingClientRect();
 
-          // Section 03 (Website Creation) is OFF SCREEN when its bottom edge moves past top of viewport (webRect.bottom <= 80)
-          isWebsiteOffScreen = webRect.bottom <= 80;
+          // Section 03 (Website Creation) is OFF SCREEN when its bottom edge moves past top of viewport
+          isWebsiteOffScreen = webRect.bottom <= 60;
 
-          if (webRect.bottom > vh * 0.85) {
+          if (webRect.top > vh * 0.85) {
             // Scrolled above website section -> laptop lid is closed
             targetLidAngle = 0;
             isCtaVisible = false;
@@ -2701,11 +2701,10 @@
             const closeRatio = Math.max(0, Math.min(1, (vh * 0.55 - ctaRect.top) / (vh * 0.40)));
             targetLidAngle = -1.95 * (1 - closeRatio);
           } else {
-            // Slowly open lid as Website Creation block moves up and off screen!
-            // When webRect.bottom is at vh * 0.85 -> openRatio = 0 (lid closed)
-            // When webRect.bottom is <= 80 (off screen) -> openRatio = 1.0 (LID FULLY OPENED!)
+            // Smooth, linear, progressive opening over Section 03 (Website Creation)
+            // As webRect.top moves from vh * 0.85 down to 0, openRatio goes smoothly from 0.0 to 1.0!
             isCtaVisible = false;
-            const openRatio = Math.max(0, Math.min(1, (vh * 0.85 - webRect.bottom) / (vh * 0.85 - 80)));
+            const openRatio = Math.max(0, Math.min(1, (vh * 0.85 - webRect.top) / (vh * 0.85)));
             targetLidAngle = -1.95 * openRatio;
           }
         }
