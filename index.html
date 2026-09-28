@@ -2128,8 +2128,9 @@
     const twWebsite = tagWebsiteEl ? createScrollTypewriter(tagWebsiteEl, "03 // WEBSITE CREATION", { holdDuration: 9000, typeSpeed: 35, deleteSpeed: 26 }) : null;
 
     // Global synchronization flags for 3D PC Typewriter & Lid animations
-    let isWebsiteBoxActive = false;
+    let isWebsiteBoxTriggered = false;
     let websiteAnimDoneTime = 0;
+    let hasWebsiteAnimCompleted = false;
     let isCtaVisible = false;
 
     /* ==========================================================================
@@ -2157,8 +2158,10 @@
               if (el.id === 'automation' && twAutomation) twAutomation.start();
               if (el.id === 'website') {
                 if (twWebsite) twWebsite.start();
-                isWebsiteBoxActive = true;
-                websiteAnimDoneTime = performance.now() + 550; // Wait 550ms for website box slide-in animation to finish!
+                isWebsiteBoxTriggered = true;
+                if (!hasWebsiteAnimCompleted && websiteAnimDoneTime === 0) {
+                  websiteAnimDoneTime = performance.now() + 550; // Wait 550ms for website box slide-in animation to finish!
+                }
               }
             }
           } else {
@@ -2170,8 +2173,6 @@
               if (el.id === 'automation' && twAutomation) twAutomation.stop();
               if (el.id === 'website') {
                 if (twWebsite) twWebsite.stop();
-                isWebsiteBoxActive = false;
-                websiteAnimDoneTime = 0;
               }
             }
           }
@@ -2277,12 +2278,17 @@
           cursorBlinkTimer = now;
         }
 
+        // Check if 550ms website box slide-in animation has finished:
+        if (isWebsiteBoxTriggered && websiteAnimDoneTime > 0 && now >= websiteAnimDoneTime) {
+          hasWebsiteAnimCompleted = true;
+        }
+
         // PC screen typewriter is ONLY allowed to type forward IF:
-        // 1. Website creation box is active on screen
-        // 2. Website creation box slide-in animation has ended (now >= websiteAnimDoneTime)
-        // 3. CTA box ("Ready to Automate...") has NOT appeared on screen yet (!isCtaVisible)
-        // 4. Laptop lid is sufficiently open (openRatio > 0.35)
-        const canTypeForward = isWebsiteBoxActive && (websiteAnimDoneTime > 0 && now >= websiteAnimDoneTime) && !isCtaVisible && (openRatio > 0.35);
+        // 1. Website creation box animation has completed (hasWebsiteAnimCompleted === true)
+        // 2. User has NOT scrolled back up above website section
+        // 3. CTA panel ("Ready to Automate...") has NOT reached close threshold (!isCtaVisible)
+        // 4. Laptop lid is open (openRatio > 0.35)
+        const canTypeForward = hasWebsiteAnimCompleted && !isCtaVisible && (openRatio > 0.35);
 
         if (canTypeForward) {
           if (pcState === 'idle') {
@@ -2677,32 +2683,29 @@
           targetOpacity = Math.max(0, 1 - ((p - 0.85) / 0.15));
         }
 
-        // Check if CTA banner ("Ready to Automate...") is visible on screen
-        if (ctaEl) {
-          const ctaRect = ctaEl.getBoundingClientRect();
-          isCtaVisible = ctaRect.top < vh;
-        } else {
-          isCtaVisible = false;
-        }
-
-        // 3D PC Lid Motion Sync:
-        // - Opens as website section enters view
-        // - Stays open throughout pipeline section
-        // - Starts closing AS SOON AS CTA box ("Ready to Automate...") appears on screen
         if (websiteEl && ctaEl) {
           const webRect = websiteEl.getBoundingClientRect();
-          const ctaRect = ctaEl.getBoundingClientRect();
+          const ctaPanelEl = document.querySelector('.cta-panel') || ctaEl;
+          const ctaRect = ctaPanelEl.getBoundingClientRect();
 
+          // Check if user scrolled BACK UP above website section:
           if (webRect.top > vh * 0.85) {
-            // Scrolled above website section -> laptop lid is closed
+            hasWebsiteAnimCompleted = false;
+            websiteAnimDoneTime = 0;
+            isWebsiteBoxTriggered = false;
             targetLidAngle = 0;
-          } else if (ctaRect.top < vh) {
-            // CTA box ("Ready to Automate...") HAS APPEARED! Start closing laptop lid as CTA box enters viewport!
-            const closeRatio = Math.max(0, Math.min(1, (vh - ctaRect.top) / (vh * 0.45)));
+            isCtaVisible = false;
+          } else if (ctaRect.top <= vh * 0.55) {
+            // CTA panel ("Ready to Automate...") HAS ENTERED SCREEN!
+            isCtaVisible = true;
+            // Smoothly close lid as CTA panel scrolls into view from vh * 0.55 down to vh * 0.15
+            const closeRatio = Math.max(0, Math.min(1, (vh * 0.55 - ctaRect.top) / (vh * 0.40)));
             targetLidAngle = -1.95 * (1 - closeRatio);
           } else {
-            // Inside website & open pipeline area -> laptop lid is open facing front
-            const openRatio = Math.max(0, Math.min(1, (vh * 0.85 - webRect.top) / (vh * 0.4)));
+            // User is inside website or reserved open space (#pipeline)
+            // PC LID STAYS 100% FULLY OPEN facing front!
+            isCtaVisible = false;
+            const openRatio = Math.max(0, Math.min(1, (vh * 0.85 - webRect.top) / (vh * 0.35)));
             targetLidAngle = -1.95 * openRatio;
           }
         }
