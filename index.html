@@ -2227,6 +2227,49 @@
       let cursorBlinkState = true;
       let cursorBlinkTimer = 0;
 
+      // Simultaneous multi-line reverse state variables
+      let pcL1Start = 0;
+      let pcL2Start = 0;
+      let pcL3Start = 0;
+      let pcMaxStartLen = 0;
+      let pcDeleteStep = 0;
+
+      function startSimultaneousPcDelete(now) {
+        pcState = 'deleting';
+        pcLastStepTime = now;
+
+        pcL1Start = Math.min(pcLine1.length, Math.max(0, pcCharIndex));
+        pcL2Start = Math.min(pcLine2.length, Math.max(0, pcCharIndex - pcLine1.length));
+        pcL3Start = Math.min(pcLine3.length, Math.max(0, pcCharIndex - pcLine1.length - pcLine2.length));
+
+        pcMaxStartLen = Math.max(pcL1Start, pcL2Start, pcL3Start);
+        pcDeleteStep = pcMaxStartLen;
+      }
+
+      function runSimultaneousPcDelete(now, allowRestart = true) {
+        if (now - pcLastStepTime > 24) {
+          if (pcDeleteStep > 0) {
+            pcDeleteStep--;
+            pcLastStepTime = now;
+
+            const ratio = pcMaxStartLen > 0 ? (pcDeleteStep / pcMaxStartLen) : 0;
+            const l1Curr = Math.round(ratio * pcL1Start);
+            const l2Curr = Math.round(ratio * pcL2Start);
+            const l3Curr = Math.round(ratio * pcL3Start);
+
+            pcCharIndex = l1Curr + l2Curr + l3Curr;
+          } else {
+            pcCharIndex = 0;
+            if (allowRestart) {
+              pcState = 'typing';
+              pcLastStepTime = now + 350;
+            } else {
+              pcState = 'idle';
+            }
+          }
+        }
+      }
+
       function updatePcScreenTypewriter(openRatio, now) {
         // Toggle cursor blink every 380ms
         if (now - cursorBlinkTimer > 380) {
@@ -2244,6 +2287,7 @@
         if (canTypeForward) {
           if (pcState === 'idle') {
             pcState = 'typing';
+            pcCharIndex = 0;
             pcLastStepTime = now;
           } else if (pcState === 'typing') {
             if (now - pcLastStepTime > 32) {
@@ -2257,28 +2301,19 @@
             }
           } else if (pcState === 'holding') {
             if (now - pcHoldStartTime > 9000) {
-              pcState = 'deleting';
-              pcLastStepTime = now;
+              startSimultaneousPcDelete(now);
             }
           } else if (pcState === 'deleting') {
-            if (now - pcLastStepTime > 24) {
-              if (pcCharIndex > 0) {
-                pcCharIndex--;
-                pcLastStepTime = now;
-              } else {
-                pcState = 'typing';
-                pcLastStepTime = now + 400;
-              }
-            }
+            runSimultaneousPcDelete(now, true);
           }
         } else {
           // Out of active window (scrolled back up OR CTA box appeared OR website anim in progress):
           // REVERSE IMMEDIATELY from current position down to 0!
-          if (pcCharIndex > 0) {
-            pcState = 'deleting';
-            if (now - pcLastStepTime > 20) {
-              pcCharIndex--;
-              pcLastStepTime = now;
+          if (pcCharIndex > 0 || pcState === 'deleting') {
+            if (pcState !== 'deleting') {
+              startSimultaneousPcDelete(now);
+            } else {
+              runSimultaneousPcDelete(now, false);
             }
           } else {
             pcState = 'idle';
@@ -2291,35 +2326,69 @@
         sCtx.fillStyle = '#050811';
         sCtx.fillRect(0, 0, 1024, 640);
 
-        // Calculate character slices for 3 lines
-        const l1Typed = Math.min(pcLine1.length, Math.max(0, pcCharIndex));
-        const l2Typed = Math.min(pcLine2.length, Math.max(0, pcCharIndex - pcLine1.length));
-        const l3Typed = Math.min(pcLine3.length, Math.max(0, pcCharIndex - pcLine1.length - pcLine2.length));
-
-        const str1 = pcLine1.slice(0, l1Typed);
-        const str2 = pcLine2.slice(0, l2Typed);
-        const str3 = pcLine3.slice(0, l3Typed);
-
-        // Main text formatting: Large white font with cyan glow
-        sCtx.font = '700 29px "Plus Jakarta Sans", "Inter", sans-serif';
-        sCtx.fillStyle = '#ffffff';
-        sCtx.textAlign = 'center';
+        let str1 = '', str2 = '', str3 = '';
+        let showCursor1 = false, showCursor2 = false, showCursor3 = false;
 
         const cursorChar = cursorBlinkState ? ' |' : '  ';
 
+        if (pcState === 'deleting' && pcMaxStartLen > 0) {
+          // SIMULTANEOUS MULTI-LINE REVERSE WITH INDIVIDUAL ERASER CURSORS!
+          const ratio = pcMaxStartLen > 0 ? (pcDeleteStep / pcMaxStartLen) : 0;
+          const l1Len = Math.round(ratio * pcL1Start);
+          const l2Len = Math.round(ratio * pcL2Start);
+          const l3Len = Math.round(ratio * pcL3Start);
+
+          str1 = pcLine1.slice(0, l1Len);
+          str2 = pcLine2.slice(0, l2Len);
+          str3 = pcLine3.slice(0, l3Len);
+
+          // All lines that were typed get their own active eraser cursor bar simultaneously!
+          showCursor1 = pcL1Start > 0 && l1Len > 0;
+          showCursor2 = pcL2Start > 0 && l2Len > 0;
+          showCursor3 = pcL3Start > 0 && l3Len > 0;
+        } else {
+          // NORMAL FORWARD TYPING OR HOLDING
+          const l1Typed = Math.min(pcLine1.length, Math.max(0, pcCharIndex));
+          const l2Typed = Math.min(pcLine2.length, Math.max(0, pcCharIndex - pcLine1.length));
+          const l3Typed = Math.min(pcLine3.length, Math.max(0, pcCharIndex - pcLine1.length - pcLine2.length));
+
+          str1 = pcLine1.slice(0, l1Typed);
+          str2 = pcLine2.slice(0, l2Typed);
+          str3 = pcLine3.slice(0, l3Typed);
+
+          if (pcCharIndex <= pcLine1.length) {
+            showCursor1 = pcCharIndex > 0;
+          } else if (pcCharIndex <= pcLine1.length + pcLine2.length) {
+            showCursor2 = true;
+          } else {
+            showCursor3 = true;
+          }
+        }
+
+        // Main text formatting: Larger crisp white font with cyan glow
+        sCtx.font = '700 38px "Plus Jakarta Sans", "Inter", sans-serif';
+        sCtx.fillStyle = '#ffffff';
+        sCtx.textAlign = 'center';
+
         // Line 1
-        sCtx.shadowColor = '#00d2ff';
-        sCtx.shadowBlur = 14;
-        sCtx.fillText(str1 + (pcCharIndex <= pcLine1.length && pcCharIndex > 0 ? cursorChar : ''), 512, 250);
+        if (str1.length > 0 || showCursor1) {
+          sCtx.shadowColor = '#00d2ff';
+          sCtx.shadowBlur = 16;
+          sCtx.fillText(str1 + (showCursor1 ? cursorChar : ''), 512, 230);
+        }
 
         // Line 2
-        if (l2Typed > 0 || pcCharIndex > pcLine1.length) {
-          sCtx.fillText(str2 + (pcCharIndex > pcLine1.length && pcCharIndex <= pcLine1.length + pcLine2.length ? cursorChar : ''), 512, 320);
+        if (str2.length > 0 || showCursor2) {
+          sCtx.shadowColor = '#00d2ff';
+          sCtx.shadowBlur = 16;
+          sCtx.fillText(str2 + (showCursor2 ? cursorChar : ''), 512, 320);
         }
 
         // Line 3
-        if (l3Typed > 0 || pcCharIndex > pcLine1.length + pcLine2.length) {
-          sCtx.fillText(str3 + (pcCharIndex > pcLine1.length + pcLine2.length ? cursorChar : ''), 512, 390);
+        if (str3.length > 0 || showCursor3) {
+          sCtx.shadowColor = '#00d2ff';
+          sCtx.shadowBlur = 16;
+          sCtx.fillText(str3 + (showCursor3 ? cursorChar : ''), 512, 410);
         }
 
         sCtx.shadowBlur = 0;
