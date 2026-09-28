@@ -2195,19 +2195,137 @@
       const container = document.getElementById('laptop-webgl-container');
       const canvas = document.getElementById('laptop-webgl-canvas');
 
-      // 1. Offscreen 2D Canvas for Dynamic CRT Screen & TUF Wallpaper Texture
+      // 1. Offscreen 2D Canvas for Dynamic 3D Laptop Display Screen Texture
       const screenCanvas = document.createElement('canvas');
       screenCanvas.width = 1024;
       screenCanvas.height = 640;
       const sCtx = screenCanvas.getContext('2d');
 
-      let crtProgress = 0; // 0 = off, 0.5 = CRT flare, 1.0 = text visible
-      let textVisible = false;
+      // 3D PC Display Typewriter State Machine
+      const pcLine1 = "in todays competitive business industry ,";
+      const pcLine2 = "you need cutting edge software ,";
+      const pcLine3 = "and online pressence to be competitive!";
+      const pcTotalChars = pcLine1.length + pcLine2.length + pcLine3.length;
+
+      let pcCharIndex = 0;
+      let pcState = 'idle'; // 'idle', 'typing', 'holding', 'deleting'
+      let pcLastStepTime = 0;
+      let pcHoldStartTime = 0;
+      let cursorBlinkState = true;
+      let cursorBlinkTimer = 0;
+
+      function updatePcScreenTypewriter(openRatio, now) {
+        // Toggle cursor blink every 380ms
+        if (now - cursorBlinkTimer > 380) {
+          cursorBlinkState = !cursorBlinkState;
+          cursorBlinkTimer = now;
+        }
+
+        if (openRatio > 0.5) {
+          if (pcState === 'idle') {
+            pcState = 'typing';
+            pcLastStepTime = now;
+          } else if (pcState === 'typing') {
+            if (now - pcLastStepTime > 32) {
+              if (pcCharIndex < pcTotalChars) {
+                pcCharIndex++;
+                pcLastStepTime = now;
+              } else {
+                pcState = 'holding';
+                pcHoldStartTime = now;
+              }
+            }
+          } else if (pcState === 'holding') {
+            if (now - pcHoldStartTime > 9000) {
+              pcState = 'deleting';
+              pcLastStepTime = now;
+            }
+          } else if (pcState === 'deleting') {
+            if (now - pcLastStepTime > 24) {
+              if (pcCharIndex > 0) {
+                pcCharIndex--;
+                pcLastStepTime = now;
+              } else {
+                pcState = 'typing';
+                pcLastStepTime = now + 400;
+              }
+            }
+          }
+        } else if (openRatio < 0.45) {
+          // When 3D PC starts closing, immediately erase text as lid bends forward and closes!
+          if (pcCharIndex > 0) {
+            pcState = 'deleting';
+            if (now - pcLastStepTime > 18) {
+              pcCharIndex--;
+              pcLastStepTime = now;
+            }
+          } else {
+            pcState = 'idle';
+          }
+        }
+      }
 
       function renderScreenTexture() {
-        // Pure dark clean screen glass (no glow, no colors, no scanlines)
-        sCtx.fillStyle = '#080a10';
+        // Deep dark sleek screen glass background
+        sCtx.fillStyle = '#050811';
         sCtx.fillRect(0, 0, 1024, 640);
+
+        // Header Frame on 3D Display
+        sCtx.fillStyle = 'rgba(0, 210, 255, 0.04)';
+        sCtx.fillRect(60, 40, 904, 560);
+        sCtx.strokeStyle = 'rgba(0, 210, 255, 0.22)';
+        sCtx.lineWidth = 2;
+        sCtx.strokeRect(60, 40, 904, 560);
+
+        // Header Badge at top of 3D display
+        sCtx.font = '600 17px "Plus Jakarta Sans", "Inter", monospace';
+        sCtx.fillStyle = '#00d2ff';
+        sCtx.textAlign = 'center';
+        sCtx.shadowColor = '#00d2ff';
+        sCtx.shadowBlur = 10;
+        sCtx.fillText('SYSTEM // AUTONOMOUS DISPLAY', 512, 90);
+
+        // Glowing divider line
+        sCtx.beginPath();
+        sCtx.moveTo(120, 115);
+        sCtx.lineTo(904, 115);
+        sCtx.strokeStyle = 'rgba(0, 210, 255, 0.3)';
+        sCtx.lineWidth = 1;
+        sCtx.stroke();
+        sCtx.shadowBlur = 0;
+
+        // Calculate character slices for 3 lines
+        const l1Typed = Math.min(pcLine1.length, Math.max(0, pcCharIndex));
+        const l2Typed = Math.min(pcLine2.length, Math.max(0, pcCharIndex - pcLine1.length));
+        const l3Typed = Math.min(pcLine3.length, Math.max(0, pcCharIndex - pcLine1.length - pcLine2.length));
+
+        const str1 = pcLine1.slice(0, l1Typed);
+        const str2 = pcLine2.slice(0, l2Typed);
+        const str3 = pcLine3.slice(0, l3Typed);
+
+        // Main text formatting: Large white font with cyan glow
+        sCtx.font = '700 27px "Plus Jakarta Sans", "Inter", sans-serif';
+        sCtx.fillStyle = '#ffffff';
+        sCtx.textAlign = 'center';
+
+        const cursorChar = cursorBlinkState ? ' |' : '  ';
+
+        // Line 1
+        sCtx.shadowColor = '#00d2ff';
+        sCtx.shadowBlur = 14;
+        sCtx.fillText(str1 + (pcCharIndex <= pcLine1.length && pcCharIndex > 0 ? cursorChar : ''), 512, 235);
+
+        // Line 2
+        if (l2Typed > 0 || pcCharIndex > pcLine1.length) {
+          sCtx.fillText(str2 + (pcCharIndex > pcLine1.length && pcCharIndex <= pcLine1.length + pcLine2.length ? cursorChar : ''), 512, 315);
+        }
+
+        // Line 3
+        if (l3Typed > 0 || pcCharIndex > pcLine1.length + pcLine2.length) {
+          sCtx.fillText(str3 + (pcCharIndex > pcLine1.length + pcLine2.length ? cursorChar : ''), 512, 395);
+        }
+
+        sCtx.shadowBlur = 0;
       }
 
       const screenTexture = new THREE.CanvasTexture(screenCanvas);
@@ -2536,6 +2654,9 @@
 
         container.style.opacity = currentOpacity.toFixed(3);
         lidPivot.rotation.x = currentLidAngle;
+
+        // Update 3D PC screen typewriter state based on current open angle & time
+        updatePcScreenTypewriter(openRatio, performance.now());
 
         renderScreenTexture();
         screenTexture.needsUpdate = true;
