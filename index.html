@@ -868,7 +868,7 @@
       margin: 0;
       opacity: 0;
       transform: translateY(14px);
-      transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.25s ease-out, transform 0.25s ease-out;
       transition-delay: 0s;
       will-change: opacity, transform;
     }
@@ -876,6 +876,7 @@
     .service-block.active .service-block-copy {
       opacity: 1;
       transform: translateY(0);
+      transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
       transition-delay: 0.35s;
     }
 
@@ -883,7 +884,7 @@
       flex-shrink: 0;
       opacity: 0;
       transform: translateY(14px);
-      transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.22s ease-out, transform 0.22s ease-out;
       transition-delay: 0s;
       will-change: opacity, transform;
     }
@@ -891,7 +892,8 @@
     .service-block.active .service-block-actions {
       opacity: 1;
       transform: translateY(0);
-      transition-delay: 0.48s;
+      transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: 0.45s;
     }
 
     .feature-icon-box {
@@ -1199,24 +1201,28 @@
       opacity: 0;
       transform: translateX(-120px) scale(0.95);
       transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: 0.18s;
       will-change: opacity, transform;
     }
 
     .reveal-left.active {
       opacity: 1;
       transform: translateX(0) scale(1);
+      transition-delay: 0s;
     }
 
     .reveal-right {
       opacity: 0;
       transform: translateX(120px) scale(0.95);
       transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: 0.18s;
       will-change: opacity, transform;
     }
 
     .reveal-right.active {
       opacity: 1;
       transform: translateX(0) scale(1);
+      transition-delay: 0s;
     }
 
     /* ==========================================================================
