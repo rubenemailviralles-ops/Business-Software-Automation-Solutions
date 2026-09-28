@@ -610,8 +610,7 @@
       will-change: opacity, transform;
     }
 
-    .hero-actions.active .hero-btn-book,
-    .hero-actions.visible .hero-btn-book {
+    .hero-actions.active .hero-btn-book {
       opacity: 1;
       transform: translateX(0);
     }
@@ -624,8 +623,7 @@
       will-change: opacity, transform;
     }
 
-    .hero-actions.active .hero-btn-contact,
-    .hero-actions.visible .hero-btn-contact {
+    .hero-actions.active .hero-btn-contact {
       opacity: 1;
       transform: translateX(0);
     }
@@ -2147,10 +2145,7 @@
       twHero = createScrollTypewriter(heroSubtitleEl, "empower you bussiness software and automation that will make your life easier!", {
         holdDuration: 9000,
         typeSpeed: 35,
-        deleteSpeed: 26,
-        onTyped: () => {
-          if (heroActionsEl) heroActionsEl.classList.add("visible");
-        }
+        deleteSpeed: 26
       });
     }
 
