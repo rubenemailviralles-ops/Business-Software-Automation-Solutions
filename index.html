@@ -2355,30 +2355,45 @@
           }
         }
 
-        // Main text formatting: Larger crisp white font with cyan glow
+        // Main text formatting: 38px font with cyan glow
         sCtx.font = '700 38px "Plus Jakarta Sans", "Inter", sans-serif';
         sCtx.fillStyle = '#ffffff';
-        sCtx.textAlign = 'center';
+        sCtx.textAlign = 'left'; // Fixed left-aligned reveal from centered baseline so words never shift!
 
-        // Line 1
-        if (str1.length > 0 || showCursor1) {
-          sCtx.shadowColor = '#00d2ff';
-          sCtx.shadowBlur = 16;
-          sCtx.fillText(str1 + (showCursor1 ? cursorChar : ''), 512, 230);
+        sCtx.shadowColor = '#00d2ff';
+        sCtx.shadowBlur = 16;
+
+        // Line 1 (Fixed position centered around X = 512)
+        const fullWidth1 = sCtx.measureText(pcLine1).width;
+        const startX1 = 512 - (fullWidth1 / 2);
+        if (str1.length > 0) {
+          sCtx.fillText(str1, startX1, 230);
+        }
+        if (showCursor1) {
+          const typedW1 = sCtx.measureText(str1).width;
+          sCtx.fillText(cursorChar, startX1 + typedW1, 230);
         }
 
-        // Line 2
-        if (str2.length > 0 || showCursor2) {
-          sCtx.shadowColor = '#00d2ff';
-          sCtx.shadowBlur = 16;
-          sCtx.fillText(str2 + (showCursor2 ? cursorChar : ''), 512, 320);
+        // Line 2 (Fixed position centered around X = 512)
+        const fullWidth2 = sCtx.measureText(pcLine2).width;
+        const startX2 = 512 - (fullWidth2 / 2);
+        if (str2.length > 0) {
+          sCtx.fillText(str2, startX2, 320);
+        }
+        if (showCursor2) {
+          const typedW2 = sCtx.measureText(str2).width;
+          sCtx.fillText(cursorChar, startX2 + typedW2, 320);
         }
 
-        // Line 3
-        if (str3.length > 0 || showCursor3) {
-          sCtx.shadowColor = '#00d2ff';
-          sCtx.shadowBlur = 16;
-          sCtx.fillText(str3 + (showCursor3 ? cursorChar : ''), 512, 410);
+        // Line 3 (Fixed position centered around X = 512)
+        const fullWidth3 = sCtx.measureText(pcLine3).width;
+        const startX3 = 512 - (fullWidth3 / 2);
+        if (str3.length > 0) {
+          sCtx.fillText(str3, startX3, 410);
+        }
+        if (showCursor3) {
+          const typedW3 = sCtx.measureText(str3).width;
+          sCtx.fillText(cursorChar, startX3 + typedW3, 410);
         }
 
         sCtx.shadowBlur = 0;
