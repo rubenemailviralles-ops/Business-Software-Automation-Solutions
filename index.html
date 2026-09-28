@@ -540,12 +540,15 @@
       max-width: 950px;
       margin: 0 auto 24px;
       opacity: 0;
-      transition: opacity 0.8s ease-in-out;
-      will-change: opacity;
+      transform: translateY(20px);
+      transition: opacity 0.75s ease-out, transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
     }
 
+    .hero-title.active,
     .hero-title.visible {
       opacity: 1;
+      transform: translateY(0);
     }
 
     .hero-subtitle {
@@ -1639,7 +1642,7 @@
   <!-- Hero Section -->
   <section class="hero">
     <div class="container">
-      <h1 class="hero-title">
+      <h1 class="hero-title reveal">
         software and <span class="text-gradient">automation solutions</span>
       </h1>
 
@@ -1847,13 +1850,11 @@
       window.scrollTo(0, 0);
     });
 
-    // Smoothly fade in hero title on fresh load and page refresh
+    // Smoothly trigger hero scroll reveals on fresh load and page refresh
     function triggerTitleFadeIn() {
-      const titleEl = document.querySelector('.hero-title');
-      if (titleEl) titleEl.classList.add('visible');
+      if (typeof updateScrollReveals === 'function') updateScrollReveals();
     }
     window.addEventListener('DOMContentLoaded', triggerTitleFadeIn);
-    setTimeout(triggerTitleFadeIn, 120);
 
     /* ==========================================================================
        CANVAS BACKGROUND ANIMATION (Floating Particles & Dark Blue Mesh Network)
@@ -2180,6 +2181,7 @@
 
         isTicking = false;
       }
+      window.updateScrollReveals = updateScrollReveals;
 
       function requestTick() {
         if (!isTicking) {
