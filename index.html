@@ -2034,11 +2034,21 @@
       let reverseStep = 0;
       let lineGroups = [];
       let maxLineLength = 0;
+      let lineCursors = [];
 
       function startDeleteBackward() {
         lineGroups = getLineGroups();
         maxLineLength = Math.max(...lineGroups.map(group => group.length));
         reverseStep = maxLineLength;
+
+        // Equip every line with its own erasing cursor bar during simultaneous reverse deletion
+        lineCursors = lineGroups.map((_, idx) => {
+          if (idx === 0 && cursorEl) return cursorEl;
+          const clone = document.createElement("span");
+          clone.className = "typewriter-cursor sim-reverse-cursor";
+          return clone;
+        });
+
         runSimultaneousDelete();
       }
 
@@ -2047,7 +2057,7 @@
           reverseStep--;
           const ratio = reverseStep / maxLineLength;
 
-          lineGroups.forEach(group => {
+          lineGroups.forEach((group, lineIdx) => {
             const keepCount = Math.round(ratio * group.length);
             group.forEach((char, idx) => {
               if (idx < keepCount) {
@@ -2056,22 +2066,28 @@
                 char.classList.remove("typed");
               }
             });
-          });
 
-          // Position cursor at active deletion point of line 1
-          if (cursorEl && lineGroups.length > 0) {
-            const line1 = lineGroups[0];
-            const line1Keep = Math.round(ratio * line1.length);
-            if (line1Keep > 0 && line1[line1Keep - 1]) {
-              line1[line1Keep - 1].insertAdjacentElement("afterend", cursorEl);
-            } else {
-              textEl.insertBefore(cursorEl, textEl.firstChild);
+            // Position each line's cursor right at its active erasing point
+            const lineCursor = lineCursors[lineIdx];
+            if (lineCursor) {
+              if (keepCount > 0 && group[keepCount - 1]) {
+                group[keepCount - 1].insertAdjacentElement("afterend", lineCursor);
+              } else if (group[0]) {
+                group[0].insertAdjacentElement("beforebegin", lineCursor);
+              }
             }
-          }
+          });
 
           setTimeout(runSimultaneousDelete, deleteSpeed);
         } else {
-          // Fully deleted! Reset index, position cursor at start, pause 400ms then type forward again
+          // Fully deleted! Clean up cloned cursors and reset main cursor to top-left
+          lineCursors.forEach((c, idx) => {
+            if (idx > 0 && c.parentNode) {
+              c.parentNode.removeChild(c);
+            }
+          });
+          lineCursors = [];
+
           charIndex = 0;
           if (cursorEl) {
             textEl.insertBefore(cursorEl, textEl.firstChild);
