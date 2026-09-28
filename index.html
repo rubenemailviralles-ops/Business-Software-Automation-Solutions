@@ -600,14 +600,34 @@
       gap: 20px;
       margin-bottom: 60px;
       flex-wrap: wrap;
-      opacity: 0;
-      transition: opacity 0.8s ease-in-out;
-      pointer-events: none;
     }
 
-    .hero-actions.visible {
+    /* Book Consultation Button: Slide Right on Enter (-60px -> 0), Slide Left on Exit (0 -> -60px) */
+    .hero-btn-book {
+      opacity: 0;
+      transform: translateX(-60px);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+
+    .hero-actions.active .hero-btn-book,
+    .hero-actions.visible .hero-btn-book {
       opacity: 1;
-      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    /* Get in Contact Button: Slide Left on Enter (60px -> 0), Slide Right on Exit (0 -> 60px) */
+    .hero-btn-contact {
+      opacity: 0;
+      transform: translateX(60px);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+
+    .hero-actions.active .hero-btn-contact,
+    .hero-actions.visible .hero-btn-contact {
+      opacity: 1;
+      transform: translateX(0);
     }
 
     /* Hero Dashboard Visual */
@@ -1649,12 +1669,12 @@
       <p class="hero-subtitle reveal" id="typewriter-text">
       </p>
 
-      <div class="hero-actions">
-        <a href="#cta" class="btn btn-primary">
+      <div class="hero-actions reveal">
+        <a href="#cta" class="btn btn-primary hero-btn-book">
           Book Consultation
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
         </a>
-        <a href="#features" class="btn btn-metallic">
+        <a href="#features" class="btn btn-metallic hero-btn-contact">
           Get in Contact
         </a>
       </div>
