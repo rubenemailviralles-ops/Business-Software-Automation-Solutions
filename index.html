@@ -2270,9 +2270,9 @@
 
         // PC screen typewriter is ONLY allowed to type forward IF:
         // 1. Website creation block is OFF SCREEN (isWebsiteOffScreen === true)
-        // 2. Laptop lid is open (openRatio > 0.65)
+        // 2. Laptop lid is FULLY OPENED (openRatio > 0.85)
         // 3. CTA panel ("Ready to Automate...") has NOT reached close threshold (!isCtaVisible)
-        const canTypeForward = isWebsiteOffScreen && !isCtaVisible && (openRatio > 0.65);
+        const canTypeForward = isWebsiteOffScreen && !isCtaVisible && (openRatio > 0.85);
 
         if (canTypeForward) {
           if (pcState === 'idle') {
@@ -2687,8 +2687,8 @@
           const ctaPanelEl = document.querySelector('.cta-panel') || ctaEl;
           const ctaRect = ctaPanelEl.getBoundingClientRect();
 
-          // Section 03 (Website Creation) is OFF SCREEN as soon as it fades out of the visible screen area (webRect.bottom <= vh * 0.32)
-          isWebsiteOffScreen = webRect.bottom <= vh * 0.32;
+          // Section 03 (Website Creation) is OFF SCREEN the exact moment its bottom edge disappears past top of viewport (webRect.bottom <= 0)
+          isWebsiteOffScreen = webRect.bottom <= 0;
 
           if (webRect.top > vh * 0.85) {
             // Scrolled above website section -> laptop lid is closed
@@ -2702,9 +2702,9 @@
             targetLidAngle = -1.95 * (1 - closeRatio);
           } else {
             // Smooth, linear, progressive opening over Section 03 (Website Creation)
-            // As webRect.top moves from vh * 0.85 down to 0, openRatio goes smoothly from 0.0 to 1.0!
+            // As webRect.bottom moves from vh * 0.85 down to 0, openRatio goes smoothly from 0.0 to 1.0!
             isCtaVisible = false;
-            const openRatio = Math.max(0, Math.min(1, (vh * 0.85 - webRect.top) / (vh * 0.85)));
+            const openRatio = Math.max(0, Math.min(1, (vh * 0.85 - webRect.bottom) / (vh * 0.85)));
             targetLidAngle = -1.95 * openRatio;
           }
         }
