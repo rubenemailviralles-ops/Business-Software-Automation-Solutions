@@ -1957,18 +1957,19 @@
     })();
 
     /* ==========================================================================
-       HERO SUBTITLE TYPEWRITER EFFECT (Continuous 9-Second Loop & Zero Layout Shift)
+       TYPEWRITER ENGINE FUNCTION (Continuous 9-Second Loop & Multi-line Synchronized Reversal)
        ========================================================================== */
-    (function () {
-      const targetText = "empower you bussiness software and automation that will make your life easier!";
-      const textEl = document.getElementById("typewriter-text");
-      const cursorEl = document.querySelector(".typewriter-cursor");
-      const heroActionsEl = document.querySelector(".hero-actions");
-      if (!textEl) return;
+    function runTypewriterOnElement(targetEl, initialText = null, options = {}) {
+      if (!targetEl) return;
+      const targetText = initialText || targetEl.textContent.trim();
+      const typeSpeed = options.typeSpeed || 35;
+      const deleteSpeed = options.deleteSpeed || 26;
+      const holdDuration = options.holdDuration || 9000;
+      const onTypedCallback = options.onTyped || null;
 
-      // Pre-wrap words and characters so paragraph layout & wrapping are 100% fixed on page load
+      // Pre-wrap words and characters so layout & wrapping are 100% fixed on page load
       const words = targetText.split(" ");
-      let html = "";
+      let html = `<span class="tw-text-wrap">`;
       words.forEach((word, wIdx) => {
         html += `<span class="tw-word">`;
         for (let i = 0; i < word.length; i++) {
@@ -1979,32 +1980,29 @@
           html += `<span class="tw-char">&nbsp;</span>`;
         }
       });
-      textEl.innerHTML = html;
+      html += `</span><span class="typewriter-cursor"></span>`;
+      targetEl.innerHTML = html;
 
-      const charList = textEl.querySelectorAll(".tw-char");
-      if (charList.length > 0 && cursorEl) {
-        textEl.insertBefore(cursorEl, textEl.firstChild);
+      const textWrap = targetEl.querySelector(".tw-text-wrap");
+      const mainCursorEl = targetEl.querySelector(".typewriter-cursor");
+      const charList = targetEl.querySelectorAll(".tw-char");
+
+      if (charList.length > 0 && mainCursorEl) {
+        textWrap.insertBefore(mainCursorEl, textWrap.firstChild);
       }
 
       let charIndex = 0;
-      const typeSpeed = 35;      // Forward typing speed per character (ms)
-      const deleteSpeed = 26;    // Backward deleting speed per character (ms)
-      const holdDuration = 9000; // Hold for 9 seconds after full phrase typed
 
       function typeForward() {
         if (charIndex < charList.length) {
           charList[charIndex].classList.add("typed");
-          if (cursorEl) {
-            charList[charIndex].insertAdjacentElement("afterend", cursorEl);
+          if (mainCursorEl) {
+            charList[charIndex].insertAdjacentElement("afterend", mainCursorEl);
           }
           charIndex++;
           setTimeout(typeForward, typeSpeed);
         } else {
-          // Fully typed! Fade in hero buttons if not already visible
-          if (heroActionsEl) {
-            heroActionsEl.classList.add("visible");
-          }
-          // Hold fully typed phrase for 9 seconds, then reverse / delete all lines simultaneously
+          if (onTypedCallback) onTypedCallback();
           setTimeout(startDeleteBackward, holdDuration);
         }
       }
@@ -2043,7 +2041,7 @@
 
         // Equip every line with its own erasing cursor bar during simultaneous reverse deletion
         lineCursors = lineGroups.map((_, idx) => {
-          if (idx === 0 && cursorEl) return cursorEl;
+          if (idx === 0 && mainCursorEl) return mainCursorEl;
           const clone = document.createElement("span");
           clone.className = "typewriter-cursor sim-reverse-cursor";
           return clone;
@@ -2080,7 +2078,7 @@
 
           setTimeout(runSimultaneousDelete, deleteSpeed);
         } else {
-          // Fully deleted! Clean up cloned cursors and reset main cursor to top-left
+          // Fully deleted! Clean up cloned cursors and reset main cursor to start
           lineCursors.forEach((c, idx) => {
             if (idx > 0 && c.parentNode) {
               c.parentNode.removeChild(c);
@@ -2089,15 +2087,48 @@
           lineCursors = [];
 
           charIndex = 0;
-          if (cursorEl) {
-            textEl.insertBefore(cursorEl, textEl.firstChild);
+          if (mainCursorEl) {
+            textWrap.insertBefore(mainCursorEl, textWrap.firstChild);
           }
           setTimeout(typeForward, 400);
         }
       }
 
-      setTimeout(typeForward, 450);
-    })();
+      setTimeout(typeForward, options.delay || 450);
+    }
+
+    // 1. Initialize Hero Subtitle Typewriter
+    const heroSubtitleEl = document.getElementById("typewriter-text");
+    const heroActionsEl = document.querySelector(".hero-actions");
+    if (heroSubtitleEl) {
+      runTypewriterOnElement(heroSubtitleEl, "empower you bussiness software and automation that will make your life easier!", {
+        holdDuration: 9000,
+        typeSpeed: 35,
+        deleteSpeed: 26,
+        delay: 450,
+        onTyped: () => {
+          if (heroActionsEl) heroActionsEl.classList.add("visible");
+        }
+      });
+    }
+
+    // 2. Initialize Service Block 01 Tag Typewriter (Software Development)
+    const tagSoftwareEl = document.querySelector("#software .section-tag");
+    if (tagSoftwareEl) {
+      runTypewriterOnElement(tagSoftwareEl, "01 // SOFTWARE DEVELOPMENT", { holdDuration: 9000, typeSpeed: 35, deleteSpeed: 26, delay: 500 });
+    }
+
+    // 3. Initialize Service Block 02 Tag Typewriter (Business Automation)
+    const tagAutomationEl = document.querySelector("#automation .section-tag");
+    if (tagAutomationEl) {
+      runTypewriterOnElement(tagAutomationEl, "02 // BUSINESS AUTOMATION", { holdDuration: 9000, typeSpeed: 35, deleteSpeed: 26, delay: 500 });
+    }
+
+    // 4. Initialize Service Block 03 Tag Typewriter (Website Creation)
+    const tagWebsiteEl = document.querySelector("#website .section-tag");
+    if (tagWebsiteEl) {
+      runTypewriterOnElement(tagWebsiteEl, "03 // WEBSITE CREATION", { holdDuration: 9000, typeSpeed: 35, deleteSpeed: 26, delay: 500 });
+    }
 
     /* ==========================================================================
        INTERACTIVE PIPELINE TAB SWITCHER
