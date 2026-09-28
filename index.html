@@ -2693,12 +2693,12 @@
             // Scrolled above website section -> laptop lid is closed
             targetLidAngle = 0;
             isCtaVisible = false;
-          } else if (ctaRect.top <= vh * 0.55) {
-            // CTA panel ("Ready to Automate...") HAS ENTERED SCREEN!
-            isCtaVisible = true;
-            // Smoothly close lid as CTA panel scrolls into view from vh * 0.55 down to vh * 0.15
-            const closeRatio = Math.max(0, Math.min(1, (vh * 0.55 - ctaRect.top) / (vh * 0.40)));
+          } else if (ctaRect.top <= vh * 0.85) {
+            // CTA panel ("Ready to Automate...") is entering lower screen!
+            // Start closing lid at vh * 0.85, and reach 100% COMPLETELY CLOSED by vh * 0.55 (BEFORE CTA reaches PC center)!
+            const closeRatio = Math.max(0, Math.min(1, (vh * 0.85 - ctaRect.top) / (vh * 0.30)));
             targetLidAngle = -1.95 * (1 - closeRatio);
+            isCtaVisible = closeRatio > 0.1;
           } else {
             // Smooth, linear, progressive opening over Section 03 (Website Creation)
             // As webRect.bottom moves from vh * 0.85 down to 0, openRatio goes smoothly from 0.0 to 1.0!
