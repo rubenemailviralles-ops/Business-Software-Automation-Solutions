@@ -9,7 +9,7 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Fira+Code:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- Three.js 3D WebGL Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -2238,7 +2238,7 @@
       }
 
       function runSimultaneousPcDelete(now, allowRestart = true) {
-        if (now - pcLastStepTime > 24) {
+        if (now - pcLastStepTime > 12) {
           if (pcDeleteStep > 0) {
             pcDeleteStep--;
             pcLastStepTime = now;
@@ -2253,7 +2253,7 @@
             pcCharIndex = 0;
             if (allowRestart) {
               pcState = 'typing';
-              pcLastStepTime = now + 350;
+              pcLastStepTime = now + 250;
             } else {
               pcState = 'idle';
             }
@@ -2262,8 +2262,8 @@
       }
 
       function updatePcScreenTypewriter(openRatio, now) {
-        // Toggle cursor blink every 380ms
-        if (now - cursorBlinkTimer > 380) {
+        // Toggle cursor blink every 280ms
+        if (now - cursorBlinkTimer > 280) {
           cursorBlinkState = !cursorBlinkState;
           cursorBlinkTimer = now;
         }
@@ -2280,7 +2280,7 @@
             pcCharIndex = 0;
             pcLastStepTime = now;
           } else if (pcState === 'typing') {
-            if (now - pcLastStepTime > 32) {
+            if (now - pcLastStepTime > 16) {
               if (pcCharIndex < pcTotalChars) {
                 pcCharIndex++;
                 pcLastStepTime = now;
@@ -2355,8 +2355,8 @@
           }
         }
 
-        // Main text formatting: 38px font with cyan glow
-        sCtx.font = '700 38px "Plus Jakarta Sans", "Inter", sans-serif';
+        // Main text formatting: Robotic Code Font (Space Mono) with cyan glow
+        sCtx.font = '700 33px "Space Mono", "Fira Code", "Consolas", "Courier New", monospace';
         sCtx.fillStyle = '#ffffff';
         sCtx.textAlign = 'left'; // Fixed left-aligned reveal from centered baseline so words never shift!
 
