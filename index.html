@@ -2269,10 +2269,9 @@
         }
 
         // PC screen typewriter is ONLY allowed to type forward IF:
-        // 1. Website creation block is OFF SCREEN (isWebsiteOffScreen === true)
-        // 2. Laptop lid is FULLY OPENED (openRatio > 0.85)
-        // 3. CTA panel ("Ready to Automate...") has NOT reached close threshold (!isCtaVisible)
-        const canTypeForward = isWebsiteOffScreen && !isCtaVisible && (openRatio > 0.85);
+        // 1. Website creation block has faded/slided out of screen (isWebsiteOffScreen === true)
+        // 2. CTA panel ("Ready to Automate...") has NOT reached close threshold (!isCtaVisible)
+        const canTypeForward = isWebsiteOffScreen && !isCtaVisible;
 
         if (canTypeForward) {
           if (pcState === 'idle') {
@@ -2687,8 +2686,8 @@
           const ctaPanelEl = document.querySelector('.cta-panel') || ctaEl;
           const ctaRect = ctaPanelEl.getBoundingClientRect();
 
-          // Section 03 (Website Creation) is OFF SCREEN the exact moment its bottom edge disappears past top of viewport (webRect.bottom <= 0)
-          isWebsiteOffScreen = webRect.bottom <= 0;
+          // Section 03 (Website Creation) is OFF SCREEN as soon as it fades/slides out of view (webRect.bottom <= vh * 0.15)
+          isWebsiteOffScreen = webRect.bottom <= vh * 0.15;
 
           if (webRect.top > vh * 0.85) {
             // Scrolled above website section -> laptop lid is closed
