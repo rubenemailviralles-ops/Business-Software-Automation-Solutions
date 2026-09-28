@@ -2270,30 +2270,6 @@
         sCtx.fillStyle = '#050811';
         sCtx.fillRect(0, 0, 1024, 640);
 
-        // Header Frame on 3D Display
-        sCtx.fillStyle = 'rgba(0, 210, 255, 0.04)';
-        sCtx.fillRect(60, 40, 904, 560);
-        sCtx.strokeStyle = 'rgba(0, 210, 255, 0.22)';
-        sCtx.lineWidth = 2;
-        sCtx.strokeRect(60, 40, 904, 560);
-
-        // Header Badge at top of 3D display
-        sCtx.font = '600 17px "Plus Jakarta Sans", "Inter", monospace';
-        sCtx.fillStyle = '#00d2ff';
-        sCtx.textAlign = 'center';
-        sCtx.shadowColor = '#00d2ff';
-        sCtx.shadowBlur = 10;
-        sCtx.fillText('SYSTEM // AUTONOMOUS DISPLAY', 512, 90);
-
-        // Glowing divider line
-        sCtx.beginPath();
-        sCtx.moveTo(120, 115);
-        sCtx.lineTo(904, 115);
-        sCtx.strokeStyle = 'rgba(0, 210, 255, 0.3)';
-        sCtx.lineWidth = 1;
-        sCtx.stroke();
-        sCtx.shadowBlur = 0;
-
         // Calculate character slices for 3 lines
         const l1Typed = Math.min(pcLine1.length, Math.max(0, pcCharIndex));
         const l2Typed = Math.min(pcLine2.length, Math.max(0, pcCharIndex - pcLine1.length));
@@ -2304,7 +2280,7 @@
         const str3 = pcLine3.slice(0, l3Typed);
 
         // Main text formatting: Large white font with cyan glow
-        sCtx.font = '700 27px "Plus Jakarta Sans", "Inter", sans-serif';
+        sCtx.font = '700 29px "Plus Jakarta Sans", "Inter", sans-serif';
         sCtx.fillStyle = '#ffffff';
         sCtx.textAlign = 'center';
 
@@ -2313,16 +2289,16 @@
         // Line 1
         sCtx.shadowColor = '#00d2ff';
         sCtx.shadowBlur = 14;
-        sCtx.fillText(str1 + (pcCharIndex <= pcLine1.length && pcCharIndex > 0 ? cursorChar : ''), 512, 235);
+        sCtx.fillText(str1 + (pcCharIndex <= pcLine1.length && pcCharIndex > 0 ? cursorChar : ''), 512, 250);
 
         // Line 2
         if (l2Typed > 0 || pcCharIndex > pcLine1.length) {
-          sCtx.fillText(str2 + (pcCharIndex > pcLine1.length && pcCharIndex <= pcLine1.length + pcLine2.length ? cursorChar : ''), 512, 315);
+          sCtx.fillText(str2 + (pcCharIndex > pcLine1.length && pcCharIndex <= pcLine1.length + pcLine2.length ? cursorChar : ''), 512, 320);
         }
 
         // Line 3
         if (l3Typed > 0 || pcCharIndex > pcLine1.length + pcLine2.length) {
-          sCtx.fillText(str3 + (pcCharIndex > pcLine1.length + pcLine2.length ? cursorChar : ''), 512, 395);
+          sCtx.fillText(str3 + (pcCharIndex > pcLine1.length + pcLine2.length ? cursorChar : ''), 512, 390);
         }
 
         sCtx.shadowBlur = 0;
