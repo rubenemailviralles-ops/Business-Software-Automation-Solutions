@@ -1913,54 +1913,10 @@
     animate();
 
     /* ==========================================================================
-       SCROLL REVEAL ANIMATIONS (Bidirectional Visible Fade-In & Fade-Out)
+       TYPEWRITER ENGINE FACTORY (Scroll-Triggered On-Demand & Reset)
        ========================================================================== */
-    (function () {
-      const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
-      let isTicking = false;
-
-      function updateScrollReveals() {
-        const vh = window.innerHeight;
-        // 22% top and bottom viewport buffer zones
-        // Elements in top 22% or bottom 22% fade/slide out prominently before leaving screen
-        const topBuffer = vh * 0.22;
-        const bottomBuffer = vh * 0.22;
-
-        revealElements.forEach(el => {
-          const rect = el.getBoundingClientRect();
-          const inVisibleZone = rect.top < (vh - bottomBuffer) && rect.bottom > topBuffer;
-
-          if (inVisibleZone) {
-            el.classList.add('active');
-          } else {
-            el.classList.remove('active');
-          }
-        });
-
-        isTicking = false;
-      }
-
-      function requestTick() {
-        if (!isTicking) {
-          requestAnimationFrame(updateScrollReveals);
-          isTicking = true;
-        }
-      }
-
-      window.addEventListener('scroll', requestTick, { passive: true });
-      window.addEventListener('resize', requestTick, { passive: true });
-
-      // Run initial checks on load and DOM ready
-      updateScrollReveals();
-      setTimeout(updateScrollReveals, 100);
-      setTimeout(updateScrollReveals, 300);
-    })();
-
-    /* ==========================================================================
-       TYPEWRITER ENGINE FUNCTION (Continuous 9-Second Loop & Multi-line Synchronized Reversal)
-       ========================================================================== */
-    function runTypewriterOnElement(targetEl, initialText = null, options = {}) {
-      if (!targetEl) return;
+    function createScrollTypewriter(targetEl, initialText = null, options = {}) {
+      if (!targetEl) return null;
       const targetText = initialText || targetEl.textContent.trim();
       const typeSpeed = options.typeSpeed || 35;
       const deleteSpeed = options.deleteSpeed || 26;
@@ -1992,6 +1948,15 @@
       }
 
       let charIndex = 0;
+      let timerId = null;
+      let isRunning = false;
+
+      function clearTimer() {
+        if (timerId) {
+          clearTimeout(timerId);
+          timerId = null;
+        }
+      }
 
       function typeForward() {
         if (charIndex < charList.length) {
@@ -2000,10 +1965,10 @@
             charList[charIndex].insertAdjacentElement("afterend", mainCursorEl);
           }
           charIndex++;
-          setTimeout(typeForward, typeSpeed);
+          timerId = setTimeout(typeForward, typeSpeed);
         } else {
           if (onTypedCallback) onTypedCallback();
-          setTimeout(startDeleteBackward, holdDuration);
+          timerId = setTimeout(startDeleteBackward, holdDuration);
         }
       }
 
@@ -2039,7 +2004,6 @@
         maxLineLength = Math.max(...lineGroups.map(group => group.length));
         reverseStep = maxLineLength;
 
-        // Equip every line with its own erasing cursor bar during simultaneous reverse deletion
         lineCursors = lineGroups.map((_, idx) => {
           if (idx === 0 && mainCursorEl) return mainCursorEl;
           const clone = document.createElement("span");
@@ -2065,7 +2029,6 @@
               }
             });
 
-            // Position each line's cursor right at its active erasing point
             const lineCursor = lineCursors[lineIdx];
             if (lineCursor) {
               if (keepCount > 0 && group[keepCount - 1]) {
@@ -2076,9 +2039,8 @@
             }
           });
 
-          setTimeout(runSimultaneousDelete, deleteSpeed);
+          timerId = setTimeout(runSimultaneousDelete, deleteSpeed);
         } else {
-          // Fully deleted! Clean up cloned cursors and reset main cursor to start
           lineCursors.forEach((c, idx) => {
             if (idx > 0 && c.parentNode) {
               c.parentNode.removeChild(c);
@@ -2090,45 +2052,123 @@
           if (mainCursorEl) {
             textWrap.insertBefore(mainCursorEl, textWrap.firstChild);
           }
-          setTimeout(typeForward, 400);
+          timerId = setTimeout(typeForward, 400);
         }
       }
 
-      setTimeout(typeForward, options.delay || 450);
+      function start() {
+        if (isRunning) return;
+        isRunning = true;
+        clearTimer();
+        charIndex = 0;
+        charList.forEach(c => c.classList.remove("typed"));
+        if (mainCursorEl && textWrap) {
+          textWrap.insertBefore(mainCursorEl, textWrap.firstChild);
+        }
+        timerId = setTimeout(typeForward, options.delay || 150);
+      }
+
+      function stop() {
+        isRunning = false;
+        clearTimer();
+        lineCursors.forEach((c, idx) => {
+          if (idx > 0 && c.parentNode) {
+            c.parentNode.removeChild(c);
+          }
+        });
+        lineCursors = [];
+        charIndex = 0;
+        charList.forEach(c => c.classList.remove("typed"));
+        if (mainCursorEl && textWrap) {
+          textWrap.insertBefore(mainCursorEl, textWrap.firstChild);
+        }
+      }
+
+      if (options.autoStart) {
+        start();
+      }
+
+      return { start, stop };
     }
 
-    // 1. Initialize Hero Subtitle Typewriter
+    // Create Typewriter Instances
     const heroSubtitleEl = document.getElementById("typewriter-text");
     const heroActionsEl = document.querySelector(".hero-actions");
+    let twHero = null;
     if (heroSubtitleEl) {
-      runTypewriterOnElement(heroSubtitleEl, "empower you bussiness software and automation that will make your life easier!", {
+      twHero = createScrollTypewriter(heroSubtitleEl, "empower you bussiness software and automation that will make your life easier!", {
         holdDuration: 9000,
         typeSpeed: 35,
         deleteSpeed: 26,
-        delay: 450,
+        autoStart: true,
         onTyped: () => {
           if (heroActionsEl) heroActionsEl.classList.add("visible");
         }
       });
     }
 
-    // 2. Initialize Service Block 01 Tag Typewriter (Software Development)
     const tagSoftwareEl = document.querySelector("#software .section-tag");
-    if (tagSoftwareEl) {
-      runTypewriterOnElement(tagSoftwareEl, "01 // SOFTWARE DEVELOPMENT", { holdDuration: 9000, typeSpeed: 35, deleteSpeed: 26, delay: 500 });
-    }
+    const twSoftware = tagSoftwareEl ? createScrollTypewriter(tagSoftwareEl, "01 // SOFTWARE DEVELOPMENT", { holdDuration: 9000, typeSpeed: 35, deleteSpeed: 26 }) : null;
 
-    // 3. Initialize Service Block 02 Tag Typewriter (Business Automation)
     const tagAutomationEl = document.querySelector("#automation .section-tag");
-    if (tagAutomationEl) {
-      runTypewriterOnElement(tagAutomationEl, "02 // BUSINESS AUTOMATION", { holdDuration: 9000, typeSpeed: 35, deleteSpeed: 26, delay: 500 });
-    }
+    const twAutomation = tagAutomationEl ? createScrollTypewriter(tagAutomationEl, "02 // BUSINESS AUTOMATION", { holdDuration: 9000, typeSpeed: 35, deleteSpeed: 26 }) : null;
 
-    // 4. Initialize Service Block 03 Tag Typewriter (Website Creation)
     const tagWebsiteEl = document.querySelector("#website .section-tag");
-    if (tagWebsiteEl) {
-      runTypewriterOnElement(tagWebsiteEl, "03 // WEBSITE CREATION", { holdDuration: 9000, typeSpeed: 35, deleteSpeed: 26, delay: 500 });
-    }
+    const twWebsite = tagWebsiteEl ? createScrollTypewriter(tagWebsiteEl, "03 // WEBSITE CREATION", { holdDuration: 9000, typeSpeed: 35, deleteSpeed: 26 }) : null;
+
+    /* ==========================================================================
+       SCROLL REVEAL ANIMATIONS & ON-DEMAND TYPEWRITER RESTART
+       ========================================================================== */
+    (function () {
+      const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+      let isTicking = false;
+
+      function updateScrollReveals() {
+        const vh = window.innerHeight;
+        const topBuffer = vh * 0.22;
+        const bottomBuffer = vh * 0.22;
+
+        revealElements.forEach(el => {
+          const rect = el.getBoundingClientRect();
+          const inVisibleZone = rect.top < (vh - bottomBuffer) && rect.bottom > topBuffer;
+
+          if (inVisibleZone) {
+            if (!el.classList.contains('active')) {
+              el.classList.add('active');
+              // Trigger typewriter restart on-demand when box enters screen!
+              if (el.id === 'software' && twSoftware) twSoftware.start();
+              if (el.id === 'automation' && twAutomation) twAutomation.start();
+              if (el.id === 'website' && twWebsite) twWebsite.start();
+            }
+          } else {
+            if (el.classList.contains('active')) {
+              el.classList.remove('active');
+              // Stop & reset typewriter cycle when box leaves screen
+              if (el.id === 'software' && twSoftware) twSoftware.stop();
+              if (el.id === 'automation' && twAutomation) twAutomation.stop();
+              if (el.id === 'website' && twWebsite) twWebsite.stop();
+            }
+          }
+        });
+
+        isTicking = false;
+      }
+
+      function requestTick() {
+        if (!isTicking) {
+          requestAnimationFrame(updateScrollReveals);
+          isTicking = true;
+        }
+      }
+
+      window.addEventListener('scroll', requestTick, { passive: true });
+      window.addEventListener('resize', requestTick, { passive: true });
+
+      // Run initial checks on load and DOM ready
+      updateScrollReveals();
+      setTimeout(updateScrollReveals, 100);
+      setTimeout(updateScrollReveals, 300);
+    })();
 
     /* ==========================================================================
        INTERACTIVE PIPELINE TAB SWITCHER
