@@ -866,8 +866,8 @@
     }
 
     #software { transition-delay: 0s; }
-    #automation { transition-delay: 0.08s; }
-    #website { transition-delay: 0.16s; }
+    #automation { transition-delay: 0.03s; }
+    #website { transition-delay: 0.05s; }
 
     .service-block:hover {
       transform: translateY(-3px);
@@ -2297,9 +2297,11 @@
           let inVisibleZone = false;
 
           // For Service Blocks (#software, #automation, #website):
-          // All 3 ultra-compact blocks fit on a single screen and reveal together as a unified suite once hero buttons are gone!
+          // All 3 blocks reveal together as a unified suite as soon as top of stack enters (softRect.top <= vh * 0.72)
           if (el.id === 'software' || el.id === 'automation' || el.id === 'website') {
-            inVisibleZone = (!isHeroActionsActive) && (scrollTop > 90) && (rect.top <= vh * 0.60) && (rect.bottom > vh * 0.10);
+            const softwareEl = document.getElementById('software');
+            const softRect = softwareEl ? softwareEl.getBoundingClientRect() : rect;
+            inVisibleZone = (!isHeroActionsActive) && (scrollTop > 60) && (softRect.top <= vh * 0.72) && (rect.bottom > vh * 0.05);
           } else {
             const topBuffer = vh * 0.22;
             const bottomBuffer = vh * 0.22;
