@@ -843,7 +843,7 @@
        SERVICE BLOCKS STACK (Software, Automation, Website Development)
        ========================================================================== */
     .service-blocks-section {
-      padding: 40px 0 70px;
+      padding: 10px 0 25px;
       position: relative;
       z-index: 2;
     }
@@ -851,44 +851,54 @@
     .service-blocks-stack {
       display: flex;
       flex-direction: column;
-      gap: 22px; /* Professional, sleek, tight spacing between blocks */
+      gap: 10px; /* Ultra-compact 10px gap so all 3 boxes fit on one screen! */
     }
 
     .service-block {
-      padding: 38px 48px;
+      padding: 14px 24px; /* Reduced vertical padding eliminating empty space */
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 36px;
+      gap: 20px;
       position: relative;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      border-radius: 12px;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
+    #software { transition-delay: 0s; }
+    #automation { transition-delay: 0.08s; }
+    #website { transition-delay: 0.16s; }
+
     .service-block:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.85), 0 0 35px rgba(0, 210, 255, 0.22);
+      transform: translateY(-2px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.85), 0 0 25px rgba(0, 210, 255, 0.22);
     }
 
     .service-block-header {
-      max-width: 760px;
+      max-width: 780px;
+    }
+
+    .service-block-header .section-tag {
+      margin-bottom: 2px;
+      font-size: 0.78rem;
     }
 
     .service-block-title {
       font-family: var(--font-heading);
-      font-size: clamp(1.6rem, 2.5vw, 2.1rem);
+      font-size: clamp(1.2rem, 1.8vw, 1.4rem);
       font-weight: 700;
-      line-height: 1.2;
-      margin-bottom: 10px;
+      line-height: 1.15;
+      margin-bottom: 3px;
       color: var(--text-main);
     }
 
     .service-block-copy {
       color: var(--text-muted);
-      font-size: 1rem;
-      line-height: 1.6;
+      font-size: 0.875rem;
+      line-height: 1.38;
       margin: 0;
       opacity: 0;
-      transform: translateY(14px);
+      transform: translateY(10px);
       transition: opacity 0.25s ease-out, transform 0.25s ease-out;
       transition-delay: 0s;
       will-change: opacity, transform;
@@ -897,14 +907,14 @@
     .service-block.active .service-block-copy {
       opacity: 1;
       transform: translateY(0);
-      transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
-      transition-delay: 0.35s;
+      transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: 0.25s;
     }
 
     .service-block-actions {
       flex-shrink: 0;
       opacity: 0;
-      transform: translateY(14px);
+      transform: translateY(10px);
       transition: opacity 0.22s ease-out, transform 0.22s ease-out;
       transition-delay: 0s;
       will-change: opacity, transform;
@@ -913,8 +923,13 @@
     .service-block.active .service-block-actions {
       opacity: 1;
       transform: translateY(0);
-      transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
-      transition-delay: 0.45s;
+      transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: 0.32s;
+    }
+
+    .service-block-actions .btn {
+      padding: 9px 20px !important;
+      font-size: 0.825rem !important;
     }
 
     .feature-icon-box {
@@ -2291,12 +2306,10 @@
           const rect = el.getBoundingClientRect();
           let inVisibleZone = false;
 
-          // For Software Development block (#software):
-          // MUST WAIT until hero buttons are 100% animated out & gone (scrollTop > 90) AND #software reaches near middle of screen (rect.top <= vh * 0.48)
-          if (el.id === 'software') {
-            inVisibleZone = (!isHeroActionsActive) && (scrollTop > 90) && (rect.top <= vh * 0.48) && (rect.bottom > vh * 0.15);
-          } else if (el.id === 'automation' || el.id === 'website') {
-            inVisibleZone = rect.top <= (vh * 0.48) && rect.bottom > (vh * 0.15);
+          // For Service Blocks (#software, #automation, #website):
+          // All 3 ultra-compact blocks fit on a single screen and reveal together as a unified suite once hero buttons are gone!
+          if (el.id === 'software' || el.id === 'automation' || el.id === 'website') {
+            inVisibleZone = (!isHeroActionsActive) && (scrollTop > 90) && (rect.top <= vh * 0.60) && (rect.bottom > vh * 0.10);
           } else {
             const topBuffer = vh * 0.22;
             const bottomBuffer = vh * 0.22;
