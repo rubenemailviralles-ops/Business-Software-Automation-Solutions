@@ -606,7 +606,7 @@
     .hero-btn-book {
       opacity: 0;
       transform: translateX(-60px);
-      transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: opacity, transform;
     }
 
@@ -619,7 +619,7 @@
     .hero-btn-contact {
       opacity: 0;
       transform: translateX(60px);
-      transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: opacity, transform;
     }
 
@@ -2270,14 +2270,17 @@
         const vh = window.innerHeight;
         const scrollTop = window.scrollY || document.documentElement.scrollTop;
 
-        // 1. Hero Actions (.hero-actions): Active ONLY at top of page (scrollTop <= 50).
+        // 1. Hero Actions (.hero-actions): Active ONLY at top of page (scrollTop <= 20).
         // Animates out immediately as soon as user starts scrolling down!
         const heroActionsEl = document.querySelector('.hero-actions');
+        let isHeroActionsActive = false;
         if (heroActionsEl) {
-          if (scrollTop <= 50) {
+          if (scrollTop <= 20) {
             heroActionsEl.classList.add('active');
+            isHeroActionsActive = true;
           } else {
             heroActionsEl.classList.remove('active');
+            isHeroActionsActive = false;
           }
         }
 
@@ -2288,10 +2291,12 @@
           const rect = el.getBoundingClientRect();
           let inVisibleZone = false;
 
-          // For Service Blocks (#software, #automation, #website), wait until block reaches middle of screen (rect.top <= vh * 0.52)
-          // This guarantees hero buttons have fully animated out before Software Development box enters!
-          if (el.id === 'software' || el.id === 'automation' || el.id === 'website') {
-            inVisibleZone = rect.top <= (vh * 0.52) && rect.bottom > (vh * 0.15);
+          // For Software Development block (#software):
+          // MUST WAIT until hero buttons are 100% animated out & gone (scrollTop > 90) AND #software reaches near middle of screen (rect.top <= vh * 0.48)
+          if (el.id === 'software') {
+            inVisibleZone = (!isHeroActionsActive) && (scrollTop > 90) && (rect.top <= vh * 0.48) && (rect.bottom > vh * 0.15);
+          } else if (el.id === 'automation' || el.id === 'website') {
+            inVisibleZone = rect.top <= (vh * 0.48) && rect.bottom > (vh * 0.15);
           } else {
             const topBuffer = vh * 0.22;
             const bottomBuffer = vh * 0.22;
