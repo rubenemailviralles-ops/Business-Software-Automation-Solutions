@@ -606,7 +606,7 @@
     .hero-btn-book {
       opacity: 0;
       transform: translateX(-60px);
-      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: opacity, transform;
     }
 
@@ -619,7 +619,7 @@
     .hero-btn-contact {
       opacity: 0;
       transform: translateX(60px);
-      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: opacity, transform;
     }
 
@@ -2257,12 +2257,35 @@
 
       function updateScrollReveals() {
         const vh = window.innerHeight;
-        const topBuffer = vh * 0.22;
-        const bottomBuffer = vh * 0.22;
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
 
+        // 1. Hero Actions (.hero-actions): Active ONLY at top of page (scrollTop <= 50).
+        // Animates out immediately as soon as user starts scrolling down!
+        const heroActionsEl = document.querySelector('.hero-actions');
+        if (heroActionsEl) {
+          if (scrollTop <= 50) {
+            heroActionsEl.classList.add('active');
+          } else {
+            heroActionsEl.classList.remove('active');
+          }
+        }
+
+        // 2. Process Reveal Elements
         revealElements.forEach(el => {
+          if (el.classList.contains('hero-actions')) return; // Handled explicitly above
+
           const rect = el.getBoundingClientRect();
-          const inVisibleZone = rect.top < (vh - bottomBuffer) && rect.bottom > topBuffer;
+          let inVisibleZone = false;
+
+          // For Service Blocks (#software, #automation, #website), wait until block reaches middle of screen (rect.top <= vh * 0.52)
+          // This guarantees hero buttons have fully animated out before Software Development box enters!
+          if (el.id === 'software' || el.id === 'automation' || el.id === 'website') {
+            inVisibleZone = rect.top <= (vh * 0.52) && rect.bottom > (vh * 0.15);
+          } else {
+            const topBuffer = vh * 0.22;
+            const bottomBuffer = vh * 0.22;
+            inVisibleZone = rect.top < (vh - bottomBuffer) && rect.bottom > topBuffer;
+          }
 
           if (inVisibleZone) {
             if (!el.classList.contains('active')) {
