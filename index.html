@@ -843,7 +843,7 @@
        SERVICE BLOCKS STACK (Software, Automation, Website Development)
        ========================================================================== */
     .service-blocks-section {
-      padding: 30px 0 50px;
+      padding: 40px 0 60px;
       position: relative;
       z-index: 2;
     }
@@ -851,23 +851,20 @@
     .service-blocks-stack {
       display: flex;
       flex-direction: column;
-      gap: 20px; /* Comfortable, elegant spacing between blocks */
+      gap: 42px; /* Professionally spaced gap so each block enters and exits individually */
     }
 
     .service-block {
-      padding: 26px 36px; /* Balanced luxury padding with spacious feel */
+      padding: 28px 38px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 28px;
       position: relative;
       border-radius: 16px;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
     }
-
-    #software { transition-delay: 0s; }
-    #automation { transition-delay: 0.03s; }
-    #website { transition-delay: 0.05s; }
 
     .service-block:hover {
       transform: translateY(-3px);
@@ -2297,11 +2294,11 @@
           let inVisibleZone = false;
 
           // For Service Blocks (#software, #automation, #website):
-          // All 3 blocks reveal together as a unified suite as soon as top of stack enters (softRect.top <= vh * 0.72)
+          // Each block is evaluated INDIVIDUALLY based on its own bounding rectangle (rect.top, rect.bottom)
+          // Block enters individually when its top enters the active zone (rect.top <= vh * 0.76)
+          // Block exits individually when its top moves back above vh * 0.76 or bottom moves out above screen (rect.bottom < vh * 0.12)
           if (el.id === 'software' || el.id === 'automation' || el.id === 'website') {
-            const softwareEl = document.getElementById('software');
-            const softRect = softwareEl ? softwareEl.getBoundingClientRect() : rect;
-            inVisibleZone = (!isHeroActionsActive) && (scrollTop > 60) && (softRect.top <= vh * 0.72) && (rect.bottom > vh * 0.05);
+            inVisibleZone = (!isHeroActionsActive) && (rect.top <= vh * 0.76) && (rect.bottom >= vh * 0.12);
           } else {
             const topBuffer = vh * 0.22;
             const bottomBuffer = vh * 0.22;
