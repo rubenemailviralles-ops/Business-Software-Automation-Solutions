@@ -2672,27 +2672,6 @@
         // Set target scroll position for liquid-smooth lerped background parallax motion
         targetScrollY = scrollTop;
 
-        // Opacity Timeline:
-        // - Fade in at top of page (0-15%)
-        // - Stay 100% visible throughout main content & pipeline open space
-        // - Start fading out BEFORE "Get Started Immediately" button reaches the 3D PC model!
-        const ctaBtnEl = document.querySelector('.cta-panel .btn') || document.querySelector('.cta-panel');
-
-        if (p < 0.15) {
-          targetOpacity = p / 0.15;
-        } else if (ctaBtnEl) {
-          const btnRect = ctaBtnEl.getBoundingClientRect();
-          if (btnRect.top <= vh * 0.85) {
-            // Button is entering bottom of screen! Fade out completely by vh * 0.60 (BEFORE reaching PC center at 50vh)!
-            const fadeRatio = Math.max(0, Math.min(1, (vh * 0.85 - btnRect.top) / (vh * 0.25)));
-            targetOpacity = Math.max(0, 1 - fadeRatio);
-          } else {
-            targetOpacity = 1;
-          }
-        } else {
-          targetOpacity = 1;
-        }
-
         if (websiteEl && ctaEl) {
           const webRect = websiteEl.getBoundingClientRect();
           const ctaPanelEl = document.querySelector('.cta-panel') || ctaEl;
@@ -2705,16 +2684,20 @@
             // Scrolled above website section -> laptop lid is closed
             targetLidAngle = 0;
             isCtaVisible = false;
+            targetOpacity = p < 0.15 ? (p / 0.15) : 1;
           } else if (ctaRect.top <= vh * 0.85) {
             // CTA panel ("Ready to Automate...") is entering lower screen!
-            // Start closing lid at vh * 0.85, and reach 100% COMPLETELY CLOSED by vh * 0.55 (BEFORE CTA reaches PC center)!
+            // Lid closing AND Opacity fade-out start together at vh * 0.85
+            // Reaches 100% COMPLETELY CLOSED and 100% INVISIBLE by vh * 0.55 (BEFORE button reaches PC center)!
             const closeRatio = Math.max(0, Math.min(1, (vh * 0.85 - ctaRect.top) / (vh * 0.30)));
             targetLidAngle = -1.95 * (1 - closeRatio);
+            targetOpacity = Math.max(0, 1 - closeRatio);
             isCtaVisible = closeRatio > 0.1;
           } else {
             // Smooth, linear, progressive opening over Section 03 (Website Creation)
             // As webRect.bottom moves from vh * 0.85 down to 0, openRatio goes smoothly from 0.0 to 1.0!
             isCtaVisible = false;
+            targetOpacity = 1;
             const openRatio = Math.max(0, Math.min(1, (vh * 0.85 - webRect.bottom) / (vh * 0.85)));
             targetLidAngle = -1.95 * openRatio;
           }
