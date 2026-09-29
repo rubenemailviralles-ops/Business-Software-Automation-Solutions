@@ -843,7 +843,7 @@
        SERVICE BLOCKS STACK (Software, Automation, Website Development)
        ========================================================================== */
     .service-blocks-section {
-      padding: 10px 0 25px;
+      padding: 30px 0 50px;
       position: relative;
       z-index: 2;
     }
@@ -851,18 +851,18 @@
     .service-blocks-stack {
       display: flex;
       flex-direction: column;
-      gap: 10px; /* Ultra-compact 10px gap so all 3 boxes fit on one screen! */
+      gap: 20px; /* Comfortable, elegant spacing between blocks */
     }
 
     .service-block {
-      padding: 14px 24px; /* Reduced vertical padding eliminating empty space */
+      padding: 26px 36px; /* Balanced luxury padding with spacious feel */
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 20px;
+      gap: 28px;
       position: relative;
-      border-radius: 12px;
-      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      border-radius: 16px;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     #software { transition-delay: 0s; }
@@ -870,8 +870,8 @@
     #website { transition-delay: 0.16s; }
 
     .service-block:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.85), 0 0 25px rgba(0, 210, 255, 0.22);
+      transform: translateY(-3px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.85), 0 0 30px rgba(0, 210, 255, 0.22);
     }
 
     .service-block-header {
@@ -879,23 +879,23 @@
     }
 
     .service-block-header .section-tag {
-      margin-bottom: 2px;
-      font-size: 0.78rem;
+      margin-bottom: 6px;
+      font-size: 0.825rem;
     }
 
     .service-block-title {
       font-family: var(--font-heading);
-      font-size: clamp(1.2rem, 1.8vw, 1.4rem);
+      font-size: clamp(1.4rem, 2.2vw, 1.75rem);
       font-weight: 700;
-      line-height: 1.15;
-      margin-bottom: 3px;
+      line-height: 1.2;
+      margin-bottom: 6px;
       color: var(--text-main);
     }
 
     .service-block-copy {
       color: var(--text-muted);
-      font-size: 0.875rem;
-      line-height: 1.38;
+      font-size: 0.95rem;
+      line-height: 1.5;
       margin: 0;
       opacity: 0;
       transform: translateY(10px);
@@ -928,8 +928,8 @@
     }
 
     .service-block-actions .btn {
-      padding: 9px 20px !important;
-      font-size: 0.825rem !important;
+      padding: 11px 24px !important;
+      font-size: 0.875rem !important;
     }
 
     .feature-icon-box {
