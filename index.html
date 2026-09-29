@@ -843,7 +843,7 @@
        SERVICE BLOCKS STACK (Software, Automation, Website Development)
        ========================================================================== */
     .service-blocks-section {
-      padding: 40px 0 60px;
+      padding: 20px 0 40px;
       position: relative;
       z-index: 2;
     }
@@ -851,17 +851,17 @@
     .service-blocks-stack {
       display: flex;
       flex-direction: column;
-      gap: 42px; /* Professionally spaced gap so each block enters and exits individually */
+      gap: 20px; /* Previous perfect 20px spacing */
     }
 
     .service-block {
-      padding: 28px 38px;
+      padding: 24px 34px; /* Previous perfect compact padding */
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 28px;
+      gap: 24px;
       position: relative;
-      border-radius: 16px;
+      border-radius: 14px;
       transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: opacity, transform;
     }
@@ -876,13 +876,13 @@
     }
 
     .service-block-header .section-tag {
-      margin-bottom: 6px;
-      font-size: 0.825rem;
+      margin-bottom: 5px;
+      font-size: 0.8rem;
     }
 
     .service-block-title {
       font-family: var(--font-heading);
-      font-size: clamp(1.4rem, 2.2vw, 1.75rem);
+      font-size: clamp(1.35rem, 2vw, 1.6rem);
       font-weight: 700;
       line-height: 1.2;
       margin-bottom: 6px;
