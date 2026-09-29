@@ -2200,9 +2200,10 @@
 
       const vh = window.innerHeight;
       const rect = ctaSection.getBoundingClientRect();
-      const topBuffer = vh * 0.12;
-      const bottomBuffer = vh * 0.12;
-      const inVisibleZone = rect.top < (vh - bottomBuffer) && rect.bottom > topBuffer;
+      
+      // CTA in-animation triggers AFTER 3D PC closes & disappears completely (rect.top <= vh * 0.55)
+      // On scroll back up (rect.top > vh * 0.55), CTA animates out while PC fades back in & opens up!
+      const inVisibleZone = rect.top <= (vh * 0.55) && rect.bottom > (vh * 0.10);
 
       if (inVisibleZone) {
         if (!ctaSequenceActive) {
