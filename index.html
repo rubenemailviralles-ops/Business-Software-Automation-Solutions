@@ -2672,13 +2672,25 @@
         // Set target scroll position for liquid-smooth lerped background parallax motion
         targetScrollY = scrollTop;
 
-        // Opacity Timeline (0-15% Fade In, 85-100% Fade Out)
+        // Opacity Timeline:
+        // - Fade in at top of page (0-15%)
+        // - Stay 100% visible throughout main content & pipeline open space
+        // - Start fading out BEFORE "Get Started Immediately" button reaches the 3D PC model!
+        const ctaBtnEl = document.querySelector('.cta-panel .btn') || document.querySelector('.cta-panel');
+
         if (p < 0.15) {
           targetOpacity = p / 0.15;
-        } else if (p <= 0.85) {
-          targetOpacity = 1;
+        } else if (ctaBtnEl) {
+          const btnRect = ctaBtnEl.getBoundingClientRect();
+          if (btnRect.top <= vh * 0.85) {
+            // Button is entering bottom of screen! Fade out completely by vh * 0.60 (BEFORE reaching PC center at 50vh)!
+            const fadeRatio = Math.max(0, Math.min(1, (vh * 0.85 - btnRect.top) / (vh * 0.25)));
+            targetOpacity = Math.max(0, 1 - fadeRatio);
+          } else {
+            targetOpacity = 1;
+          }
         } else {
-          targetOpacity = Math.max(0, 1 - ((p - 0.85) / 0.15));
+          targetOpacity = 1;
         }
 
         if (websiteEl && ctaEl) {
