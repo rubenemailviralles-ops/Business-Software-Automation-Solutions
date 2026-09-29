@@ -2081,20 +2081,21 @@
     window.addEventListener('DOMContentLoaded', triggerTitleFadeIn);
 
     /* ==========================================================================
-       CANVAS BACKGROUND ANIMATION (Floating Particles & Dark Blue Mesh Network)
+       CANVAS BACKGROUND ANIMATION (Optimized Mobile/Desktop Particle Network)
        ========================================================================== */
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
 
     let width = canvas.width = window.innerWidth;
-    let height = canvas.height = Math.floor(window.innerHeight * 1.4);
+    let height = canvas.height = Math.floor(window.innerHeight * (window.innerWidth < 768 ? 1.0 : 1.4));
     let particles = [];
+    const isMobile = window.innerWidth < 768;
 
     function resize() {
       width = canvas.width = window.innerWidth;
-      height = canvas.height = Math.floor(window.innerHeight * 1.4);
+      height = canvas.height = Math.floor(window.innerHeight * (window.innerWidth < 768 ? 1.0 : 1.4));
     }
-    window.addEventListener('resize', resize);
+    window.addEventListener('resize', resize, { passive: true });
 
     class Particle {
       constructor() {
@@ -2104,11 +2105,11 @@
       reset() {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 0.45;
-        this.vy = (Math.random() - 0.5) * 0.45;
-        this.baseRadius = Math.random() * 1.5 + 0.6;
+        this.vx = (Math.random() - 0.5) * 0.4;
+        this.vy = (Math.random() - 0.5) * 0.4;
+        this.baseRadius = Math.random() * 1.4 + 0.6;
         this.radius = this.baseRadius;
-        this.baseAlpha = Math.random() * 0.45 + 0.2;
+        this.baseAlpha = Math.random() * 0.4 + 0.2;
         this.alpha = this.baseAlpha;
       }
 
@@ -2124,17 +2125,24 @@
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(0, 210, 255, ${this.alpha})`;
-        ctx.shadowBlur = this.radius * 4;
-        ctx.shadowColor = '#00d2ff';
+        if (!isMobile) {
+          ctx.shadowBlur = this.radius * 3;
+          ctx.shadowColor = '#00d2ff';
+        }
         ctx.fill();
-        ctx.shadowBlur = 0;
+        if (!isMobile) {
+          ctx.shadowBlur = 0;
+        }
       }
     }
 
-    // Spawn 70 floating particles
-    for (let i = 0; i < 70; i++) {
+    // Spawn 24 particles on mobile, 65 on desktop for optimal frame rates
+    const particleCount = isMobile ? 24 : 65;
+    for (let i = 0; i < particleCount; i++) {
       particles.push(new Particle());
     }
+
+    const maxLineDist = isMobile ? 100 : 135;
 
     function animate() {
       ctx.clearRect(0, 0, width, height);
@@ -2149,12 +2157,12 @@
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < 140) {
+          if (dist < maxLineDist) {
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(0, 210, 255, ${0.15 * (1 - dist / 140)})`;
-            ctx.lineWidth = 0.6;
+            ctx.strokeStyle = `rgba(0, 210, 255, ${0.14 * (1 - dist / maxLineDist)})`;
+            ctx.lineWidth = 0.5;
             ctx.stroke();
           }
         }
@@ -2762,9 +2770,10 @@
       const camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 100);
       camera.position.set(0, 0, 9.6);
 
-      const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+      const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true, powerPreference: "high-performance" });
       renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      const initialPR = window.innerWidth < 768 ? 1 : Math.min(window.devicePixelRatio, 1.75);
+      renderer.setPixelRatio(initialPR);
 
       // 3. Lighting (Tactical Gunmetal Lighting & White Backlight glow)
       const ambientLight = new THREE.AmbientLight(0x283244, 2.5);
@@ -3091,13 +3100,13 @@
         window.currentPcOpacity = currentOpacity;
         lidPivot.rotation.x = currentLidAngle;
 
-        // Update 3D PC screen typewriter state based on current open angle & time
-        updatePcScreenTypewriter(openRatio, performance.now());
-
-        renderScreenTexture();
-        screenTexture.needsUpdate = true;
-
-        renderer.render(scene, camera);
+        // Skip heavy WebGL render calls if model is fully invisible or tab is hidden
+        if (currentOpacity > 0.005 && !document.hidden) {
+          updatePcScreenTypewriter(openRatio, performance.now());
+          renderScreenTexture();
+          screenTexture.needsUpdate = true;
+          renderer.render(scene, camera);
+        }
       }
 
       function onResize() {
@@ -3105,6 +3114,9 @@
         camera.position.z = window.innerWidth < 768 ? 10.8 : (window.innerWidth <= 1024 ? 10.2 : 9.6);
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const pr = window.innerWidth < 768 ? 1 : Math.min(window.devicePixelRatio, 1.75);
+        renderer.setPixelRatio(pr);
 
         // Responsive scaling for mobile and tablet viewports so whole 3D PC fits perfectly centered
         if (window.innerWidth < 768) {
@@ -3119,7 +3131,7 @@
       }
 
       window.addEventListener('scroll', updateTimeline, { passive: true });
-      window.addEventListener('resize', onResize);
+      window.addEventListener('resize', onResize, { passive: true });
       window.scrollTo(0, 0);
       onResize();
       updateTimeline();
