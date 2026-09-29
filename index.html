@@ -1621,47 +1621,217 @@
     }
 
     /* ==========================================================================
-       RESPONSIVE BREAKPOINTS
+       RESPONSIVE BREAKPOINTS & MOBILE/TABLET OPTIMIZATIONS
        ========================================================================== */
+    html, body {
+      overflow-x: hidden;
+      width: 100%;
+      max-width: 100%;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    button, a, .btn, .nav-link {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    /* Tablet Breakpoint (768px to 1024px) */
     @media (max-width: 1024px) {
-      .features-grid {
-        grid-template-columns: repeat(2, 1fr);
+      .container {
+        padding: 0 20px;
       }
-      .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
+      .navbar-container {
+        padding: 0 20px;
+      }
+      .service-block {
+        padding: 24px 28px;
+        gap: 22px;
+      }
+      .service-block-title {
+        font-size: 1.45rem;
       }
       .footer-grid {
         grid-template-columns: 1fr 1fr;
+        column-gap: 40px;
       }
     }
 
+    /* Mobile Breakpoint (< 768px) */
     @media (max-width: 768px) {
-      .navbar {
-        padding: 12px 20px;
+      .container {
+        padding: 0 16px;
+      }
+      .site-header {
+        padding: 6px 10px;
+      }
+      .navbar-container {
+        height: 76px;
+        padding: 0 12px;
+        gap: 8px;
+      }
+      .site-header.scrolled .navbar-container {
+        height: 60px;
+      }
+      .brand-logo {
+        font-size: 1.05rem;
+        gap: 10px;
+      }
+      .brand-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+      }
+      .brand-icon svg {
+        width: 20px;
+        height: 20px;
+      }
+      .brand-text-sub {
+        font-size: 0.55rem;
+        letter-spacing: 0.08em;
       }
       .nav-links {
-        display: none; /* Can be expanded if mobile menu toggled */
+        display: none;
       }
-      .menu-toggle {
-        display: block;
+      .header-actions {
+        gap: 6px;
       }
+      .header-actions .btn {
+        padding: 7px 14px !important;
+        font-size: 0.78rem !important;
+        border-radius: var(--radius-full);
+      }
+
       .hero {
-        padding-top: 140px;
-        padding-bottom: 60px;
+        padding-top: 125px;
+        padding-bottom: 35px;
       }
-      .features-grid {
-        grid-template-columns: 1fr;
+      .hero-title {
+        font-size: clamp(1.85rem, 7.2vw, 2.6rem);
+        margin-bottom: 14px;
+        line-height: 1.12;
       }
-      .stats-grid {
-        grid-template-columns: 1fr;
+      .hero-subtitle {
+        font-size: 0.925rem;
+        margin-bottom: 26px;
+        padding: 0 6px;
+        min-height: 4.2em;
+      }
+      .hero-actions {
+        flex-direction: column;
+        width: 100%;
+        max-width: 310px;
+        margin: 0 auto;
+        gap: 10px;
+      }
+      .hero-actions .btn {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        padding: 13px 20px !important;
+        font-size: 0.925rem !important;
+      }
+
+      /* Responsive Service Blocks Stack */
+      .service-blocks-section {
+        padding: 15px 0 35px;
+      }
+      .service-blocks-stack {
+        gap: 16px;
+      }
+      .service-block {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+        padding: 20px 18px;
+        gap: 14px;
+        border-radius: 14px;
+      }
+      .service-block-header {
+        width: 100%;
+      }
+      .service-block-title {
+        font-size: 1.25rem;
+        margin-bottom: 5px;
+      }
+      .service-block-copy {
+        font-size: 0.88rem;
+        line-height: 1.45;
+      }
+      .service-block-actions {
+        width: 100%;
+      }
+      .service-block-actions .btn {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        padding: 12px 20px !important;
+        font-size: 0.875rem !important;
+      }
+
+      /* Reveal animations reduced slide distance on phone viewports to prevent overflow */
+      .reveal-left {
+        transform: translateX(-30px) scale(0.97);
+      }
+      .reveal-right {
+        transform: translateX(30px) scale(0.97);
+      }
+
+      /* CTA Section Mobile */
+      .cta-section {
+        padding: 40px 0;
+      }
+      .cta-panel {
+        padding: 32px 14px;
+      }
+      .cta-title {
+        font-size: clamp(1.45rem, 5.2vw, 2.1rem);
+      }
+      .cta-title-reveal-left {
+        transform: translateX(-30px);
+      }
+      .cta-btn {
+        width: 100%;
+        max-width: 290px;
+        justify-content: center;
+      }
+
+      /* Footer Mobile */
+      .footer {
+        padding: 40px 0 30px;
       }
       .footer-grid {
         grid-template-columns: 1fr;
+        gap: 28px;
+        margin-bottom: 30px;
       }
       .footer-bottom {
         flex-direction: column;
-        gap: 16px;
+        gap: 12px;
         text-align: center;
+      }
+    }
+
+    /* Small Phone Breakpoint (< 480px) */
+    @media (max-width: 480px) {
+      .brand-text-sub {
+        display: none; /* Hide secondary tagline on tight phone viewports */
+      }
+      .brand-logo {
+        font-size: 0.95rem;
+      }
+      .header-actions .btn {
+        padding: 6px 10px !important;
+        font-size: 0.75rem !important;
+      }
+      .hero-title {
+        font-size: 1.8rem;
+      }
+      .service-block-title {
+        font-size: 1.18rem;
+      }
+      .service-block {
+        padding: 18px 15px;
       }
     }
   </style>
@@ -2907,13 +3077,17 @@
 
       function onResize() {
         camera.aspect = window.innerWidth / window.innerHeight;
+        camera.position.z = window.innerWidth < 768 ? 10.8 : (window.innerWidth <= 1024 ? 10.2 : 9.6);
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
 
-        // Responsive scaling for mobile / narrow viewports so whole 3D PC fits perfectly centered
+        // Responsive scaling for mobile and tablet viewports so whole 3D PC fits perfectly centered
         if (window.innerWidth < 768) {
-          const mobileScale = Math.max(0.65, window.innerWidth / 800);
+          const mobileScale = Math.max(0.42, Math.min(0.72, window.innerWidth / 650));
           laptopGroup.scale.set(mobileScale, mobileScale, mobileScale);
+        } else if (window.innerWidth <= 1024) {
+          const tabletScale = Math.max(0.72, Math.min(0.90, window.innerWidth / 920));
+          laptopGroup.scale.set(tabletScale, tabletScale, tabletScale);
         } else {
           laptopGroup.scale.set(1, 1, 1);
         }
@@ -2922,6 +3096,7 @@
       window.addEventListener('scroll', updateTimeline, { passive: true });
       window.addEventListener('resize', onResize);
       window.scrollTo(0, 0);
+      onResize();
       updateTimeline();
       animate();
     })();
