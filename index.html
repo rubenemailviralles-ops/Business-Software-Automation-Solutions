@@ -1124,6 +1124,44 @@
       text-shadow: 0 2px 20px rgba(0, 0, 0, 0.85), 0 0 25px rgba(0, 210, 255, 0.35);
     }
 
+    /* CTA Custom Orchestrated Reveal System */
+    .cta-title-reveal-left {
+      opacity: 0;
+      transform: translateX(-140px);
+      transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+
+    .cta-title-reveal-left.active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .cta-btn {
+      opacity: 0;
+      transform: translateY(18px);
+      pointer-events: none;
+      transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+
+    .cta-btn.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .cta-btn-arrow {
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: opacity 0.35s ease-out, transform 0.35s ease-out;
+    }
+
+    .cta-btn-arrow.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
     .cta-subtitle {
       color: rgba(255, 255, 255, 0.88);
       max-width: 620px;
@@ -1769,11 +1807,11 @@
   <!-- CTA Banner -->
   <section class="cta-section" id="cta">
     <div class="container">
-      <div class="cta-panel reveal">
-        <h2 class="cta-title">Ready to Automate Your Business Software?</h2>
-        <a href="#" class="btn btn-primary" style="padding: 16px 36px; font-size: 1.05rem; margin-top: 12px;">
-          Get Started Immediately
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      <div class="cta-panel" id="cta-panel-el">
+        <h2 class="cta-title cta-title-reveal-left" id="cta-title-el">Ready to Automate Your Business Software?</h2>
+        <a href="#" class="btn btn-primary cta-btn" id="cta-btn-el" style="padding: 16px 36px; font-size: 1.05rem; margin-top: 12px;">
+          <span id="cta-btn-text">Get Started Immediately</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="cta-btn-arrow"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
         </a>
       </div>
     </div>
@@ -2127,6 +2165,84 @@
     const tagWebsiteEl = document.querySelector("#website .section-tag");
     const twWebsite = tagWebsiteEl ? createScrollTypewriter(tagWebsiteEl, "03 // WEBSITE CREATION", { holdDuration: 9000, typeSpeed: 35, deleteSpeed: 26 }) : null;
 
+    // CTA Button Typewriter Instance
+    const ctaBtnTextEl = document.getElementById("cta-btn-text");
+    let twCtaBtn = null;
+    if (ctaBtnTextEl) {
+      twCtaBtn = createScrollTypewriter(ctaBtnTextEl, "Get Started Immediately", {
+        holdDuration: 9999999,
+        typeSpeed: 30,
+        delay: 50,
+        onTyped: function() {
+          const arrowEl = document.querySelector(".cta-btn-arrow");
+          if (arrowEl) arrowEl.classList.add("visible");
+        }
+      });
+    }
+
+    // CTA Sequence Orchestration State
+    let ctaSequenceActive = false;
+    let ctaTimer1 = null;
+    let ctaTimer2 = null;
+
+    function clearCtaTimers() {
+      if (ctaTimer1) { clearTimeout(ctaTimer1); ctaTimer1 = null; }
+      if (ctaTimer2) { clearTimeout(ctaTimer2); ctaTimer2 = null; }
+    }
+
+    function checkCtaSequence() {
+      const ctaSection = document.getElementById("cta");
+      const ctaTitle = document.getElementById("cta-title-el");
+      const ctaBtn = document.getElementById("cta-btn-el");
+      const arrowEl = document.querySelector(".cta-btn-arrow");
+
+      if (!ctaSection || !ctaTitle || !ctaBtn) return;
+
+      const vh = window.innerHeight;
+      const rect = ctaSection.getBoundingClientRect();
+      const topBuffer = vh * 0.12;
+      const bottomBuffer = vh * 0.12;
+      const inVisibleZone = rect.top < (vh - bottomBuffer) && rect.bottom > topBuffer;
+
+      if (inVisibleZone) {
+        if (!ctaSequenceActive) {
+          ctaSequenceActive = true;
+          clearCtaTimers();
+
+          // Step 1: Heading slides in from the left and fades in (550ms transition)
+          ctaTitle.classList.add("active");
+
+          // Step 2: ONLY after heading enter animation finishes (550ms), button fade in starts!
+          ctaTimer1 = setTimeout(() => {
+            ctaBtn.classList.add("active");
+
+            // Step 3: ONLY after button fade in completes (450ms), typewriter effect starts!
+            ctaTimer2 = setTimeout(() => {
+              if (twCtaBtn) twCtaBtn.start();
+            }, 450);
+
+          }, 550);
+        }
+      } else {
+        if (ctaSequenceActive) {
+          ctaSequenceActive = false;
+          clearCtaTimers();
+
+          // Heading slides back out to the left and fades out
+          ctaTitle.classList.remove("active");
+
+          // Button fades out
+          ctaBtn.classList.remove("active");
+
+          // Hide arrow icon
+          if (arrowEl) arrowEl.classList.remove("visible");
+
+          // Stop and reset typewriter instance
+          if (twCtaBtn) twCtaBtn.stop();
+        }
+      }
+    }
+
     // Global synchronization flags for 3D PC Typewriter & Lid animations
     let isWebsiteOffScreen = false;
     let isCtaVisible = false;
@@ -2167,6 +2283,9 @@
             }
           }
         });
+
+        // Run CTA orchestrated sequence check on scroll
+        checkCtaSequence();
 
         isTicking = false;
       }
