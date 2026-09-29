@@ -2201,9 +2201,11 @@
       const vh = window.innerHeight;
       const rect = ctaSection.getBoundingClientRect();
       
-      // CTA in-animation triggers AFTER 3D PC closes & disappears completely (rect.top <= vh * 0.55)
-      // On scroll back up (rect.top > vh * 0.55), CTA animates out while PC fades back in & opens up!
-      const inVisibleZone = rect.top <= (vh * 0.55) && rect.bottom > (vh * 0.10);
+      // CTA in-animation triggers ONLY AFTER 3D PC has 100% closed & completely faded out (currentPcOpacity < 0.03)
+      // and AFTER CTA panel reaches past middle of screen (rect.top <= vh * 0.45)
+      const pcOpacity = (typeof window.currentPcOpacity !== 'undefined') ? window.currentPcOpacity : 1;
+      const isPcFullyFadedOut = pcOpacity < 0.03;
+      const inVisibleZone = isPcFullyFadedOut && rect.top <= (vh * 0.45) && rect.bottom > (vh * 0.10);
 
       if (inVisibleZone) {
         if (!ctaSequenceActive) {
@@ -2875,6 +2877,7 @@
         }
 
         container.style.opacity = currentOpacity.toFixed(3);
+        window.currentPcOpacity = currentOpacity;
         lidPivot.rotation.x = currentLidAngle;
 
         // Update 3D PC screen typewriter state based on current open angle & time
