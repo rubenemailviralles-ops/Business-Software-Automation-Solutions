@@ -1744,7 +1744,7 @@
           </div>
           <div class="service-block-actions">
             <a href="#cta" class="btn btn-primary" style="padding: 13px 26px; font-size: 0.9rem;">
-              Book Consultation
+              <span id="software-btn-text">learn more</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
             </a>
           </div>
@@ -1761,7 +1761,7 @@
           </div>
           <div class="service-block-actions">
             <a href="#cta" class="btn btn-primary" style="padding: 13px 26px; font-size: 0.9rem;">
-              Book Consultation
+              <span id="automation-btn-text">learn more</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
             </a>
           </div>
@@ -1778,7 +1778,7 @@
           </div>
           <div class="service-block-actions">
             <a href="#cta" class="btn btn-primary" style="padding: 13px 26px; font-size: 0.9rem;">
-              Book Consultation
+              <span id="website-btn-text">learn more</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
             </a>
           </div>
@@ -2159,6 +2159,16 @@
     const tagWebsiteEl = document.querySelector("#website .section-tag");
     const twWebsite = tagWebsiteEl ? createScrollTypewriter(tagWebsiteEl, "03 // WEBSITE CREATION", { holdDuration: 9000, typeSpeed: 35, deleteSpeed: 26 }) : null;
 
+    // Service Block "learn more" Button Typewriter Instances
+    const btnSoftwareEl = document.getElementById("software-btn-text");
+    const twBtnSoftware = btnSoftwareEl ? createScrollTypewriter(btnSoftwareEl, "learn more", { holdDuration: 9000, typeSpeed: 30, deleteSpeed: 26 }) : null;
+
+    const btnAutomationEl = document.getElementById("automation-btn-text");
+    const twBtnAutomation = btnAutomationEl ? createScrollTypewriter(btnAutomationEl, "learn more", { holdDuration: 9000, typeSpeed: 30, deleteSpeed: 26 }) : null;
+
+    const btnWebsiteEl = document.getElementById("website-btn-text");
+    const twBtnWebsite = btnWebsiteEl ? createScrollTypewriter(btnWebsiteEl, "learn more", { holdDuration: 9000, typeSpeed: 30, deleteSpeed: 26 }) : null;
+
     // CTA Button Typewriter Instance (Repeating cycle matching other typewriter elements)
     const ctaBtnTextEl = document.getElementById("cta-btn-text");
     let twCtaBtn = null;
@@ -2293,18 +2303,36 @@
               el.classList.add('active');
               // Trigger typewriter restart on-demand when element enters screen!
               if (el.id === 'typewriter-text' && twHero) twHero.start();
-              if (el.id === 'software' && twSoftware) twSoftware.start();
-              if (el.id === 'automation' && twAutomation) twAutomation.start();
-              if (el.id === 'website' && twWebsite) twWebsite.start();
+              if (el.id === 'software') {
+                if (twSoftware) twSoftware.start();
+                if (twBtnSoftware) twBtnSoftware.start();
+              }
+              if (el.id === 'automation') {
+                if (twAutomation) twAutomation.start();
+                if (twBtnAutomation) twBtnAutomation.start();
+              }
+              if (el.id === 'website') {
+                if (twWebsite) twWebsite.start();
+                if (twBtnWebsite) twBtnWebsite.start();
+              }
             }
           } else {
             if (el.classList.contains('active')) {
               el.classList.remove('active');
               // Stop & reset typewriter cycle when element leaves screen
               if (el.id === 'typewriter-text' && twHero) twHero.stop();
-              if (el.id === 'software' && twSoftware) twSoftware.stop();
-              if (el.id === 'automation' && twAutomation) twAutomation.stop();
-              if (el.id === 'website' && twWebsite) twWebsite.stop();
+              if (el.id === 'software') {
+                if (twSoftware) twSoftware.stop();
+                if (twBtnSoftware) twBtnSoftware.stop();
+              }
+              if (el.id === 'automation') {
+                if (twAutomation) twAutomation.stop();
+                if (twBtnAutomation) twBtnAutomation.stop();
+              }
+              if (el.id === 'website') {
+                if (twWebsite) twWebsite.stop();
+                if (twBtnWebsite) twBtnWebsite.stop();
+              }
             }
           }
         });
