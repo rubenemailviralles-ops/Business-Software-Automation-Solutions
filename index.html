@@ -1975,6 +1975,7 @@
       const deleteSpeed = options.deleteSpeed || 26;
       const holdDuration = options.holdDuration || 9000;
       const onTypedCallback = options.onTyped || null;
+      const onDeleteStartCallback = options.onDeleteStart || null;
 
       // Pre-wrap words and characters so layout & wrapping are 100% fixed on page load
       const words = targetText.split(" ");
@@ -2053,6 +2054,7 @@
       let lineCursors = [];
 
       function startDeleteBackward() {
+        if (onDeleteStartCallback) onDeleteStartCallback();
         lineGroups = getLineGroups();
         maxLineLength = Math.max(...lineGroups.map(group => group.length));
         reverseStep = maxLineLength;
@@ -2165,17 +2167,22 @@
     const tagWebsiteEl = document.querySelector("#website .section-tag");
     const twWebsite = tagWebsiteEl ? createScrollTypewriter(tagWebsiteEl, "03 // WEBSITE CREATION", { holdDuration: 9000, typeSpeed: 35, deleteSpeed: 26 }) : null;
 
-    // CTA Button Typewriter Instance
+    // CTA Button Typewriter Instance (Repeating cycle matching other typewriter elements)
     const ctaBtnTextEl = document.getElementById("cta-btn-text");
     let twCtaBtn = null;
     if (ctaBtnTextEl) {
       twCtaBtn = createScrollTypewriter(ctaBtnTextEl, "Get Started Immediately", {
-        holdDuration: 9999999,
+        holdDuration: 9000,
         typeSpeed: 30,
+        deleteSpeed: 26,
         delay: 50,
         onTyped: function() {
           const arrowEl = document.querySelector(".cta-btn-arrow");
           if (arrowEl) arrowEl.classList.add("visible");
+        },
+        onDeleteStart: function() {
+          const arrowEl = document.querySelector(".cta-btn-arrow");
+          if (arrowEl) arrowEl.classList.remove("visible");
         }
       });
     }
