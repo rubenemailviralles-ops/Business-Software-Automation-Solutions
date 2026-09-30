@@ -1822,6 +1822,26 @@
         gap: 10px;
         text-align: center;
       }
+
+      /* Optimized Mobile Layer Compositing & Glass Blur */
+      .glass-panel {
+        background: rgba(8, 17, 34, 0.85);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+      }
+      .ambient-glow {
+        filter: blur(45px) !important;
+        will-change: transform;
+      }
+      .glow-2, .glow-3 {
+        display: none !important; /* Streamline redundant ambient glow compositing layers on mobile */
+      }
+      .glow-1 {
+        width: 100% !important;
+        height: 360px !important;
+        background: radial-gradient(circle at 50% 30%, rgba(0, 119, 255, 0.32) 0%, rgba(0, 210, 255, 0.12) 55%, transparent 80%) !important;
+        animation: none !important; /* Disables heavy mobile keyframe matrix recalculations */
+      }
     }
 
     /* Small Phone Breakpoint (< 480px) */
@@ -2098,11 +2118,6 @@
       </div>
     </div>
   </section>
-
-  <!-- Deep Void Glowing Lights -->
-  <div class="ambient-glow glow-1"></div>
-  <div class="ambient-glow glow-2"></div>
-  <div class="ambient-glow glow-3"></div>
 
   <!-- THREE.JS WEBGL 3D LAPTOP CONTAINER -->
   <div id="laptop-webgl-container">
