@@ -1823,16 +1823,40 @@
         text-align: center;
       }
 
-      /* High-Performance Multi-Depth Ambient Glow for Mobile (Zero Filter Blur Overhead!) */
+      /* Exact PC Background Replica for Mobile (Zero Filter Blur Overhead!) */
       .ambient-glow-wrapper {
-        background: 
-          radial-gradient(circle at 50% 8%, rgba(0, 119, 255, 0.45) 0%, rgba(0, 210, 255, 0.22) 35%, transparent 65%),
-          radial-gradient(circle at 90% 45%, rgba(16, 35, 70, 0.85) 0%, rgba(0, 210, 255, 0.15) 40%, transparent 70%),
-          radial-gradient(circle at 10% 85%, rgba(30, 144, 255, 0.35) 0%, rgba(138, 43, 226, 0.22) 45%, transparent 75%);
-        opacity: 0.9;
+        background: none !important;
+        opacity: 1;
       }
       .ambient-glow {
-        display: none !important; /* Replaced with zero-cost native multi-radial gradient background */
+        display: block !important;
+        filter: none !important; /* Zero blur GPU overhead on mobile! Soft glow is baked directly into gradient stops */
+        will-change: transform;
+      }
+      .glow-1 {
+        top: -140px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100vw;
+        height: 520px;
+        background: radial-gradient(ellipse at center, #0077ff 0%, rgba(0, 210, 255, 0.38) 35%, rgba(0, 210, 255, 0.14) 60%, transparent 75%) !important;
+        animation: morphGlow1 16s infinite alternate ease-in-out !important;
+      }
+      .glow-2 {
+        top: 32%;
+        right: -140px;
+        width: 420px;
+        height: 420px;
+        background: radial-gradient(circle at center, rgba(16, 35, 70, 0.95) 0%, rgba(0, 210, 255, 0.25) 45%, transparent 75%) !important;
+        animation: morphGlow2 20s infinite alternate ease-in-out !important;
+      }
+      .glow-3 {
+        bottom: 8%;
+        left: -140px;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle at center, rgba(30, 144, 255, 0.45) 0%, rgba(138, 43, 226, 0.22) 50%, transparent 75%) !important;
+        animation: morphGlow3 18s infinite alternate ease-in-out !important;
       }
       .glass-panel {
         background: rgba(8, 17, 34, 0.72);
