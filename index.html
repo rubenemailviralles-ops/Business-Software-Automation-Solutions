@@ -1858,10 +1858,114 @@
         padding: 6px 14px !important;
         font-size: 0.75rem !important;
       }
+    /* ==========================================================================
+       PRELOADER & LAZY LOAD ADAPTER STYLES
+       ========================================================================== */
+    #app-preloader {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: #030508;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #app-preloader.loaded {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .preloader-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 24px;
+    }
+
+    .preloader-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(0, 210, 255, 0.25), rgba(30, 144, 255, 0.7));
+      border: 1px solid rgba(0, 210, 255, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 30px var(--accent-glow-strong);
+      margin-bottom: 20px;
+      animation: preloaderPulse 1.8s infinite ease-in-out;
+    }
+
+    .preloader-icon svg {
+      width: 30px;
+      height: 30px;
+      color: #fff;
+    }
+
+    @keyframes preloaderPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 25px var(--accent-glow); }
+      50% { transform: scale(1.06); box-shadow: 0 0 45px var(--accent-glow-strong); }
+    }
+
+    .preloader-title {
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: 1.35rem;
+      color: var(--text-main);
+      margin-bottom: 22px;
+    }
+
+    .preloader-bar-wrapper {
+      width: 220px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .preloader-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #0077ff, #00d2ff);
+      box-shadow: 0 0 10px var(--accent-cyan);
+      transition: width 0.15s ease-out;
+    }
+
+    .preloader-status {
+      margin-top: 12px;
+      font-family: 'Space Mono', 'Fira Code', monospace;
+      font-size: 0.72rem;
+      color: var(--accent-cyan);
+      letter-spacing: 0.08em;
     }
   </style>
 </head>
 <body>
+
+  <!-- Application Preloader (Optimized for Low-RAM & Smooth Asset Warmup) -->
+  <div id="app-preloader">
+    <div class="preloader-content">
+      <div class="preloader-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+          <polyline points="2 17 12 22 22 17"></polyline>
+          <polyline points="2 12 12 17 22 12"></polyline>
+        </svg>
+      </div>
+      <div class="preloader-title">S&amp;A <span class="text-cyan">Solutions</span></div>
+      <div class="preloader-bar-wrapper">
+        <div class="preloader-bar-fill" id="preloader-progress"></div>
+      </div>
+      <div class="preloader-status" id="preloader-status-text">INITIALIZING CORE...</div>
+    </div>
+  </div>
 
   <!-- Animated Particle Canvas Background -->
   <canvas id="bg-canvas"></canvas>
@@ -2065,6 +2169,55 @@
 
   <!-- Embedded JavaScript -->
   <script>
+    /* ==========================================================================
+       LOW-RAM LAZY LOADER & PRELOADER SYSTEM
+       ========================================================================== */
+    (function () {
+      // 1. Hardware Memory Profiling (Low RAM / Low-End Device Detection)
+      const devRam = (navigator.deviceMemory) || 4;
+      const cores = (navigator.hardwareConcurrency) || 4;
+      const saveData = (navigator.connection && navigator.connection.saveData) ? true : false;
+      const isLowRam = devRam <= 4 || cores <= 4 || saveData || window.innerWidth < 768;
+      
+      window.isLowRamDevice = isLowRam;
+
+      // 2. Preloader Progress Orchestration
+      const preloaderEl = document.getElementById('app-preloader');
+      const progressBar = document.getElementById('preloader-progress');
+      const statusText = document.getElementById('preloader-status-text');
+
+      function updatePreloader(percent, msg) {
+        if (progressBar) progressBar.style.width = percent + '%';
+        if (statusText && msg) statusText.textContent = msg;
+      }
+
+      // Initializing Base UI & CSS
+      updatePreloader(35, "LOADING SYSTEM...");
+
+      // DOM & Assets Warmup
+      window.addEventListener('DOMContentLoaded', () => {
+        updatePreloader(75, isLowRam ? "ADAPTING TO DEVICE MEMORY..." : "WARMING SHADERS...");
+      });
+
+      // Full Window Load & Preloader Dismiss
+      window.addEventListener('load', () => {
+        updatePreloader(100, "SYSTEM READY");
+        setTimeout(() => {
+          if (preloaderEl) preloaderEl.classList.add('loaded');
+          if (typeof updateScrollReveals === 'function') updateScrollReveals();
+        }, 320);
+      });
+
+      // Low-RAM Safety Fallback: Guarantee reveal after max 1.6s
+      setTimeout(() => {
+        if (preloaderEl && !preloaderEl.classList.contains('loaded')) {
+          updatePreloader(100, "SYSTEM READY");
+          preloaderEl.classList.add('loaded');
+          if (typeof updateScrollReveals === 'function') updateScrollReveals();
+        }
+      }, 1600);
+    })();
+
     // Force scroll position to top (y=0) on page load so header navigation animation triggers on scroll
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual';
